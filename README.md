@@ -28,13 +28,12 @@ Flutter Mobile
        │
  REST API
        │
- Next.js Server
+ Next.js (Vercel)
        │
- ├── PostgreSQL
- ├── Prisma ORM
+ ├── Supabase Auth + Postgres (RLS)
  ├── AI Decision Engine
- ├── Firebase
- └── Storage
+ ├── Firebase Storage
+ └── Firebase Cloud Messaging
 ```
 
 ---
@@ -153,28 +152,20 @@ Responsibilities:
 
 ## Frontend
 
-- Next.js
+- Next.js (App Router)
 - TypeScript
 - Tailwind CSS
-- shadcn/ui
+- Motion animations
 
-## Backend
+## Backend & Data
 
-- Next.js API Routes
-- Prisma ORM
-- PostgreSQL
+- Next.js Route Handlers + Server Actions
+- Supabase Postgres + Row Level Security
+- Supabase Auth
 
-## Authentication
-
-- Auth.js
-- JWT
-
-## Storage
+## Storage & Notifications
 
 - Firebase Storage
-
-## Notifications
-
 - Firebase Cloud Messaging
 
 ## AI
@@ -188,23 +179,34 @@ Responsibilities:
 
 ---
 
+# 🚀 Quick Start
+
+See [SETUP.md](./SETUP.md) for tools, environment variables, Supabase, Firebase, and Vercel.
+
+```bash
+npm install
+copy .env.example .env.local
+npm run dev
+```
+
+---
+
 # 📂 Project Structure
 
 ```text
 src/
 ├── app/
 │   ├── api/
-│   ├── admin/
 │   ├── auth/
-│   └── dashboard/
-│
+│   ├── dashboard/
+│   └── login/
 ├── components/
 ├── lib/
-├── services/
-├── prisma/
-├── middleware/
-├── utils/
-└── types/
+│   ├── firebase/
+│   └── supabase/
+└── proxy.ts
+supabase/
+└── schema.sql
 ```
 
 ---

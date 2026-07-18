@@ -15,7 +15,7 @@ export default async function AdminAuditPage() {
         Track administrative actions across the VIVA platform.
       </p>
 
-      <div className="mt-8 overflow-hidden rounded-[1.6rem] border border-white bg-white/75 shadow-sm">
+      <div className="mt-8 overflow-hidden rounded-[1.6rem] border border-[#26222f]/8 bg-[#fdfbf4]/85 shadow-sm">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-black/5 bg-[#faf9fc] text-xs font-black text-[#8a8491]">
             <tr>

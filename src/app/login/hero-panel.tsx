@@ -274,7 +274,7 @@ export function HeroPanel() {
       style={{ perspective: 1200 }}
     >
       {/* Ambient glow + grid backdrop */}
-      <div className="animate-glow absolute -left-32 top-24 size-[30rem] rounded-full bg-[#7557ff]/28 blur-[100px]" />
+      <div className="animate-glow absolute -left-32 top-24 size-[30rem] rounded-full bg-[#5f45e6]/28 blur-[100px]" />
       <div className="animate-glow-slow absolute -bottom-44 right-0 size-[32rem] rounded-full bg-[#20d8dd]/22 blur-[110px]" />
       <div className="animate-glow-slow absolute left-1/3 top-1/2 size-[22rem] rounded-full bg-[#ff6b8b]/12 blur-[110px]" />
       <div

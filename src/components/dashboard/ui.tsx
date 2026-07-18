@@ -17,7 +17,7 @@ export function PageHeader({
   return (
     <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
       <div>
-        <p className="text-xs font-black tracking-[0.16em] text-[#7557ff]">{eyebrow}</p>
+        <p className="text-xs font-black tracking-[0.16em] text-[#5f45e6]">{eyebrow}</p>
         <h1 className="font-display mt-2 text-4xl sm:text-5xl">
           {title}{" "}
           {highlight && <span className="gradient-text italic">{highlight}</span>}
@@ -50,7 +50,7 @@ export function StatCard({
   suffix,
   detail,
   icon: Icon,
-  className = "bg-white/75 text-[#24212e]",
+  className = "bg-[#fdfbf4]/85 text-[#26222f]",
 }: {
   label: string;
   value: string;
@@ -67,7 +67,7 @@ export function StatCard({
       }}
       whileHover={{ y: -5 }}
       transition={{ type: "spring", stiffness: 280, damping: 22 }}
-      className={`rounded-[1.6rem] border border-white/60 p-5 shadow-[0_16px_35px_rgba(43,36,70,.08)] ${className}`}
+      className={`rounded-[1.6rem] border border-[#26222f]/6 p-5 shadow-[0_16px_35px_rgba(43,36,70,.08)] ${className}`}
     >
       <div className="flex items-center justify-between">
         <span className="text-xs font-bold opacity-65">{label}</span>
@@ -129,7 +129,7 @@ export function Bars({
             transition={{ delay: 0.15 + index * 0.05, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className={`w-full max-w-10 rounded-full ${
               index === activeIndex
-                ? "bg-gradient-to-t from-[#7657ff] to-[#23d4df]"
+                ? "bg-gradient-to-t from-[#5f45e6] to-[#23d4df]"
                 : "bg-[#eae4d6]"
             }`}
           />

@@ -93,7 +93,7 @@ export function TodayView() {
                 variants={{ hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0 } }}
                 className="relative overflow-hidden rounded-[1.6rem] bg-[#20202a] p-6 text-white"
               >
-                <div className="absolute -right-10 -top-10 size-36 rounded-full bg-[#7657ff]/40 blur-3xl" />
+                <div className="absolute -right-10 -top-10 size-36 rounded-full bg-[#5f45e6]/40 blur-3xl" />
                 <div className="relative">
                   <span className="grid size-10 place-items-center rounded-xl bg-white/10">
                     <Moon size={19} className="text-[#c3b7ff]" />
@@ -148,7 +148,7 @@ export function TodayView() {
               className="rounded-[1.6rem] bg-gradient-to-br from-[#ddf8f3] via-[#eefaf6] to-[#f7f2ff] p-5"
             >
               <div className="flex items-center justify-between">
-                <span className="grid size-10 place-items-center rounded-xl bg-white text-[#7557ff] shadow-sm">
+                <span className="grid size-10 place-items-center rounded-xl bg-[#fdfbf4] text-[#5f45e6] shadow-sm">
                   <Sparkles size={18} />
                 </span>
                 <span className="text-[10px] font-black tracking-wider text-[#8a7e98]">
@@ -158,7 +158,7 @@ export function TodayView() {
               <p className="mt-7 text-base font-bold leading-6">
                 A protein-rich snack now may keep your afternoon energy steady.
               </p>
-              <button className="mt-5 flex items-center gap-1 text-xs font-black text-[#7557ff] transition hover:gap-2">
+              <button className="mt-5 flex items-center gap-1 text-xs font-black text-[#5f45e6] transition hover:gap-2">
                 See options <ChevronRight size={13} />
               </button>
             </motion.article>

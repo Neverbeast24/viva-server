@@ -34,9 +34,9 @@ export function AdminShell({
   return (
     <main className="min-h-screen p-3 sm:p-5">
       <div className="glass mx-auto flex min-h-[calc(100vh-2.5rem)] max-w-[1500px] overflow-hidden rounded-[2rem]">
-        <aside className="hidden w-64 shrink-0 flex-col border-r border-black/5 bg-white/45 p-5 lg:flex">
+        <aside className="hidden w-64 shrink-0 flex-col border-r border-black/5 bg-[#fdfbf4]/60 p-5 lg:flex">
           <Brand className="mb-8" />
-          <p className="mb-4 text-[10px] font-black tracking-[0.16em] text-[#7557ff]">
+          <p className="mb-4 text-[10px] font-black tracking-[0.16em] text-[#5f45e6]">
             ADMIN CONSOLE
           </p>
           <nav className="space-y-1">
@@ -50,13 +50,13 @@ export function AdminShell({
                   key={item.href}
                   href={item.href}
                   className={`focus-ring relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition ${
-                    active ? "text-white" : "text-[#716d78] hover:bg-white/80"
+                    active ? "text-white" : "text-[#716d78] hover:bg-[#fdfbf4]/90"
                   }`}
                 >
                   {active && (
                     <motion.span
                       layoutId="admin-nav"
-                      className="absolute inset-0 -z-10 rounded-xl bg-[#24212e] shadow-lg"
+                      className="absolute inset-0 -z-10 rounded-xl bg-[#26222f] shadow-lg"
                     />
                   )}
                   <item.icon size={17} />
@@ -67,13 +67,13 @@ export function AdminShell({
           </nav>
           <Link
             href="/dashboard"
-            className="mt-auto rounded-xl border border-black/8 bg-white/70 px-3 py-2.5 text-sm font-bold text-[#5f5a67] transition hover:bg-white"
+            className="mt-auto rounded-xl border border-black/8 bg-[#fdfbf4]/85 px-3 py-2.5 text-sm font-bold text-[#5f5a67] transition hover:bg-[#fdfbf4]"
           >
             ← Back to dashboard
           </Link>
         </aside>
 
-        <section className="min-w-0 flex-1 bg-[#f8f7fb]/65">
+        <section className="min-w-0 flex-1 bg-[#f6f1e6]/65">
           <header className="flex h-20 items-center justify-between border-b border-black/5 px-5 sm:px-8">
             <div>
               <p className="text-xs font-bold text-[#8a8491]">Signed in as</p>
@@ -82,7 +82,7 @@ export function AdminShell({
             <form action={signOut}>
               <button
                 type="submit"
-                className="focus-ring inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold shadow-sm"
+                className="focus-ring inline-flex items-center gap-2 rounded-full bg-[#fdfbf4] px-4 py-2 text-sm font-bold shadow-sm"
               >
                 <LogOut size={15} /> Sign out
               </button>

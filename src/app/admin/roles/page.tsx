@@ -19,9 +19,9 @@ export default function AdminRolesPage() {
         {Object.entries(ROLE_LABELS).map(([key, label]) => (
           <article
             key={key}
-            className="rounded-[1.5rem] border border-white bg-white/75 p-5 shadow-sm"
+            className="rounded-[1.5rem] border border-[#26222f]/8 bg-[#fdfbf4]/85 p-5 shadow-sm"
           >
-            <p className="text-xs font-black tracking-wide text-[#7557ff]">{label.toUpperCase()}</p>
+            <p className="text-xs font-black tracking-wide text-[#5f45e6]">{label.toUpperCase()}</p>
             <p className="mt-3 text-sm leading-6 text-[#6f6b79]">
               {key === "user" && "Access personal dashboard modules and own data only."}
               {key === "admin" && "Manage users, view audit logs, and support members."}
@@ -31,7 +31,7 @@ export default function AdminRolesPage() {
         ))}
       </div>
 
-      <div className="mt-8 overflow-hidden rounded-[1.6rem] border border-white bg-white/75 shadow-sm">
+      <div className="mt-8 overflow-hidden rounded-[1.6rem] border border-[#26222f]/8 bg-[#fdfbf4]/85 shadow-sm">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-black/5 bg-[#faf9fc] text-xs font-black text-[#8a8491]">
             <tr>
@@ -60,7 +60,7 @@ export default function AdminRolesPage() {
           {MODULES.map((module) => (
             <span
               key={module}
-              className="rounded-full border border-black/8 bg-white/70 px-3 py-1.5 text-xs font-bold text-[#5f5a67]"
+              className="rounded-full border border-black/8 bg-[#fdfbf4]/85 px-3 py-1.5 text-xs font-bold text-[#5f5a67]"
             >
               {module}
             </span>

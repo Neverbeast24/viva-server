@@ -28,7 +28,7 @@ export function AiView({ insights }: { insights: Insight[] }) {
             whileHover={{ y: -2 }}
             disabled={pending}
             onClick={() => submit(new FormData())}
-            className="rounded-full bg-[#24212e] px-5 py-3 text-sm font-bold text-white"
+            className="rounded-full bg-[#26222f] px-5 py-3 text-sm font-bold text-white"
           >
             {pending ? "Generating…" : "Generate insight"}
           </motion.button>
@@ -41,11 +41,11 @@ export function AiView({ insights }: { insights: Insight[] }) {
             <Panel key={item.id}>
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-black text-[#7557ff]">VIVA INSIGHT</p>
+                  <p className="text-xs font-black text-[#5f45e6]">VIVA INSIGHT</p>
                   <h2 className="mt-2 text-lg font-black">{item.title}</h2>
                   <p className="mt-3 text-sm leading-6 text-[#6f6b79]">{item.body}</p>
                 </div>
-                <span className="grid size-10 place-items-center rounded-xl bg-[#f0edff] text-[#7557ff]">
+                <span className="grid size-10 place-items-center rounded-xl bg-[#ece7fb] text-[#5f45e6]">
                   <BrainCircuit size={18} />
                 </span>
               </div>

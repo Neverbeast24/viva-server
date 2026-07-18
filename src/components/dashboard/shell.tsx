@@ -54,7 +54,7 @@ export function DashboardShell({
   return (
     <main className="min-h-screen p-3 sm:p-5">
       <div className="glass mx-auto flex min-h-[calc(100vh-2.5rem)] max-w-[1500px] overflow-hidden rounded-[2rem]">
-        <aside className="hidden w-60 shrink-0 flex-col border-r border-black/5 bg-white/45 p-5 lg:flex">
+        <aside className="hidden w-60 shrink-0 flex-col border-r border-black/5 bg-[#fdfbf4]/60 p-5 lg:flex">
           <Brand className="mb-10" />
           <nav className="space-y-1">
             {navItems.map((item) => {
@@ -66,13 +66,13 @@ export function DashboardShell({
                   className={`focus-ring relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition ${
                     active
                       ? "text-white"
-                      : "text-[#716d78] hover:bg-white/80 hover:text-[#332f3c]"
+                      : "text-[#716d78] hover:bg-[#fdfbf4]/90 hover:text-[#332f3c]"
                   }`}
                 >
                   {active && (
                     <motion.span
                       layoutId="nav-active"
-                      className="absolute inset-0 -z-10 rounded-xl bg-[#24212e] shadow-lg"
+                      className="absolute inset-0 -z-10 rounded-xl bg-[#26222f] shadow-lg"
                       transition={{ type: "spring", stiffness: 380, damping: 32 }}
                     />
                   )}
@@ -95,23 +95,23 @@ export function DashboardShell({
           {isStaff && (
             <Link
               href="/admin"
-              className="mt-3 flex items-center gap-3 rounded-xl bg-[#f0edff] px-3 py-2.5 text-sm font-bold text-[#5f4fd6] transition hover:bg-white"
+              className="mt-3 flex items-center gap-3 rounded-xl bg-[#ece7fb] px-3 py-2.5 text-sm font-bold text-[#5f4fd6] transition hover:bg-[#fdfbf4]"
             >
               <Shield size={17} /> Admin console
             </Link>
           )}
           <Link
             href="/dashboard/settings"
-            className="mt-4 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-[#77727e] transition hover:bg-white/70"
+            className="mt-4 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-[#77727e] transition hover:bg-[#fdfbf4]/85"
           >
             <Settings2 size={17} /> Preferences
           </Link>
         </aside>
 
-        <section className="min-w-0 flex-1 bg-[#f8f7fb]/65">
+        <section className="min-w-0 flex-1 bg-[#f6f1e6]/65">
           <header className="flex h-20 items-center justify-between gap-3 border-b border-black/5 px-5 sm:px-8">
             <Brand compact className="lg:hidden" />
-            <label className="hidden items-center gap-2 rounded-full border border-black/5 bg-white/75 px-4 py-2.5 text-[#8c8793] sm:flex">
+            <label className="hidden items-center gap-2 rounded-full border border-black/5 bg-[#fdfbf4]/85 px-4 py-2.5 text-[#8c8793] sm:flex">
               <Search size={16} />
               <input
                 aria-label="Search VIVA"
@@ -127,13 +127,13 @@ export function DashboardShell({
                   whileTap={{ scale: 0.97 }}
                   type="submit"
                   title="Sign out"
-                  className="focus-ring group ml-1 flex items-center gap-2 rounded-full bg-white py-1.5 pl-1.5 pr-3 text-sm font-bold shadow-sm"
+                  className="focus-ring group ml-1 flex items-center gap-2 rounded-full bg-[#fdfbf4] py-1.5 pl-1.5 pr-3 text-sm font-bold shadow-sm"
                 >
                   <span className="grid size-8 place-items-center rounded-full bg-gradient-to-br from-[#ac99ff] to-[#5fd8e0] text-xs font-black text-white">
                     {initials}
                   </span>
                   <span className="hidden max-w-28 truncate sm:block">{displayName}</span>
-                  <LogOut size={14} className="text-[#a7a2ae] transition group-hover:text-[#7557ff]" />
+                  <LogOut size={14} className="text-[#a7a2ae] transition group-hover:text-[#5f45e6]" />
                 </motion.button>
               </form>
             </div>
@@ -148,8 +148,8 @@ export function DashboardShell({
                   href={item.href}
                   className={`focus-ring flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-xs font-bold transition ${
                     active
-                      ? "bg-[#24212e] text-white"
-                      : "bg-white/70 text-[#716d78]"
+                      ? "bg-[#26222f] text-white"
+                      : "bg-[#fdfbf4]/85 text-[#716d78]"
                   }`}
                 >
                   <item.icon size={14} />

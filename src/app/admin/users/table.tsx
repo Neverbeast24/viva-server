@@ -7,7 +7,7 @@ import { updateUserRole, updateUserStatus } from "./actions";
 
 export function UsersTable({ users }: { users: Profile[] }) {
   return (
-    <div className="overflow-hidden rounded-[1.6rem] border border-white bg-white/75 shadow-sm">
+    <div className="overflow-hidden rounded-[1.6rem] border border-[#26222f]/8 bg-[#fdfbf4]/85 shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[760px] text-left text-sm">
           <thead className="border-b border-black/5 bg-[#faf9fc] text-xs font-black tracking-wide text-[#8a8491]">
@@ -38,7 +38,7 @@ export function UsersTable({ users }: { users: Profile[] }) {
                 <td className="px-5 py-4 text-[#8a8491]">
                   {new Date(user.created_at).toLocaleDateString()}
                 </td>
-                <td className="px-5 py-4 text-xs font-bold text-[#7557ff]">Manage</td>
+                <td className="px-5 py-4 text-xs font-bold text-[#5f45e6]">Manage</td>
               </tr>
             ))}
           </tbody>
@@ -63,7 +63,7 @@ function RoleSelect({ userId, role }: { userId: string; role: UserRole }) {
           else toast.error(result.message);
         });
       }}
-      className="rounded-xl border border-black/8 bg-white px-2 py-1.5 text-xs font-bold"
+      className="rounded-xl border border-black/8 bg-[#fdfbf4] px-2 py-1.5 text-xs font-bold"
     >
       {Object.entries(ROLE_LABELS).map(([value, label]) => (
         <option key={value} value={value}>
@@ -89,7 +89,7 @@ function StatusSelect({ userId, status }: { userId: string; status: UserStatus }
           else toast.error(result.message);
         });
       }}
-      className="rounded-xl border border-black/8 bg-white px-2 py-1.5 text-xs font-bold capitalize"
+      className="rounded-xl border border-black/8 bg-[#fdfbf4] px-2 py-1.5 text-xs font-bold capitalize"
     >
       <option value="active">Active</option>
       <option value="suspended">Suspended</option>

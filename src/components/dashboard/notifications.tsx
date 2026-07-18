@@ -10,7 +10,7 @@ const items = [
     title: "New insight ready",
     detail: "Your energy peaks after morning walks.",
     time: "2m ago",
-    tone: "text-[#7557ff] bg-[#f0edff]",
+    tone: "text-[#5f45e6] bg-[#ece7fb]",
   },
   {
     icon: Utensils,
@@ -49,7 +49,7 @@ export function Notifications() {
         whileTap={{ scale: 0.92 }}
         aria-label="Notifications"
         onClick={() => setOpen((value) => !value)}
-        className="focus-ring relative grid size-10 place-items-center rounded-full bg-white text-[#676270] shadow-sm transition hover:-translate-y-0.5"
+        className="focus-ring relative grid size-10 place-items-center rounded-full bg-[#fdfbf4] text-[#676270] shadow-sm transition hover:-translate-y-0.5"
       >
         <Bell size={17} />
         <i className="absolute right-2.5 top-2.5 size-1.5 rounded-full bg-[#ff647c]" />
@@ -66,7 +66,7 @@ export function Notifications() {
           >
             <div className="flex items-center justify-between px-2 py-1">
               <span className="text-sm font-black">Notifications</span>
-              <span className="rounded-full bg-[#f0edff] px-2 py-0.5 text-[10px] font-bold text-[#7557ff]">
+              <span className="rounded-full bg-[#ece7fb] px-2 py-0.5 text-[10px] font-bold text-[#5f45e6]">
                 3 new
               </span>
             </div>
@@ -74,7 +74,7 @@ export function Notifications() {
               {items.map((item) => (
                 <button
                   key={item.title}
-                  className="flex w-full items-start gap-3 rounded-xl p-2.5 text-left transition hover:bg-white/70"
+                  className="flex w-full items-start gap-3 rounded-xl p-2.5 text-left transition hover:bg-[#fdfbf4]/85"
                 >
                   <span className={`grid size-9 shrink-0 place-items-center rounded-xl ${item.tone}`}>
                     <item.icon size={16} />

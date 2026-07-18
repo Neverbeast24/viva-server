@@ -140,7 +140,7 @@ export function AuthForm({
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-xs font-black tracking-[0.18em] text-[#7557ff]">{copy.eyebrow}</p>
+          <p className="text-xs font-black tracking-[0.18em] text-[#5f45e6]">{copy.eyebrow}</p>
           <h2 className="font-display mt-4 text-5xl">{copy.title}</h2>
           <p className="mt-4 text-sm leading-6 text-[#7b7682]">{copy.blurb}</p>
         </motion.div>
@@ -225,7 +225,7 @@ export function AuthForm({
                     <button
                       type="button"
                       onClick={() => switchMode("forgot")}
-                      className="focus-ring font-bold text-[#7557ff] transition hover:text-[#5a3de0]"
+                      className="focus-ring font-bold text-[#5f45e6] transition hover:text-[#5a3de0]"
                     >
                       Forgot password?
                     </button>
@@ -277,7 +277,7 @@ export function AuthForm({
             <button
               type="button"
               onClick={() => switchMode("signup")}
-              className="focus-ring font-black text-[#7557ff] transition hover:text-[#5a3de0]"
+              className="focus-ring font-black text-[#5f45e6] transition hover:text-[#5a3de0]"
             >
               Create an account
             </button>
@@ -289,7 +289,7 @@ export function AuthForm({
             <button
               type="button"
               onClick={() => switchMode("signin")}
-              className="focus-ring font-black text-[#7557ff] transition hover:text-[#5a3de0]"
+              className="focus-ring font-black text-[#5f45e6] transition hover:text-[#5a3de0]"
             >
               Sign in
             </button>
@@ -299,7 +299,7 @@ export function AuthForm({
           <button
             type="button"
             onClick={() => switchMode("signin")}
-            className="focus-ring font-black text-[#7557ff] transition hover:text-[#5a3de0]"
+            className="focus-ring font-black text-[#5f45e6] transition hover:text-[#5a3de0]"
           >
             Back to sign in
           </button>

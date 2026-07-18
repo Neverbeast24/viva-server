@@ -24,16 +24,16 @@ export function NutritionView({ meals }: { meals: Meal[] }) {
 
       <Panel title="Log a meal" className="mb-4">
         <form action={submit} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <input name="meal_name" required placeholder="Meal name" className="rounded-2xl border border-black/8 bg-white px-4 py-3 text-sm sm:col-span-2" />
-          <select name="meal_type" defaultValue="lunch" className="rounded-2xl border border-black/8 bg-white px-4 py-3 text-sm">
+          <input name="meal_name" required placeholder="Meal name" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm sm:col-span-2" />
+          <select name="meal_type" defaultValue="lunch" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm">
             <option value="breakfast">Breakfast</option>
             <option value="lunch">Lunch</option>
             <option value="dinner">Dinner</option>
             <option value="snack">Snack</option>
           </select>
-          <input name="calories" type="number" min={0} placeholder="Calories" className="rounded-2xl border border-black/8 bg-white px-4 py-3 text-sm" />
-          <input name="protein_g" type="number" min={0} placeholder="Protein (g)" className="rounded-2xl border border-black/8 bg-white px-4 py-3 text-sm" />
-          <button disabled={pending} className="rounded-2xl bg-[#24212e] px-4 py-3 text-sm font-bold text-white sm:col-span-2 lg:col-span-4">
+          <input name="calories" type="number" min={0} placeholder="Calories" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm" />
+          <input name="protein_g" type="number" min={0} placeholder="Protein (g)" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm" />
+          <button disabled={pending} className="rounded-2xl bg-[#26222f] px-4 py-3 text-sm font-bold text-white sm:col-span-2 lg:col-span-4">
             {pending ? "Saving…" : "Log meal"}
           </button>
         </form>
@@ -68,7 +68,7 @@ export function NutritionView({ meals }: { meals: Meal[] }) {
         <Panel title="Logged meals" className="mt-4">
           <div className="space-y-2">
             {meals.map((meal) => (
-              <div key={meal.id} className="flex items-center justify-between rounded-2xl border border-black/5 bg-white/70 px-4 py-3">
+              <div key={meal.id} className="flex items-center justify-between rounded-2xl border border-black/5 bg-[#fdfbf4]/85 px-4 py-3">
                 <div>
                   <p className="text-sm font-bold">{meal.meal_name}</p>
                   <p className="text-xs capitalize text-[#847f8c]">{meal.meal_type}</p>

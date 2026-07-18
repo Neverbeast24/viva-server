@@ -30,7 +30,7 @@ const insights = [
     title: "Vitality score",
     value: "84",
     detail: "+7 this week",
-    color: "from-[#7557ff] to-[#b947ee]",
+    color: "from-[#5f45e6] to-[#b947ee]",
   },
   {
     icon: Leaf,
@@ -110,7 +110,7 @@ const modules: Module[] = [
     title: "Health dashboard",
     copy: "See daily signals in one calm workspace.",
     tag: "Understand",
-    iconClass: "bg-gradient-to-br from-[#7557ff] to-[#9b42ff]",
+    iconClass: "bg-gradient-to-br from-[#5f45e6] to-[#9b42ff]",
   },
   {
     icon: Bell,
@@ -169,13 +169,13 @@ export function LandingPage() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-8">
         <Brand />
         <div className="hidden items-center gap-8 text-sm font-semibold text-[#696574] md:flex">
-          <a href="#experience" className="transition-colors hover:text-[#7557ff]">
+          <a href="#experience" className="transition-colors hover:text-[#5f45e6]">
             Experience
           </a>
-          <a href="#modules" className="transition-colors hover:text-[#7557ff]">
+          <a href="#modules" className="transition-colors hover:text-[#5f45e6]">
             Modules
           </a>
-          <a href="#principles" className="transition-colors hover:text-[#7557ff]">
+          <a href="#principles" className="transition-colors hover:text-[#5f45e6]">
             Why VIVA
           </a>
         </div>
@@ -207,7 +207,7 @@ export function LandingPage() {
               Your wellbeing, finally connected
             </div>
           </div>
-          <h1 className="font-display max-w-3xl text-6xl leading-[0.96] font-medium text-[#1e1b28] sm:text-7xl lg:text-[5.6rem]">
+          <h1 className="font-display max-w-3xl text-6xl leading-[0.96] font-medium text-[#26222f] sm:text-7xl lg:text-[5.6rem]">
             Make every choice feel{" "}
             <span className="gradient-text italic">healthier.</span>
           </h1>
@@ -240,7 +240,7 @@ export function LandingPage() {
           transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="relative"
         >
-          <div className="absolute -inset-10 -z-10 rounded-full bg-gradient-to-br from-[#7557ff]/20 via-transparent to-[#20d8dd]/20 blur-3xl" />
+          <div className="absolute -inset-10 -z-10 rounded-full bg-gradient-to-br from-[#5f45e6]/20 via-transparent to-[#20d8dd]/20 blur-3xl" />
           <div className="glass noise overflow-hidden rounded-[2.2rem] p-3">
             <div className="rounded-[1.7rem] border border-[#26222f]/6 bg-[#f4efe4]/90 p-4 sm:p-6">
               <div className="mb-8 flex items-center justify-between">
@@ -281,7 +281,7 @@ export function LandingPage() {
                 ))}
               </div>
               <div className="mt-3 grid gap-3 sm:grid-cols-[1.4fr_1fr]">
-                <div className="rounded-[1.4rem] bg-[#1e1b27] p-5 text-white">
+                <div className="rounded-[1.4rem] bg-[#26222f] p-5 text-white">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-white/55">VIVA INSIGHT</span>
                     <BrainCircuit size={18} className="text-[#9f8aff]" />
@@ -309,7 +309,7 @@ export function LandingPage() {
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
-            className="rounded-[2rem] bg-[#211e2a] p-8 text-white sm:p-10"
+            className="rounded-[2rem] bg-[#26222f] p-8 text-white sm:p-10"
           >
             <span className="text-xs font-black tracking-[0.2em] text-[#aa98ff]">
               OUR MISSION
@@ -346,7 +346,7 @@ export function LandingPage() {
       <section id="modules" className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
         <div className="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div>
-            <span className="text-xs font-black tracking-[0.2em] text-[#7557ff]">
+            <span className="text-xs font-black tracking-[0.2em] text-[#5f45e6]">
               THE VIVA ECOSYSTEM
             </span>
             <h2 className="font-display mt-4 max-w-2xl text-5xl leading-tight">
@@ -365,9 +365,9 @@ export function LandingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-30px" }}
             whileHover={{ y: -6 }}
-            className="group relative overflow-hidden rounded-[1.7rem] bg-[#1e1b27] p-6 text-white sm:col-span-2 sm:row-span-2 sm:p-8"
+            className="group relative overflow-hidden rounded-[1.7rem] bg-[#26222f] p-6 text-white sm:col-span-2 sm:row-span-2 sm:p-8"
           >
-            <div className="absolute -right-20 -top-24 size-64 rounded-full bg-[#7557ff]/35 blur-[80px] transition-all duration-700 group-hover:scale-150 group-hover:bg-[#7557ff]/45" />
+            <div className="absolute -right-20 -top-24 size-64 rounded-full bg-[#5f45e6]/35 blur-[80px] transition-all duration-700 group-hover:scale-150 group-hover:bg-[#5f45e6]/45" />
             <div className="absolute -bottom-24 -left-16 size-56 rounded-full bg-[#20d8dd]/20 blur-[80px]" />
             <div className="relative">
               <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-[10px] font-black tracking-[0.14em] text-[#b6a8ff]">
@@ -415,10 +415,10 @@ export function LandingPage() {
             className="group relative overflow-hidden rounded-[1.7rem] border border-[#26222f]/8 bg-gradient-to-br from-[#efeaff] via-[#fdfbf4] to-[#fbf3e2] p-6 sm:col-span-2"
           >
             <div className="flex items-start justify-between">
-              <span className="grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-[#7557ff] to-[#b947ee] text-white shadow-lg shadow-[#7557ff]/25 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+              <span className="grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-[#5f45e6] to-[#b947ee] text-white shadow-lg shadow-[#5f45e6]/25 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
                 <Sparkles size={19} />
               </span>
-              <span className="rounded-full bg-[#7557ff]/10 px-3 py-1 text-[10px] font-black tracking-wider text-[#6654cc]">
+              <span className="rounded-full bg-[#5f45e6]/10 px-3 py-1 text-[10px] font-black tracking-wider text-[#6654cc]">
                 DAILY
               </span>
             </div>
@@ -445,7 +445,7 @@ export function LandingPage() {
                 >
                   <module.icon size={18} />
                 </span>
-                <span className="rounded-full bg-black/4 px-2.5 py-1 text-[9px] font-black tracking-wider text-[#8a8492] transition-colors group-hover:bg-[#7557ff]/10 group-hover:text-[#6654cc]">
+                <span className="rounded-full bg-black/4 px-2.5 py-1 text-[9px] font-black tracking-wider text-[#8a8492] transition-colors group-hover:bg-[#5f45e6]/10 group-hover:text-[#6654cc]">
                   {module.tag.toUpperCase()}
                 </span>
               </div>
@@ -453,7 +453,7 @@ export function LandingPage() {
               <p className="mt-2 text-xs leading-5 text-[#817c88]">{module.copy}</p>
               <ArrowUpRight
                 size={15}
-                className="absolute bottom-5 right-5 text-[#7557ff] opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
+                className="absolute bottom-5 right-5 text-[#5f45e6] opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
               />
             </motion.article>
           ))}
@@ -461,8 +461,8 @@ export function LandingPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
-        <div className="noise relative overflow-hidden rounded-[2.3rem] bg-[#1e1b27] px-6 py-10 text-white sm:px-10 lg:px-14 lg:py-14">
-          <div className="absolute -right-24 -top-32 size-96 rounded-full bg-[#7557ff]/30 blur-[100px]" />
+        <div className="noise relative overflow-hidden rounded-[2.3rem] bg-[#26222f] px-6 py-10 text-white sm:px-10 lg:px-14 lg:py-14">
+          <div className="absolute -right-24 -top-32 size-96 rounded-full bg-[#5f45e6]/30 blur-[100px]" />
           <div className="absolute -bottom-40 left-1/3 size-80 rounded-full bg-[#20d8dd]/15 blur-[100px]" />
           <div className="relative grid gap-12 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
             <div>
@@ -515,7 +515,7 @@ export function LandingPage() {
 
       <section className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
         <div className="mb-10 text-center">
-          <span className="text-xs font-black tracking-[0.2em] text-[#7557ff]">
+          <span className="text-xs font-black tracking-[0.2em] text-[#5f45e6]">
             HOW IT FLOWS
           </span>
           <h2 className="font-display mt-4 text-5xl">From signals to insight.</h2>
@@ -530,7 +530,7 @@ export function LandingPage() {
               transition={{ delay: index * 0.06 }}
               className="relative rounded-2xl border border-[#26222f]/8 bg-[#fdfbf4]/70 p-4 text-center"
             >
-              <span className="mx-auto grid size-7 place-items-center rounded-full bg-[#24212e] text-[10px] font-black text-white">
+              <span className="mx-auto grid size-7 place-items-center rounded-full bg-[#26222f] text-[10px] font-black text-white">
                 {index + 1}
               </span>
               <p className="mt-3 text-xs font-bold leading-5">{step}</p>

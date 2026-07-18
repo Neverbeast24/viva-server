@@ -24,7 +24,7 @@ export function SettingsView({ settings }: { settings: Settings }) {
             <select
               name="theme"
               defaultValue={settings.theme}
-              className="mt-2 w-full rounded-2xl border border-black/8 bg-white px-4 py-3"
+              className="mt-2 w-full rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3"
             >
               <option value="light">Light</option>
               <option value="dark">Dark</option>
@@ -36,7 +36,7 @@ export function SettingsView({ settings }: { settings: Settings }) {
             <input
               name="timezone"
               defaultValue={settings.timezone}
-              className="mt-2 w-full rounded-2xl border border-black/8 bg-white px-4 py-3"
+              className="mt-2 w-full rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3"
             />
           </label>
           <label className="flex items-center gap-2 text-sm font-bold">
@@ -57,7 +57,7 @@ export function SettingsView({ settings }: { settings: Settings }) {
           </label>
           <button
             disabled={pending}
-            className="rounded-2xl bg-[#24212e] px-5 py-3 text-sm font-bold text-white"
+            className="rounded-2xl bg-[#26222f] px-5 py-3 text-sm font-bold text-white"
           >
             {pending ? "Saving…" : "Save settings"}
           </button>

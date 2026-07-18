@@ -23,8 +23,8 @@ export function MovementView({ workouts }: { workouts: Workout[] }) {
 
       <Panel title="Log a workout" className="mb-4">
         <form action={submit} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <input name="title" required placeholder="Workout title" className="rounded-2xl border border-black/8 bg-white px-4 py-3 text-sm sm:col-span-2" />
-          <select name="activity_type" defaultValue="walk" className="rounded-2xl border border-black/8 bg-white px-4 py-3 text-sm">
+          <input name="title" required placeholder="Workout title" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm sm:col-span-2" />
+          <select name="activity_type" defaultValue="walk" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm">
             <option value="walk">Walk</option>
             <option value="run">Run</option>
             <option value="strength">Strength</option>
@@ -32,9 +32,9 @@ export function MovementView({ workouts }: { workouts: Workout[] }) {
             <option value="yoga">Yoga</option>
             <option value="other">Other</option>
           </select>
-          <input name="duration_minutes" type="number" min={1} required placeholder="Minutes" className="rounded-2xl border border-black/8 bg-white px-4 py-3 text-sm" />
-          <input name="calories_burned" type="number" min={0} placeholder="Calories" className="rounded-2xl border border-black/8 bg-white px-4 py-3 text-sm" />
-          <button disabled={pending} className="rounded-2xl bg-[#24212e] px-4 py-3 text-sm font-bold text-white sm:col-span-2 lg:col-span-4">
+          <input name="duration_minutes" type="number" min={1} required placeholder="Minutes" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm" />
+          <input name="calories_burned" type="number" min={0} placeholder="Calories" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm" />
+          <button disabled={pending} className="rounded-2xl bg-[#26222f] px-4 py-3 text-sm font-bold text-white sm:col-span-2 lg:col-span-4">
             {pending ? "Saving…" : "Log workout"}
           </button>
         </form>
@@ -76,7 +76,7 @@ export function MovementView({ workouts }: { workouts: Workout[] }) {
         <Panel title="Sessions" className="mt-4">
           <div className="space-y-2">
             {workouts.map((workout) => (
-              <div key={workout.id} className="flex items-center justify-between rounded-2xl border border-black/5 bg-white/70 px-4 py-3">
+              <div key={workout.id} className="flex items-center justify-between rounded-2xl border border-black/5 bg-[#fdfbf4]/85 px-4 py-3">
                 <div>
                   <p className="text-sm font-bold">{workout.title}</p>
                   <p className="text-xs capitalize text-[#847f8c]">{workout.activity_type}</p>

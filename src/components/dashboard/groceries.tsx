@@ -34,9 +34,9 @@ export function GroceriesView({ items }: { items: GroceryItem[] }) {
 
       <Panel title="Add grocery item" className="mb-4">
         <form action={submit} className="grid gap-3 sm:grid-cols-3">
-          <input name="name" required placeholder="Item name" className="rounded-2xl border border-black/8 bg-white px-4 py-3 text-sm sm:col-span-2" />
-          <input name="quantity" placeholder="Qty" className="rounded-2xl border border-black/8 bg-white px-4 py-3 text-sm" />
-          <button disabled={pending} className="rounded-2xl bg-[#24212e] px-4 py-3 text-sm font-bold text-white sm:col-span-3">
+          <input name="name" required placeholder="Item name" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm sm:col-span-2" />
+          <input name="quantity" placeholder="Qty" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm" />
+          <button disabled={pending} className="rounded-2xl bg-[#26222f] px-4 py-3 text-sm font-bold text-white sm:col-span-3">
             {pending ? "Saving…" : "Add item"}
           </button>
         </form>
@@ -69,7 +69,7 @@ export function GroceriesView({ items }: { items: GroceryItem[] }) {
                   layout
                   disabled={togglePending}
                   onClick={() => toggle(item.id, !item.is_checked)}
-                  className="flex w-full items-center gap-3 rounded-2xl border border-black/5 bg-white/70 p-3.5 text-left"
+                  className="flex w-full items-center gap-3 rounded-2xl border border-black/5 bg-[#fdfbf4]/85 p-3.5 text-left"
                 >
                   <span
                     className={`grid size-6 place-items-center rounded-lg border-2 ${
@@ -93,7 +93,7 @@ export function GroceriesView({ items }: { items: GroceryItem[] }) {
           variants={{ hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0 } }}
           className="mt-4 rounded-[1.6rem] bg-gradient-to-br from-[#ddf8f3] via-[#eefaf6] to-[#f7f2ff] p-5"
         >
-          <Sparkles size={18} className="text-[#7557ff]" />
+          <Sparkles size={18} className="text-[#5f45e6]" />
           <p className="mt-4 text-sm font-bold leading-6">
             Swap white rice for quinoa to boost protein within the same budget.
           </p>

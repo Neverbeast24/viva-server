@@ -1,12 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Space_Grotesk } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Serif, Space_Grotesk } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
-const displayFont = Fraunces({
+const displayFont = Bricolage_Grotesque({
   subsets: ["latin"],
-  style: ["normal", "italic"],
   variable: "--font-display",
+});
+
+const accentFont = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: "italic",
+  variable: "--font-accent",
 });
 
 const bodyFont = Space_Grotesk({
@@ -37,7 +43,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${displayFont.variable} ${bodyFont.variable}`}
+      className={`${displayFont.variable} ${accentFont.variable} ${bodyFont.variable}`}
     >
       <body>
         <Providers>{children}</Providers>

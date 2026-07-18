@@ -4,6 +4,7 @@ import { Flame, Footprints, Heart, Timer } from "lucide-react";
 import { logWorkout } from "@/app/dashboard/movement/actions";
 import {
   EmptyState,
+  FormField,
   ListRow,
   PageHeader,
   Panel,
@@ -22,9 +23,22 @@ type Workout = {
   calories_burned: number | null;
 };
 
-export function MovementView({ workouts }: { workouts: Workout[] }) {
+export function MovementView({
+  workouts,
+  steps = 0,
+}: {
+  workouts: Workout[];
+  steps?: number;
+}) {
   const { pending, submit } = useModuleAction(logWorkout);
   const totalMinutes = workouts.reduce((sum, w) => sum + (w.duration_minutes ?? 0), 0);
+  const totalCalories = workouts.reduce((sum, w) => sum + (w.calories_burned ?? 0), 0);
+  const stepGoal = 8000;
+  const stepPct = Math.min(100, Math.round((steps / stepGoal) * 100));
+  const effortIndex = Math.min(
+    100,
+    Math.round(totalMinutes * 1.8 + workouts.length * 8 + Math.min(steps, stepGoal) / 80),
+  );
 
   return (
     <>
@@ -32,17 +46,25 @@ export function MovementView({ workouts }: { workouts: Workout[] }) {
 
       <Panel title="Log a workout" className="mb-4">
         <form action={submit} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <input name="title" required placeholder="Workout title" className={`${fieldClass} sm:col-span-2`} />
-          <select name="activity_type" defaultValue="walk" className={fieldClass}>
-            <option value="walk">Walk</option>
-            <option value="run">Run</option>
-            <option value="strength">Strength</option>
-            <option value="cycle">Cycle</option>
-            <option value="yoga">Yoga</option>
-            <option value="other">Other</option>
-          </select>
-          <input name="duration_minutes" type="number" min={1} required placeholder="Minutes" className={fieldClass} />
-          <input name="calories_burned" type="number" min={0} placeholder="Calories" className={fieldClass} />
+          <FormField label="Workout" hint="Required" className="sm:col-span-2">
+            <input name="title" required placeholder="e.g. Morning walk" className={fieldClass} />
+          </FormField>
+          <FormField label="Activity">
+            <select name="activity_type" defaultValue="walk" className={fieldClass}>
+              <option value="walk">Walk</option>
+              <option value="run">Run</option>
+              <option value="strength">Strength</option>
+              <option value="cycle">Cycle</option>
+              <option value="yoga">Yoga</option>
+              <option value="other">Other</option>
+            </select>
+          </FormField>
+          <FormField label="Duration" hint="minutes">
+            <input name="duration_minutes" type="number" min={1} required placeholder="30" className={fieldClass} />
+          </FormField>
+          <FormField label="Energy burned" hint="kcal">
+            <input name="calories_burned" type="number" min={0} placeholder="0" className={fieldClass} />
+          </FormField>
           <PrimaryButton disabled={pending} className="sm:col-span-2 lg:col-span-4">
             {pending ? "Saving…" : "Log workout"}
           </PrimaryButton>
@@ -53,8 +75,8 @@ export function MovementView({ workouts }: { workouts: Workout[] }) {
         <div className="grid gap-4 sm:grid-cols-4">
           <StatCard
             label="Steps"
-            value="6,420"
-            detail="78% of goal"
+            value={steps.toLocaleString()}
+            detail={`${stepPct}% of ${stepGoal.toLocaleString()} goal`}
             icon={Footprints}
             className="bg-gradient-to-br from-[#5f45e6] to-[#9a57e9] text-white"
           />
@@ -67,16 +89,16 @@ export function MovementView({ workouts }: { workouts: Workout[] }) {
           />
           <StatCard
             label="Calories"
-            value="410"
-            detail="Burned today"
+            value={String(totalCalories)}
+            detail="Burned from logged workouts"
             icon={Flame}
             className="bg-[#fff3e8] text-[#533621]"
           />
           <StatCard
-            label="Avg heart"
-            value="72"
-            suffix="bpm"
-            detail="Resting"
+            label="Effort"
+            value={String(effortIndex)}
+            suffix="/100"
+            detail={workouts.length || steps ? "From today’s activity" : "Log movement to score"}
             icon={Heart}
             className="bg-[#fdeaf1] text-[#5a2438]"
           />

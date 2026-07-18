@@ -6,6 +6,7 @@ import { Check, Package, ShoppingBasket, Sparkles } from "lucide-react";
 import { addGroceryItem, toggleGroceryItem } from "@/app/dashboard/groceries/actions";
 import {
   EmptyState,
+  FormField,
   PageHeader,
   Panel,
   PrimaryButton,
@@ -42,8 +43,12 @@ export function GroceriesView({ items }: { items: GroceryItem[] }) {
 
       <Panel title="Add grocery item" className="mb-4">
         <form action={submit} className="grid gap-3 sm:grid-cols-3">
-          <input name="name" required placeholder="Item name" className={`${fieldClass} sm:col-span-2`} />
-          <input name="quantity" placeholder="Qty" className={fieldClass} />
+          <FormField label="Grocery item" hint="Required" className="sm:col-span-2">
+            <input name="name" required placeholder="e.g. Green apples" className={fieldClass} />
+          </FormField>
+          <FormField label="Quantity">
+            <input name="quantity" placeholder="e.g. 6 pcs" className={fieldClass} />
+          </FormField>
           <PrimaryButton disabled={pending} className="sm:col-span-3">
             {pending ? "Saving…" : "Add item"}
           </PrimaryButton>

@@ -12,7 +12,6 @@ import {
   LayoutDashboard,
   LogOut,
   Refrigerator,
-  Search,
   Settings2,
   Shield,
   ShoppingBasket,
@@ -21,6 +20,7 @@ import {
 import { Brand } from "@/components/brand";
 import { signOut } from "@/app/dashboard/actions";
 import { Notifications } from "@/components/dashboard/notifications";
+import { CommandSearch } from "@/components/dashboard/command-search";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Today", href: "/dashboard" },
@@ -53,9 +53,14 @@ export function DashboardShell({
 
   return (
     <main className="min-h-screen p-3 sm:p-5">
-      <div className="glass mx-auto flex min-h-[calc(100vh-2.5rem)] max-w-[1500px] overflow-hidden rounded-[2rem]">
-        <aside className="hidden w-60 shrink-0 flex-col border-r border-black/5 bg-[#fdfbf4]/60 p-5 lg:flex">
-          <Brand className="mb-10" />
+      <div className="glass mx-auto flex min-h-[calc(100vh-2.5rem)] max-w-[1500px] overflow-hidden rounded-[2rem] border border-white/65 shadow-[0_30px_90px_rgba(54,43,34,.14)]">
+        <aside className="hidden w-72 shrink-0 flex-col border-r border-black/5 bg-[#fdfbf4]/68 p-6 lg:flex">
+          <div className="mb-7 flex items-center gap-2" aria-hidden>
+            <span className="size-3 rounded-full bg-[#ff5f57] shadow-inner" />
+            <span className="size-3 rounded-full bg-[#febc2e] shadow-inner" />
+            <span className="size-3 rounded-full bg-[#28c840] shadow-inner" />
+          </div>
+          <Brand className="mb-9" />
           <nav className="space-y-1">
             {navItems.map((item) => {
               const active = isActive(pathname, item.href);
@@ -109,16 +114,9 @@ export function DashboardShell({
         </aside>
 
         <section className="min-w-0 flex-1 bg-[#f6f1e6]/65">
-          <header className="flex h-20 items-center justify-between gap-3 border-b border-black/5 px-5 sm:px-8">
+          <header className="flex h-20 items-center justify-between gap-3 border-b border-black/5 bg-[#fdfbf4]/35 px-5 backdrop-blur-xl sm:px-8">
             <Brand compact className="lg:hidden" />
-            <label className="hidden items-center gap-2 rounded-full border border-black/5 bg-[#fdfbf4]/85 px-4 py-2.5 text-[#8c8793] sm:flex">
-              <Search size={16} />
-              <input
-                aria-label="Search VIVA"
-                placeholder="Search your wellbeing"
-                className="w-44 bg-transparent text-sm outline-none placeholder:text-[#aaa6b0]"
-              />
-            </label>
+            <CommandSearch />
             <div className="flex items-center gap-2">
               <Notifications />
               <form action={signOut}>

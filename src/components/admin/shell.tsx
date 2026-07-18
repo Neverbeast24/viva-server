@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { signOut } from "@/app/dashboard/actions";
+import { CommandSearch } from "@/components/dashboard/command-search";
 
 const nav = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -33,8 +34,13 @@ export function AdminShell({
 
   return (
     <main className="min-h-screen p-3 sm:p-5">
-      <div className="glass mx-auto flex min-h-[calc(100vh-2.5rem)] max-w-[1500px] overflow-hidden rounded-[2rem]">
-        <aside className="hidden w-64 shrink-0 flex-col border-r border-black/5 bg-[#fdfbf4]/60 p-5 lg:flex">
+      <div className="glass mx-auto flex min-h-[calc(100vh-2.5rem)] max-w-[1500px] overflow-hidden rounded-[2rem] border border-white/65 shadow-[0_30px_90px_rgba(54,43,34,.14)]">
+        <aside className="hidden w-72 shrink-0 flex-col border-r border-black/5 bg-[#fdfbf4]/68 p-6 lg:flex">
+          <div className="mb-7 flex items-center gap-2" aria-hidden>
+            <span className="size-3 rounded-full bg-[#ff5f57] shadow-inner" />
+            <span className="size-3 rounded-full bg-[#febc2e] shadow-inner" />
+            <span className="size-3 rounded-full bg-[#28c840] shadow-inner" />
+          </div>
           <Brand className="mb-8" />
           <p className="mb-4 text-[10px] font-black tracking-[0.16em] text-[#5f45e6]">
             ADMIN CONSOLE
@@ -74,10 +80,16 @@ export function AdminShell({
         </aside>
 
         <section className="min-w-0 flex-1 bg-[#f6f1e6]/65">
-          <header className="flex h-20 items-center justify-between border-b border-black/5 px-5 sm:px-8">
-            <div>
-              <p className="text-xs font-bold text-[#8a8491]">Signed in as</p>
-              <p className="font-bold">{displayName}</p>
+          <header className="flex h-20 items-center justify-between gap-3 border-b border-black/5 bg-[#fdfbf4]/35 px-5 backdrop-blur-xl sm:px-8">
+            <div className="flex min-w-0 items-center gap-4">
+              <Brand compact className="lg:hidden" />
+              <CommandSearch />
+              <div className="hidden xl:block">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#9a94a0]">
+                  Admin session
+                </p>
+                <p className="max-w-32 truncate text-xs font-bold">{displayName}</p>
+              </div>
             </div>
             <form action={signOut}>
               <button

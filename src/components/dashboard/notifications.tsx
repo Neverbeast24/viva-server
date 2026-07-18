@@ -30,6 +30,7 @@ const items = [
 
 export function Notifications() {
   const [open, setOpen] = useState(false);
+  const [unread, setUnread] = useState(() => new Set(items.map((item) => item.title)));
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,7 +53,9 @@ export function Notifications() {
         className="focus-ring relative grid size-10 place-items-center rounded-full bg-[#fdfbf4] text-[#676270] shadow-sm transition hover:-translate-y-0.5"
       >
         <Bell size={17} />
-        <i className="absolute right-2.5 top-2.5 size-1.5 rounded-full bg-[#ff647c]" />
+        {unread.size > 0 && (
+          <i className="absolute right-2.5 top-2.5 size-1.5 rounded-full bg-[#ff647c]" />
+        )}
       </motion.button>
 
       <AnimatePresence>
@@ -66,15 +69,33 @@ export function Notifications() {
           >
             <div className="flex items-center justify-between px-2 py-1">
               <span className="text-sm font-black">Notifications</span>
-              <span className="rounded-full bg-[#ece7fb] px-2 py-0.5 text-[10px] font-bold text-[#5f45e6]">
-                3 new
-              </span>
+              {unread.size > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => setUnread(new Set())}
+                  className="rounded-full bg-[#ece7fb] px-2.5 py-1 text-[10px] font-bold text-[#5f45e6] transition hover:bg-[#ded5fa]"
+                >
+                  Mark {unread.size} read
+                </button>
+              ) : (
+                <span className="px-2 py-1 text-[10px] font-bold text-[#9d98a3]">All read</span>
+              )}
             </div>
             <div className="mt-2 space-y-1">
               {items.map((item) => (
                 <button
                   key={item.title}
-                  className="flex w-full items-start gap-3 rounded-xl p-2.5 text-left transition hover:bg-[#fdfbf4]/85"
+                  type="button"
+                  onClick={() =>
+                    setUnread((current) => {
+                      const next = new Set(current);
+                      next.delete(item.title);
+                      return next;
+                    })
+                  }
+                  className={`relative flex w-full items-start gap-3 rounded-xl p-2.5 text-left transition hover:bg-[#fdfbf4]/85 ${
+                    unread.has(item.title) ? "bg-white/45" : "opacity-65"
+                  }`}
                 >
                   <span className={`grid size-9 shrink-0 place-items-center rounded-xl ${item.tone}`}>
                     <item.icon size={16} />
@@ -86,6 +107,9 @@ export function Notifications() {
                     </span>
                   </span>
                   <span className="shrink-0 text-[10px] text-[#a9a4b0]">{item.time}</span>
+                  {unread.has(item.title) && (
+                    <span className="absolute right-2 top-2 size-1.5 rounded-full bg-[#5f45e6]" />
+                  )}
                 </button>
               ))}
             </div>

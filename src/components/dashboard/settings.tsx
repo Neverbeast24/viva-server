@@ -1,7 +1,13 @@
 "use client";
 
 import { saveSettings } from "@/app/dashboard/settings/actions";
-import { PageHeader, Panel, PrimaryButton, fieldClass } from "@/components/dashboard/ui";
+import {
+  FormField,
+  PageHeader,
+  Panel,
+  PrimaryButton,
+  fieldClass,
+} from "@/components/dashboard/ui";
 import { useModuleAction } from "@/components/dashboard/use-module-action";
 
 type Settings = {
@@ -19,39 +25,49 @@ export function SettingsView({ settings }: { settings: Settings }) {
       <PageHeader eyebrow="SETTINGS" title="Make VIVA" highlight="yours." />
       <Panel title="Preferences">
         <form action={submit} className="space-y-5">
-          <label className="block text-sm font-bold">
-            Theme
+          <div className="grid gap-3 sm:grid-cols-2">
+            <FormField label="Appearance">
             <select name="theme" defaultValue={settings.theme} className={`mt-2 ${fieldClass}`}>
               <option value="light">Light</option>
               <option value="dark">Dark</option>
               <option value="system">System</option>
             </select>
-          </label>
-          <label className="block text-sm font-bold">
-            Timezone
+            </FormField>
+            <FormField label="Timezone" hint="IANA name">
             <input
               name="timezone"
               defaultValue={settings.timezone}
               className={`mt-2 ${fieldClass}`}
             />
-          </label>
-          <label className="flex items-center gap-3 text-sm font-bold">
+            </FormField>
+          </div>
+          <label className="flex items-center justify-between gap-3 rounded-2xl border border-[#26222f]/7 bg-white/40 px-4 py-3 text-sm font-bold">
+            <span>
+              <span className="block">Push notifications</span>
+              <span className="mt-0.5 block text-xs font-normal text-[#918b96]">
+                Receive reminders and new VIVA insights
+              </span>
+            </span>
             <input
               type="checkbox"
               name="notifications_enabled"
               defaultChecked={settings.notifications_enabled}
-              className="size-4 accent-[#5f45e6]"
+              className="size-5 accent-[#5f45e6]"
             />
-            Enable notifications
           </label>
-          <label className="flex items-center gap-3 text-sm font-bold">
+          <label className="flex items-center justify-between gap-3 rounded-2xl border border-[#26222f]/7 bg-white/40 px-4 py-3 text-sm font-bold">
+            <span>
+              <span className="block">Weekly report</span>
+              <span className="mt-0.5 block text-xs font-normal text-[#918b96]">
+                Email a summary of your wellbeing trends
+              </span>
+            </span>
             <input
               type="checkbox"
               name="weekly_report_enabled"
               defaultChecked={settings.weekly_report_enabled}
-              className="size-4 accent-[#5f45e6]"
+              className="size-5 accent-[#5f45e6]"
             />
-            Weekly report emails
           </label>
           <PrimaryButton disabled={pending}>{pending ? "Saving…" : "Save settings"}</PrimaryButton>
         </form>

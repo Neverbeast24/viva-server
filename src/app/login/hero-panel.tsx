@@ -24,7 +24,7 @@ type Food = {
 };
 
 type Toast = {
-  id: number;
+  id: string;
   tone: "good" | "warn";
   text: string;
 };
@@ -92,7 +92,9 @@ function ParallaxLayer({
 }
 
 export function HeroPanel() {
-  const [slots, setSlots] = useState<(Food | null)[]>([]);
+  const [slots, setSlots] = useState<(Food | null)[]>(() =>
+    FOODS.slice(0, SLOTS.length),
+  );
   const [cartCount, setCartCount] = useState(0);
   const [healthyCount, setHealthyCount] = useState(0);
   const [score, setScore] = useState(0);
@@ -133,8 +135,6 @@ export function HeroPanel() {
   }
 
   useEffect(() => {
-    // Random picks happen after mount only, so SSR and client HTML match.
-    setSlots(shuffle(FOODS).slice(0, SLOTS.length));
     const timers = respawnTimers.current;
     return () => {
       if (toastTimer.current) clearTimeout(toastTimer.current);
@@ -145,7 +145,7 @@ export function HeroPanel() {
 
   function showToast(tone: "good" | "warn", text: string) {
     if (toastTimer.current) clearTimeout(toastTimer.current);
-    setToast({ id: Date.now(), tone, text });
+    setToast({ id: crypto.randomUUID(), tone, text });
     toastTimer.current = setTimeout(() => setToast(null), 2400);
   }
 

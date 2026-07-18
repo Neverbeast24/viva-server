@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { toast } from "sonner";
+import { Copy, ShieldBan, ShieldCheck } from "lucide-react";
 import { ROLE_LABELS, type Profile, type UserRole, type UserStatus } from "@/lib/types";
 import { updateUserRole, updateUserStatus } from "./actions";
 
@@ -38,12 +39,58 @@ export function UsersTable({ users }: { users: Profile[] }) {
                 <td className="px-5 py-4 text-[#8a8491]">
                   {new Date(user.created_at).toLocaleDateString()}
                 </td>
-                <td className="px-5 py-4 text-xs font-bold text-[#5f45e6]">Manage</td>
+                <td className="px-5 py-4">
+                  <UserActions user={user} />
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+function UserActions({ user }: { user: Profile }) {
+  const [pending, start] = useTransition();
+  const nextStatus: UserStatus = user.status === "active" ? "suspended" : "active";
+
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        title="Copy user ID"
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(user.user_id);
+            toast.success("User ID copied");
+          } catch {
+            toast.error("Could not copy user ID");
+          }
+        }}
+        className="focus-ring inline-flex items-center gap-1 rounded-lg border border-[#26222f]/10 bg-white/70 px-2.5 py-1.5 text-[11px] font-bold text-[#5f45e6] transition hover:bg-[#ece7fb]"
+      >
+        <Copy size={12} /> ID
+      </button>
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() => {
+          start(async () => {
+            const result = await updateUserStatus(user.user_id, nextStatus);
+            if (result.ok) toast.success(result.message);
+            else toast.error(result.message);
+          });
+        }}
+        className={`focus-ring inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-60 ${
+          nextStatus === "suspended"
+            ? "border-[#e4571f]/20 bg-[#fff0e8] text-[#c24a1a] hover:bg-[#ffe4d4]"
+            : "border-[#26bea9]/25 bg-[#e6faf6] text-[#0f8f80] hover:bg-[#d7f5ef]"
+        }`}
+      >
+        {nextStatus === "suspended" ? <ShieldBan size={12} /> : <ShieldCheck size={12} />}
+        {nextStatus === "suspended" ? "Suspend" : "Activate"}
+      </button>
     </div>
   );
 }

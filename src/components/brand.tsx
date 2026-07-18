@@ -18,24 +18,25 @@ export function Brand({
   return (
     <Link
       href="/"
-      className={`focus-ring inline-flex items-center gap-3 rounded-xl ${className}`}
+      className={`focus-ring inline-flex min-w-0 max-w-full items-center gap-3 rounded-xl ${className}`}
       aria-label="VIVA home"
     >
       <Image
         src="/viva-mark.svg"
         alt=""
-        width={42}
-        height={42}
+        width={40}
+        height={40}
         priority
-        className="drop-shadow-[0_8px_16px_rgba(96,70,222,0.18)]"
+        className="size-10 shrink-0"
       />
       {!compact && (
-        <span className="flex flex-col leading-none">
-          <span className={`text-[1.08rem] font-black tracking-[0.24em] ${titleClass}`}>
+        <span className="flex min-w-0 flex-col leading-none">
+          <span className={`text-[1.05rem] font-black tracking-[0.22em] ${titleClass}`}>
             VIVA
           </span>
           <span
-            className={`mt-1 whitespace-nowrap text-[0.48rem] font-bold tracking-[0.09em] ${subtitleClass}`}
+            className={`mt-1.5 truncate text-[0.46rem] font-bold tracking-[0.04em] ${subtitleClass}`}
+            title="Virtual Intelligent Vitality Assistant"
           >
             VIRTUAL INTELLIGENT VITALITY ASSISTANT
           </span>

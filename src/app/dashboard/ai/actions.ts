@@ -1,23 +1,116 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { generateHealthInsight } from "@/lib/ai/gemini";
 import { createClient } from "@/lib/supabase/server";
 
+function dayStartIso() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d.toISOString();
+}
+
+function weekStartDate() {
+  const d = new Date();
+  d.setDate(d.getDate() - 6);
+  return d.toISOString().slice(0, 10);
+}
+
+async function buildUserContext(userId: string) {
+  const supabase = await createClient();
+  const since = dayStartIso();
+  const weekStart = weekStartDate();
+
+  const [checkins, meals, workouts, expenses, pantry, groceries] = await Promise.all([
+    supabase
+      .from("daily_checkins")
+      .select("checkin_date, energy, mood, steps, water_ml, sleep_minutes, note")
+      .eq("user_id", userId)
+      .gte("checkin_date", weekStart)
+      .order("checkin_date", { ascending: false }),
+    supabase
+      .from("nutrition_logs")
+      .select("meal_name, meal_type, calories, protein_g, logged_at")
+      .eq("user_id", userId)
+      .gte("logged_at", since)
+      .order("logged_at", { ascending: false })
+      .limit(12),
+    supabase
+      .from("workout_logs")
+      .select("title, activity_type, duration_minutes, calories_burned, logged_at")
+      .eq("user_id", userId)
+      .gte("logged_at", since)
+      .order("logged_at", { ascending: false })
+      .limit(12),
+    supabase
+      .from("expenses")
+      .select("title, category, amount, spent_at")
+      .eq("user_id", userId)
+      .order("spent_at", { ascending: false })
+      .limit(12),
+    supabase
+      .from("pantry_items")
+      .select("name, category, stock_level")
+      .eq("user_id", userId)
+      .order("stock_level", { ascending: true })
+      .limit(12),
+    supabase
+      .from("grocery_items")
+      .select("name, quantity, is_checked")
+      .eq("user_id", userId)
+      .eq("is_checked", false)
+      .limit(12),
+  ]);
+
+  return JSON.stringify(
+    {
+      today: new Date().toISOString().slice(0, 10),
+      timezone: "Asia/Manila",
+      checkins_last_7_days: checkins.data ?? [],
+      meals_today: meals.data ?? [],
+      workouts_today: workouts.data ?? [],
+      recent_expenses: expenses.data ?? [],
+      low_pantry_items: pantry.data ?? [],
+      open_grocery_list: groceries.data ?? [],
+    },
+    null,
+    2,
+  );
+}
+
 export async function generateInsight(_formData: FormData) {
+  void _formData;
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, message: "Not signed in." };
 
-  const { error } = await supabase.from("ai_recommendations").insert({
-    user_id: user.id,
-    title: "Protect your morning rhythm",
-    body: "Your energy is strongest after morning walks. Tomorrow’s plan now protects that rhythm.",
-    score: 84,
-  });
-  if (error) return { ok: false, message: error.message };
+  if (!process.env.GEMINI_API_KEY) {
+    return {
+      ok: false,
+      message: "Gemini is not configured. Add GEMINI_API_KEY to your server environment.",
+    };
+  }
 
-  revalidatePath("/dashboard/ai");
-  return { ok: true, message: "New insight generated." };
+  try {
+    const context = await buildUserContext(user.id);
+    const insight = await generateHealthInsight(context);
+
+    const { error } = await supabase.from("ai_recommendations").insert({
+      user_id: user.id,
+      title: insight.title,
+      body: insight.body,
+      score: insight.score,
+    });
+    if (error) return { ok: false, message: error.message };
+
+    revalidatePath("/dashboard/ai");
+    revalidatePath("/dashboard");
+    return { ok: true, message: "New Gemini insight generated." };
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Gemini could not generate an insight.";
+    return { ok: false, message };
+  }
 }

@@ -117,7 +117,31 @@ export function Panel({
 }
 
 export const fieldClass =
-  "w-full rounded-2xl border border-[#26222f]/10 bg-[#f4efe4]/70 px-4 py-3 text-sm outline-none transition placeholder:text-[#9a9488] focus:border-[#5f45e6]/45 focus:bg-[#fdfbf4] focus:ring-4 focus:ring-[#5f45e6]/10";
+  "w-full rounded-xl border border-[#26222f]/10 bg-[#f4efe4]/70 px-3.5 py-3 text-sm outline-none transition placeholder:text-[#9a9488] hover:border-[#26222f]/18 focus:border-[#5f45e6]/45 focus:bg-[#fdfbf4] focus:ring-4 focus:ring-[#5f45e6]/10";
+
+export function FormField({
+  label,
+  hint,
+  className = "",
+  children,
+}: {
+  label: string;
+  hint?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className={`block rounded-2xl border border-[#26222f]/6 bg-white/38 p-2.5 ${className}`}>
+      <span className="mb-2 flex items-center justify-between gap-2 px-1">
+        <span className="text-[10px] font-black uppercase tracking-[0.12em] text-[#716b78]">
+          {label}
+        </span>
+        {hint && <span className="text-[10px] font-semibold text-[#aaa4ae]">{hint}</span>}
+      </span>
+      {children}
+    </label>
+  );
+}
 
 export function PrimaryButton({
   children,
@@ -127,7 +151,7 @@ export function PrimaryButton({
   return (
     <button
       {...props}
-      className={`focus-ring rounded-2xl bg-[#26222f] px-4 py-3 text-sm font-black text-white transition hover:bg-[#5f45e6] disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+      className={`focus-ring rounded-xl bg-[#26222f] px-4 py-3 text-sm font-black text-white shadow-[0_8px_18px_rgba(38,34,47,.14)] transition hover:-translate-y-0.5 hover:bg-[#5f45e6] hover:shadow-[0_12px_24px_rgba(95,69,230,.22)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
     >
       {children}
     </button>

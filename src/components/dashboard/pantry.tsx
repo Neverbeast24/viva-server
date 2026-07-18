@@ -4,6 +4,7 @@ import { Refrigerator } from "lucide-react";
 import { addPantryItem } from "@/app/dashboard/pantry/actions";
 import {
   EmptyState,
+  FormField,
   PageHeader,
   Panel,
   PrimaryButton,
@@ -30,16 +31,30 @@ export function PantryView({ items }: { items: PantryItem[] }) {
 
       <Panel title="Add pantry item" className="mb-4">
         <form action={submit} className="grid gap-3 sm:grid-cols-4">
-          <input name="name" required placeholder="Item name" className={`${fieldClass} sm:col-span-2`} />
-          <input name="category" defaultValue="vegetables" className={fieldClass} />
-          <input
-            name="stock_level"
-            type="number"
-            min={0}
-            max={100}
-            defaultValue={50}
-            className={fieldClass}
-          />
+          <FormField label="Pantry item" hint="Required" className="sm:col-span-2">
+            <input name="name" required placeholder="e.g. Brown rice" className={fieldClass} />
+          </FormField>
+          <FormField label="Category">
+            <select name="category" defaultValue="grains" className={fieldClass}>
+              <option value="vegetables">Vegetables</option>
+              <option value="fruits">Fruits</option>
+              <option value="protein">Protein</option>
+              <option value="dairy">Dairy</option>
+              <option value="grains">Grains</option>
+              <option value="snacks">Snacks</option>
+              <option value="other">Other</option>
+            </select>
+          </FormField>
+          <FormField label="Stock level" hint="percent">
+            <input
+              name="stock_level"
+              type="number"
+              min={0}
+              max={100}
+              defaultValue={50}
+              className={fieldClass}
+            />
+          </FormField>
           <PrimaryButton disabled={pending} className="sm:col-span-4">
             {pending ? "Saving…" : "Add to pantry"}
           </PrimaryButton>

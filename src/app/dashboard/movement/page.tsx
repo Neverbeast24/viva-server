@@ -6,12 +6,27 @@ export const metadata: Metadata = { title: "Movement" };
 
 export default async function MovementPage() {
   const { supabase, user } = await requireUser();
-  const { data } = await supabase
-    .from("workout_logs")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("logged_at", { ascending: false })
-    .limit(20);
+  const today = new Date().toISOString().slice(0, 10);
+  const dayStart = new Date();
+  dayStart.setHours(0, 0, 0, 0);
 
-  return <MovementView workouts={data ?? []} />;
+  const [workoutsRes, checkinRes] = await Promise.all([
+    supabase
+      .from("workout_logs")
+      .select("*")
+      .eq("user_id", user.id)
+      .gte("logged_at", dayStart.toISOString())
+      .order("logged_at", { ascending: false })
+      .limit(20),
+    supabase
+      .from("daily_checkins")
+      .select("steps")
+      .eq("user_id", user.id)
+      .eq("checkin_date", today)
+      .maybeSingle(),
+  ]);
+
+  return (
+    <MovementView workouts={workoutsRes.data ?? []} steps={checkinRes.data?.steps ?? 0} />
+  );
 }

@@ -59,7 +59,7 @@ export function TodayView() {
                 suffix="/100"
                 detail="Rested & ready"
                 icon={Activity}
-                className="bg-gradient-to-br from-[#7055ed] to-[#9a57e9] text-white"
+                className="bg-gradient-to-br from-[#5f45e6] to-[#9a57e9] text-white"
               />
               <StatCard
                 label="Daily steps"

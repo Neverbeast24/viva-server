@@ -4,7 +4,15 @@ import { useTransition } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Check, Package, ShoppingBasket, Sparkles } from "lucide-react";
 import { addGroceryItem, toggleGroceryItem } from "@/app/dashboard/groceries/actions";
-import { PageHeader, Panel, Stagger, StatCard } from "@/components/dashboard/ui";
+import {
+  EmptyState,
+  PageHeader,
+  Panel,
+  PrimaryButton,
+  Stagger,
+  StatCard,
+  fieldClass,
+} from "@/components/dashboard/ui";
 import { useModuleAction } from "@/components/dashboard/use-module-action";
 import { toast } from "sonner";
 
@@ -34,11 +42,11 @@ export function GroceriesView({ items }: { items: GroceryItem[] }) {
 
       <Panel title="Add grocery item" className="mb-4">
         <form action={submit} className="grid gap-3 sm:grid-cols-3">
-          <input name="name" required placeholder="Item name" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm sm:col-span-2" />
-          <input name="quantity" placeholder="Qty" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm" />
-          <button disabled={pending} className="rounded-2xl bg-[#26222f] px-4 py-3 text-sm font-bold text-white sm:col-span-3">
+          <input name="name" required placeholder="Item name" className={`${fieldClass} sm:col-span-2`} />
+          <input name="quantity" placeholder="Qty" className={fieldClass} />
+          <PrimaryButton disabled={pending} className="sm:col-span-3">
             {pending ? "Saving…" : "Add item"}
-          </button>
+          </PrimaryButton>
         </form>
       </Panel>
 
@@ -49,7 +57,7 @@ export function GroceriesView({ items }: { items: GroceryItem[] }) {
             value={`${done}/${items.length}`}
             detail="Items checked off"
             icon={ShoppingBasket}
-            className="bg-gradient-to-br from-[#7055ed] to-[#9a57e9] text-white"
+            className="bg-gradient-to-br from-[#5f45e6] to-[#9a57e9] text-white"
           />
           <StatCard
             label="Items"
@@ -69,29 +77,35 @@ export function GroceriesView({ items }: { items: GroceryItem[] }) {
                   layout
                   disabled={togglePending}
                   onClick={() => toggle(item.id, !item.is_checked)}
-                  className="flex w-full items-center gap-3 rounded-2xl border border-black/5 bg-[#fdfbf4]/85 p-3.5 text-left"
+                  className="flex w-full items-center gap-3 rounded-2xl border border-[#26222f]/6 bg-[#f4efe4]/45 p-3.5 text-left transition hover:border-[#26222f]/12 hover:bg-[#fdfbf4]"
                 >
                   <span
                     className={`grid size-6 place-items-center rounded-lg border-2 ${
-                      item.is_checked ? "border-[#26bea9] bg-[#26bea9] text-white" : "border-[#d8d3df]"
+                      item.is_checked
+                        ? "border-[#26bea9] bg-[#26bea9] text-white"
+                        : "border-[#d4cec0]"
                     }`}
                   >
                     {item.is_checked && <Check size={13} />}
                   </span>
-                  <span className={`flex-1 text-sm font-bold ${item.is_checked ? "line-through text-[#a9a4b0]" : ""}`}>
+                  <span
+                    className={`flex-1 text-sm font-bold ${
+                      item.is_checked ? "text-[#a9a4b0] line-through" : ""
+                    }`}
+                  >
                     {item.name}
                   </span>
                   <span className="text-xs text-[#847f8c]">{item.quantity ?? "—"}</span>
                 </motion.button>
               ))}
             </AnimatePresence>
-            {!items.length && <p className="text-sm text-[#9a95a0]">Your list is empty.</p>}
+            {!items.length && <EmptyState>Your list is empty.</EmptyState>}
           </div>
         </Panel>
 
         <motion.article
           variants={{ hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0 } }}
-          className="mt-4 rounded-[1.6rem] bg-gradient-to-br from-[#ddf8f3] via-[#eefaf6] to-[#f7f2ff] p-5"
+          className="mt-4 rounded-[1.4rem] border border-[#26222f]/8 bg-gradient-to-br from-[#fbf3e2] via-[#fdfbf4] to-[#efeaff] p-5"
         >
           <Sparkles size={18} className="text-[#5f45e6]" />
           <p className="mt-4 text-sm font-bold leading-6">

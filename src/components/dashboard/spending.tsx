@@ -2,7 +2,16 @@
 
 import { HeartPulse, TrendingDown, WalletCards } from "lucide-react";
 import { addExpense } from "@/app/dashboard/spending/actions";
-import { PageHeader, Panel, Stagger, StatCard } from "@/components/dashboard/ui";
+import {
+  EmptyState,
+  ListRow,
+  PageHeader,
+  Panel,
+  PrimaryButton,
+  Stagger,
+  StatCard,
+  fieldClass,
+} from "@/components/dashboard/ui";
 import { useModuleAction } from "@/components/dashboard/use-module-action";
 
 type Expense = {
@@ -23,18 +32,26 @@ export function SpendingView({ expenses }: { expenses: Expense[] }) {
 
       <Panel title="Add expense" className="mb-4">
         <form action={submit} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <input name="title" required placeholder="Expense title" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm sm:col-span-2" />
-          <select name="category" defaultValue="food" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm">
+          <input name="title" required placeholder="Expense title" className={`${fieldClass} sm:col-span-2`} />
+          <select name="category" defaultValue="food" className={fieldClass}>
             <option value="food">Food</option>
             <option value="fitness">Fitness</option>
             <option value="supplements">Supplements</option>
             <option value="wellness">Wellness</option>
             <option value="other">Other</option>
           </select>
-          <input name="amount" type="number" min={0} step="0.01" required placeholder="Amount" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm" />
-          <button disabled={pending} className="rounded-2xl bg-[#26222f] px-4 py-3 text-sm font-bold text-white sm:col-span-2 lg:col-span-4">
+          <input
+            name="amount"
+            type="number"
+            min={0}
+            step="0.01"
+            required
+            placeholder="Amount"
+            className={fieldClass}
+          />
+          <PrimaryButton disabled={pending} className="sm:col-span-2 lg:col-span-4">
             {pending ? "Saving…" : "Add expense"}
-          </button>
+          </PrimaryButton>
         </form>
       </Panel>
 
@@ -45,7 +62,7 @@ export function SpendingView({ expenses }: { expenses: Expense[] }) {
             value={`₱${total.toLocaleString()}`}
             detail={`${expenses.length} expenses`}
             icon={WalletCards}
-            className="bg-gradient-to-br from-[#7055ed] to-[#9a57e9] text-white"
+            className="bg-gradient-to-br from-[#5f45e6] to-[#9a57e9] text-white"
           />
           <StatCard
             label="Budget left"
@@ -67,15 +84,18 @@ export function SpendingView({ expenses }: { expenses: Expense[] }) {
         <Panel title="Recent expenses" className="mt-4">
           <div className="space-y-2">
             {expenses.map((expense) => (
-              <div key={expense.id} className="flex items-center justify-between rounded-2xl border border-black/5 bg-[#fdfbf4]/85 px-4 py-3">
-                <div>
-                  <p className="text-sm font-bold">{expense.title}</p>
-                  <p className="text-xs capitalize text-[#847f8c]">{expense.category}</p>
-                </div>
-                <span className="text-xs font-black">₱{Number(expense.amount).toLocaleString()}</span>
-              </div>
+              <ListRow
+                key={expense.id}
+                title={expense.title}
+                meta={expense.category}
+                right={
+                  <span className="text-xs font-black">
+                    ₱{Number(expense.amount).toLocaleString()}
+                  </span>
+                }
+              />
             ))}
-            {!expenses.length && <p className="text-sm text-[#9a95a0]">No expenses yet.</p>}
+            {!expenses.length && <EmptyState>No expenses yet.</EmptyState>}
           </div>
         </Panel>
       </Stagger>

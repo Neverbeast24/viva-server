@@ -19,8 +19,8 @@ export default async function AdminOverviewPage() {
 
   return (
     <>
-      <p className="text-xs font-black tracking-[0.16em] text-[#5f45e6]">ADMIN</p>
-      <h1 className="font-display mt-2 text-4xl">VIVA control center</h1>
+      <p className="text-[11px] font-black tracking-[0.2em] text-[#5f45e6]">ADMIN</p>
+      <h1 className="font-display mt-2 text-4xl tracking-tight">VIVA control center</h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-[#77727f]">
         Manage users, roles, permissions, and platform activity from one place.
       </p>
@@ -29,10 +29,10 @@ export default async function AdminOverviewPage() {
         {stats.map(([label, value]) => (
           <article
             key={label}
-            className="rounded-[1.5rem] border border-[#26222f]/8 bg-[#fdfbf4]/85 p-5 shadow-sm"
+            className="rounded-[1.4rem] border border-[#26222f]/8 bg-[#fdfbf4] p-5 shadow-[0_14px_32px_rgba(64,49,38,.07)]"
           >
-            <p className="text-xs font-bold text-[#8a8491]">{label}</p>
-            <p className="mt-3 text-3xl font-black">{value}</p>
+            <p className="text-[11px] font-bold tracking-wide text-[#8a8491]">{label}</p>
+            <p className="font-display mt-3 text-4xl leading-none tracking-tight">{value}</p>
           </article>
         ))}
       </div>

@@ -10,7 +10,7 @@ export function UsersTable({ users }: { users: Profile[] }) {
     <div className="overflow-hidden rounded-[1.6rem] border border-[#26222f]/8 bg-[#fdfbf4]/85 shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[760px] text-left text-sm">
-          <thead className="border-b border-black/5 bg-[#faf9fc] text-xs font-black tracking-wide text-[#8a8491]">
+          <thead className="border-b border-[#26222f]/8 bg-[#f4efe4]/70 text-xs font-black tracking-wide text-[#8a8491]">
             <tr>
               <th className="px-5 py-4">ID</th>
               <th className="px-5 py-4">Name</th>
@@ -63,7 +63,7 @@ function RoleSelect({ userId, role }: { userId: string; role: UserRole }) {
           else toast.error(result.message);
         });
       }}
-      className="rounded-xl border border-black/8 bg-[#fdfbf4] px-2 py-1.5 text-xs font-bold"
+      className="rounded-xl border border-[#26222f]/10 bg-[#f4efe4]/70 px-2 py-1.5 text-xs font-bold outline-none focus:border-[#5f45e6]/45"
     >
       {Object.entries(ROLE_LABELS).map(([value, label]) => (
         <option key={value} value={value}>
@@ -89,7 +89,7 @@ function StatusSelect({ userId, status }: { userId: string; status: UserStatus }
           else toast.error(result.message);
         });
       }}
-      className="rounded-xl border border-black/8 bg-[#fdfbf4] px-2 py-1.5 text-xs font-bold capitalize"
+      className="rounded-xl border border-[#26222f]/10 bg-[#f4efe4]/70 px-2 py-1.5 text-xs font-bold capitalize outline-none focus:border-[#5f45e6]/45"
     >
       <option value="active">Active</option>
       <option value="suspended">Suspended</option>

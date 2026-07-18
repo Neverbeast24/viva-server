@@ -1,7 +1,7 @@
 "use client";
 
 import { saveSettings } from "@/app/dashboard/settings/actions";
-import { PageHeader, Panel } from "@/components/dashboard/ui";
+import { PageHeader, Panel, PrimaryButton, fieldClass } from "@/components/dashboard/ui";
 import { useModuleAction } from "@/components/dashboard/use-module-action";
 
 type Settings = {
@@ -18,14 +18,10 @@ export function SettingsView({ settings }: { settings: Settings }) {
     <>
       <PageHeader eyebrow="SETTINGS" title="Make VIVA" highlight="yours." />
       <Panel title="Preferences">
-        <form action={submit} className="space-y-4">
+        <form action={submit} className="space-y-5">
           <label className="block text-sm font-bold">
             Theme
-            <select
-              name="theme"
-              defaultValue={settings.theme}
-              className="mt-2 w-full rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3"
-            >
+            <select name="theme" defaultValue={settings.theme} className={`mt-2 ${fieldClass}`}>
               <option value="light">Light</option>
               <option value="dark">Dark</option>
               <option value="system">System</option>
@@ -36,31 +32,28 @@ export function SettingsView({ settings }: { settings: Settings }) {
             <input
               name="timezone"
               defaultValue={settings.timezone}
-              className="mt-2 w-full rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3"
+              className={`mt-2 ${fieldClass}`}
             />
           </label>
-          <label className="flex items-center gap-2 text-sm font-bold">
+          <label className="flex items-center gap-3 text-sm font-bold">
             <input
               type="checkbox"
               name="notifications_enabled"
               defaultChecked={settings.notifications_enabled}
+              className="size-4 accent-[#5f45e6]"
             />
             Enable notifications
           </label>
-          <label className="flex items-center gap-2 text-sm font-bold">
+          <label className="flex items-center gap-3 text-sm font-bold">
             <input
               type="checkbox"
               name="weekly_report_enabled"
               defaultChecked={settings.weekly_report_enabled}
+              className="size-4 accent-[#5f45e6]"
             />
             Weekly report emails
           </label>
-          <button
-            disabled={pending}
-            className="rounded-2xl bg-[#26222f] px-5 py-3 text-sm font-bold text-white"
-          >
-            {pending ? "Saving…" : "Save settings"}
-          </button>
+          <PrimaryButton disabled={pending}>{pending ? "Saving…" : "Save settings"}</PrimaryButton>
         </form>
       </Panel>
     </>

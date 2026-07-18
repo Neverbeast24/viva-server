@@ -2,7 +2,16 @@
 
 import { Flame, Footprints, Heart, Timer } from "lucide-react";
 import { logWorkout } from "@/app/dashboard/movement/actions";
-import { PageHeader, Panel, Stagger, StatCard } from "@/components/dashboard/ui";
+import {
+  EmptyState,
+  ListRow,
+  PageHeader,
+  Panel,
+  PrimaryButton,
+  Stagger,
+  StatCard,
+  fieldClass,
+} from "@/components/dashboard/ui";
 import { useModuleAction } from "@/components/dashboard/use-module-action";
 
 type Workout = {
@@ -23,8 +32,8 @@ export function MovementView({ workouts }: { workouts: Workout[] }) {
 
       <Panel title="Log a workout" className="mb-4">
         <form action={submit} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <input name="title" required placeholder="Workout title" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm sm:col-span-2" />
-          <select name="activity_type" defaultValue="walk" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm">
+          <input name="title" required placeholder="Workout title" className={`${fieldClass} sm:col-span-2`} />
+          <select name="activity_type" defaultValue="walk" className={fieldClass}>
             <option value="walk">Walk</option>
             <option value="run">Run</option>
             <option value="strength">Strength</option>
@@ -32,11 +41,11 @@ export function MovementView({ workouts }: { workouts: Workout[] }) {
             <option value="yoga">Yoga</option>
             <option value="other">Other</option>
           </select>
-          <input name="duration_minutes" type="number" min={1} required placeholder="Minutes" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm" />
-          <input name="calories_burned" type="number" min={0} placeholder="Calories" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm" />
-          <button disabled={pending} className="rounded-2xl bg-[#26222f] px-4 py-3 text-sm font-bold text-white sm:col-span-2 lg:col-span-4">
+          <input name="duration_minutes" type="number" min={1} required placeholder="Minutes" className={fieldClass} />
+          <input name="calories_burned" type="number" min={0} placeholder="Calories" className={fieldClass} />
+          <PrimaryButton disabled={pending} className="sm:col-span-2 lg:col-span-4">
             {pending ? "Saving…" : "Log workout"}
-          </button>
+          </PrimaryButton>
         </form>
       </Panel>
 
@@ -47,7 +56,7 @@ export function MovementView({ workouts }: { workouts: Workout[] }) {
             value="6,420"
             detail="78% of goal"
             icon={Footprints}
-            className="bg-gradient-to-br from-[#7055ed] to-[#9a57e9] text-white"
+            className="bg-gradient-to-br from-[#5f45e6] to-[#9a57e9] text-white"
           />
           <StatCard
             label="Active min"
@@ -76,15 +85,16 @@ export function MovementView({ workouts }: { workouts: Workout[] }) {
         <Panel title="Sessions" className="mt-4">
           <div className="space-y-2">
             {workouts.map((workout) => (
-              <div key={workout.id} className="flex items-center justify-between rounded-2xl border border-black/5 bg-[#fdfbf4]/85 px-4 py-3">
-                <div>
-                  <p className="text-sm font-bold">{workout.title}</p>
-                  <p className="text-xs capitalize text-[#847f8c]">{workout.activity_type}</p>
-                </div>
-                <span className="text-xs font-black">{workout.duration_minutes ?? 0} min</span>
-              </div>
+              <ListRow
+                key={workout.id}
+                title={workout.title}
+                meta={workout.activity_type}
+                right={
+                  <span className="text-xs font-black">{workout.duration_minutes ?? 0} min</span>
+                }
+              />
             ))}
-            {!workouts.length && <p className="text-sm text-[#9a95a0]">No workouts logged yet.</p>}
+            {!workouts.length && <EmptyState>No workouts logged yet.</EmptyState>}
           </div>
         </Panel>
       </Stagger>

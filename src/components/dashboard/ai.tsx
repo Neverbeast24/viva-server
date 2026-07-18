@@ -1,9 +1,8 @@
 "use client";
 
-import { motion } from "motion/react";
 import { BrainCircuit, Sparkles } from "lucide-react";
 import { generateInsight } from "@/app/dashboard/ai/actions";
-import { PageHeader, Panel, Stagger } from "@/components/dashboard/ui";
+import { EmptyState, PageHeader, Panel, PrimaryButton, Stagger } from "@/components/dashboard/ui";
 import { useModuleAction } from "@/components/dashboard/use-module-action";
 
 type Insight = {
@@ -24,14 +23,13 @@ export function AiView({ insights }: { insights: Insight[] }) {
         title="Your best"
         highlight="next action."
         action={
-          <motion.button
-            whileHover={{ y: -2 }}
+          <PrimaryButton
             disabled={pending}
             onClick={() => submit(new FormData())}
-            className="rounded-full bg-[#26222f] px-5 py-3 text-sm font-bold text-white"
+            className="rounded-full px-5"
           >
             {pending ? "Generating…" : "Generate insight"}
-          </motion.button>
+          </PrimaryButton>
         }
       />
 
@@ -41,11 +39,13 @@ export function AiView({ insights }: { insights: Insight[] }) {
             <Panel key={item.id}>
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-black text-[#5f45e6]">VIVA INSIGHT</p>
-                  <h2 className="mt-2 text-lg font-black">{item.title}</h2>
+                  <p className="text-[11px] font-black tracking-[0.16em] text-[#5f45e6]">
+                    VIVA INSIGHT
+                  </p>
+                  <h2 className="font-display mt-2 text-xl tracking-tight">{item.title}</h2>
                   <p className="mt-3 text-sm leading-6 text-[#6f6b79]">{item.body}</p>
                 </div>
-                <span className="grid size-10 place-items-center rounded-xl bg-[#ece7fb] text-[#5f45e6]">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#ece7fb] text-[#5f45e6]">
                   <BrainCircuit size={18} />
                 </span>
               </div>
@@ -57,12 +57,11 @@ export function AiView({ insights }: { insights: Insight[] }) {
             </Panel>
           ))}
           {!insights.length && (
-            <Panel>
-              <div className="flex items-center gap-3 text-[#8a8491]">
-                <Sparkles size={18} />
-                <p className="text-sm">No insights yet. Generate your first recommendation.</p>
-              </div>
-            </Panel>
+            <EmptyState>
+              <span className="inline-flex items-center gap-2">
+                <Sparkles size={16} /> No insights yet. Generate your first recommendation.
+              </span>
+            </EmptyState>
           )}
         </div>
       </Stagger>

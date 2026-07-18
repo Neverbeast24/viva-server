@@ -7,14 +7,14 @@ export default function AdminSettingsPage() {
       </p>
 
       <div className="mt-8 grid gap-4 md:grid-cols-2">
-        <article className="rounded-[1.5rem] border border-[#26222f]/8 bg-[#fdfbf4]/85 p-5 shadow-sm">
-          <p className="text-xs font-black text-[#5f45e6]">PROJECT</p>
-          <p className="mt-3 font-bold">gcqbuccazplfpmuhperg</p>
+        <article className="rounded-[1.4rem] border border-[#26222f]/8 bg-[#fdfbf4] p-5 shadow-[0_14px_32px_rgba(64,49,38,.07)]">
+          <p className="text-[11px] font-black tracking-[0.16em] text-[#5f45e6]">PROJECT</p>
+          <p className="font-display mt-3 text-2xl tracking-tight">gcqbuccazplfpmuhperg</p>
           <p className="mt-1 text-xs text-[#8a8491]">Supabase project reference</p>
         </article>
-        <article className="rounded-[1.5rem] border border-[#26222f]/8 bg-[#fdfbf4]/85 p-5 shadow-sm">
-          <p className="text-xs font-black text-[#5f45e6]">REGION</p>
-          <p className="mt-3 font-bold">ap-southeast-2</p>
+        <article className="rounded-[1.4rem] border border-[#26222f]/8 bg-[#fdfbf4] p-5 shadow-[0_14px_32px_rgba(64,49,38,.07)]">
+          <p className="text-[11px] font-black tracking-[0.16em] text-[#5f45e6]">REGION</p>
+          <p className="font-display mt-3 text-2xl tracking-tight">ap-southeast-2</p>
           <p className="mt-1 text-xs text-[#8a8491]">Sydney (closest to PH/SG)</p>
         </article>
       </div>

@@ -218,7 +218,7 @@ export function LandingPage() {
           <div className="mt-9 flex flex-wrap items-center gap-4">
             <Link
               href="/dashboard"
-              className="focus-ring group inline-flex items-center gap-2 rounded-full bg-[#26222f] px-6 py-3.5 text-sm font-bold text-white shadow-[0_14px_34px_rgba(38,34,47,.22)] transition hover:-translate-y-1 hover:bg-[#e4571f]"
+              className="focus-ring group inline-flex items-center gap-2 rounded-full bg-[#26222f] px-6 py-3.5 text-sm font-bold text-white shadow-[0_14px_34px_rgba(38,34,47,.22)] transition hover:-translate-y-1 hover:bg-[#5f45e6]"
             >
               Explore your space
               <ArrowUpRight

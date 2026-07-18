@@ -1,5 +1,5 @@
+import { Activity, Utensils, Dumbbell, WalletCards } from "lucide-react";
 import { PageHeader, Panel, Stagger, StatCard } from "@/components/dashboard/ui";
-import { Activity, WalletCards } from "lucide-react";
 
 type ReportsViewProps = {
   checkins: number;
@@ -24,20 +24,20 @@ export function ReportsView({
             value={String(checkins)}
             detail="This month"
             icon={Activity}
-            className="bg-gradient-to-br from-[#7055ed] to-[#9a57e9] text-white"
+            className="bg-gradient-to-br from-[#5f45e6] to-[#9a57e9] text-white"
           />
           <StatCard
             label="Meals logged"
             value={String(meals)}
             detail="This month"
-            icon={Activity}
+            icon={Utensils}
             className="bg-[#e8fbf8] text-[#183d3a]"
           />
           <StatCard
             label="Workouts"
             value={String(workouts)}
             detail="This month"
-            icon={Activity}
+            icon={Dumbbell}
             className="bg-[#fff3e8] text-[#533621]"
           />
           <StatCard

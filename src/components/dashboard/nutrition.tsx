@@ -2,7 +2,16 @@
 
 import { Apple, Droplets, Flame } from "lucide-react";
 import { logMeal } from "@/app/dashboard/nutrition/actions";
-import { PageHeader, Panel, Stagger, StatCard } from "@/components/dashboard/ui";
+import {
+  EmptyState,
+  ListRow,
+  PageHeader,
+  Panel,
+  PrimaryButton,
+  Stagger,
+  StatCard,
+  fieldClass,
+} from "@/components/dashboard/ui";
 import { useModuleAction } from "@/components/dashboard/use-module-action";
 
 type Meal = {
@@ -24,18 +33,18 @@ export function NutritionView({ meals }: { meals: Meal[] }) {
 
       <Panel title="Log a meal" className="mb-4">
         <form action={submit} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <input name="meal_name" required placeholder="Meal name" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm sm:col-span-2" />
-          <select name="meal_type" defaultValue="lunch" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm">
+          <input name="meal_name" required placeholder="Meal name" className={`${fieldClass} sm:col-span-2`} />
+          <select name="meal_type" defaultValue="lunch" className={fieldClass}>
             <option value="breakfast">Breakfast</option>
             <option value="lunch">Lunch</option>
             <option value="dinner">Dinner</option>
             <option value="snack">Snack</option>
           </select>
-          <input name="calories" type="number" min={0} placeholder="Calories" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm" />
-          <input name="protein_g" type="number" min={0} placeholder="Protein (g)" className="rounded-2xl border border-black/8 bg-[#fdfbf4] px-4 py-3 text-sm" />
-          <button disabled={pending} className="rounded-2xl bg-[#26222f] px-4 py-3 text-sm font-bold text-white sm:col-span-2 lg:col-span-4">
+          <input name="calories" type="number" min={0} placeholder="Calories" className={fieldClass} />
+          <input name="protein_g" type="number" min={0} placeholder="Protein (g)" className={fieldClass} />
+          <PrimaryButton disabled={pending} className="sm:col-span-2 lg:col-span-4">
             {pending ? "Saving…" : "Log meal"}
-          </button>
+          </PrimaryButton>
         </form>
       </Panel>
 
@@ -46,7 +55,7 @@ export function NutritionView({ meals }: { meals: Meal[] }) {
             value={String(totalCalories)}
             detail={`${meals.length} meals logged`}
             icon={Flame}
-            className="bg-gradient-to-br from-[#7055ed] to-[#9a57e9] text-white"
+            className="bg-gradient-to-br from-[#5f45e6] to-[#9a57e9] text-white"
           />
           <StatCard
             label="Water"
@@ -68,15 +77,14 @@ export function NutritionView({ meals }: { meals: Meal[] }) {
         <Panel title="Logged meals" className="mt-4">
           <div className="space-y-2">
             {meals.map((meal) => (
-              <div key={meal.id} className="flex items-center justify-between rounded-2xl border border-black/5 bg-[#fdfbf4]/85 px-4 py-3">
-                <div>
-                  <p className="text-sm font-bold">{meal.meal_name}</p>
-                  <p className="text-xs capitalize text-[#847f8c]">{meal.meal_type}</p>
-                </div>
-                <span className="text-xs font-black">{meal.calories ?? 0} kcal</span>
-              </div>
+              <ListRow
+                key={meal.id}
+                title={meal.meal_name}
+                meta={meal.meal_type}
+                right={<span className="text-xs font-black">{meal.calories ?? 0} kcal</span>}
+              />
             ))}
-            {!meals.length && <p className="text-sm text-[#9a95a0]">No meals logged yet.</p>}
+            {!meals.length && <EmptyState>No meals logged yet.</EmptyState>}
           </div>
         </Panel>
       </Stagger>

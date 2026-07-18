@@ -33,7 +33,7 @@ export default function AdminRolesPage() {
 
       <div className="mt-8 overflow-hidden rounded-[1.6rem] border border-[#26222f]/8 bg-[#fdfbf4]/85 shadow-sm">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-black/5 bg-[#faf9fc] text-xs font-black text-[#8a8491]">
+          <thead className="border-b border-[#26222f]/8 bg-[#f4efe4]/70 text-xs font-black text-[#8a8491]">
             <tr>
               <th className="px-5 py-4">Module</th>
               <th className="px-5 py-4">User</th>
@@ -60,7 +60,7 @@ export default function AdminRolesPage() {
           {MODULES.map((module) => (
             <span
               key={module}
-              className="rounded-full border border-black/8 bg-[#fdfbf4]/85 px-3 py-1.5 text-xs font-bold text-[#5f5a67]"
+              className="rounded-full border border-[#26222f]/10 bg-[#f4efe4]/70 px-3 py-1.5 text-xs font-bold text-[#5f5a67]"
             >
               {module}
             </span>

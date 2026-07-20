@@ -92,16 +92,16 @@ export function DashboardShell({
   }, [setCollapsed]);
 
   return (
-    <main className="min-h-screen p-2 sm:p-3">
-      <div className="glass mx-auto flex min-h-[calc(100vh-1.5rem)] w-full overflow-hidden rounded-[1.6rem] border border-white/65 shadow-[0_30px_90px_rgba(54,43,34,.14)]">
+    <main className="h-dvh overflow-hidden p-2 sm:p-3">
+      <div className="glass mx-auto flex h-full w-full overflow-hidden rounded-[1.6rem] border border-white/65 shadow-[0_30px_90px_rgba(20,34,27,.14)]">
         <motion.aside
           animate={{ width: expanded ? 288 : 88 }}
           transition={{ type: "spring", stiffness: 320, damping: 30 }}
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
-          className="relative hidden shrink-0 flex-col overflow-hidden border-r border-black/5 bg-[#f6faf7]/72 p-4 lg:flex"
+          className="relative hidden h-full shrink-0 flex-col overflow-hidden border-r border-black/5 bg-[#f6faf7]/72 p-4 lg:flex"
         >
-          <div className={`mb-6 flex h-12 items-center ${expanded ? "justify-between" : "justify-center"}`}>
+          <div className={`mb-6 flex h-12 shrink-0 items-center ${expanded ? "justify-between" : "justify-center"}`}>
             <Brand compact={!expanded} />
             {expanded && (
               <button
@@ -115,9 +115,11 @@ export function DashboardShell({
             )}
           </div>
 
-          <DashboardNavigation collapsed={!expanded} />
+          <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+            <DashboardNavigation collapsed={!expanded} />
+          </div>
 
-          <div className="mt-auto space-y-2 pt-5">
+          <div className="mt-3 shrink-0 space-y-2 pt-2">
             {expanded && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-2xl bg-gradient-to-br from-[#16352c] to-[#1a4a3c] p-4 text-white">
                 <p className="text-sm font-bold">Your weekly story is ready.</p>
@@ -167,8 +169,8 @@ export function DashboardShell({
           </div>
         </motion.aside>
 
-        <section className="min-w-0 flex-1 bg-[#e6ede8]/65">
-          <header className="flex h-20 items-center justify-between gap-3 border-b border-black/5 bg-[#f6faf7]/35 px-4 backdrop-blur-xl sm:px-6">
+        <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[#e6ede8]/65">
+          <header className="flex h-20 shrink-0 items-center justify-between gap-3 border-b border-black/5 bg-[#f6faf7]/35 px-4 backdrop-blur-xl sm:px-6">
             <div className="flex min-w-0 items-center gap-3">
               <button type="button" onClick={() => setMobileOpen(true)} className="focus-ring grid size-10 place-items-center rounded-xl bg-[#f6faf7] text-[#5f5867] shadow-sm lg:hidden" aria-label="Open navigation">
                 <Menu size={18} />
@@ -208,12 +210,14 @@ export function DashboardShell({
             {mobileOpen && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[90] bg-[#0f1a14]/40 backdrop-blur-sm lg:hidden" onMouseDown={(event) => event.target === event.currentTarget && setMobileOpen(false)}>
                 <motion.aside initial={{ x: -320 }} animate={{ x: 0 }} exit={{ x: -320 }} transition={{ type: "spring", stiffness: 320, damping: 30 }} className="flex h-full w-[min(88vw,20rem)] flex-col bg-[#f6faf7] p-5 shadow-2xl">
-                  <div className="mb-6 flex items-center justify-between">
+                  <div className="mb-6 flex shrink-0 items-center justify-between">
                     <Brand />
                     <button type="button" onClick={() => setMobileOpen(false)} className="grid size-9 place-items-center rounded-xl bg-[#dce8e1]" aria-label="Close navigation"><X size={17} /></button>
                   </div>
-                  <DashboardNavigation close={() => setMobileOpen(false)} />
-                  <div className="mt-auto space-y-2">
+                  <div className="min-h-0 flex-1 overflow-y-auto">
+                    <DashboardNavigation close={() => setMobileOpen(false)} />
+                  </div>
+                  <div className="mt-4 shrink-0 space-y-2">
                     {isStaff && <Link href="/admin" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-xl bg-[#d7efe6] px-3 py-3 text-sm font-bold text-[#0e7c66]"><Shield size={17} /> Admin console</Link>}
                     <div className="flex items-center gap-3 rounded-2xl border border-black/6 bg-white/70 p-3">
                       <Avatar avatarUrl={avatarUrl} initials={initials} size={40} />
@@ -233,9 +237,11 @@ export function DashboardShell({
             )}
           </AnimatePresence>
 
-          <motion.div key={pathname} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }} className="p-5 sm:p-8">
-            {children}
-          </motion.div>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <motion.div key={pathname} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }} className="p-5 sm:p-8">
+              {children}
+            </motion.div>
+          </div>
         </section>
       </div>
     </main>

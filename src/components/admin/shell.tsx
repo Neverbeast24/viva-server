@@ -110,16 +110,16 @@ export function AdminShell({
   }, [setCollapsed]);
 
   return (
-    <main className="min-h-screen p-2 sm:p-3">
-      <div className="glass mx-auto flex min-h-[calc(100vh-1.5rem)] w-full overflow-hidden rounded-[1.6rem] border border-white/65 shadow-[0_30px_90px_rgba(54,43,34,.14)]">
+    <main className="h-dvh overflow-hidden p-2 sm:p-3">
+      <div className="glass mx-auto flex h-full w-full overflow-hidden rounded-[1.6rem] border border-white/65 shadow-[0_30px_90px_rgba(20,34,27,.14)]">
         <motion.aside
           animate={{ width: expanded ? 288 : 88 }}
           transition={{ type: "spring", stiffness: 320, damping: 30 }}
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
-          className="relative hidden shrink-0 flex-col overflow-hidden border-r border-black/5 bg-[#f6faf7]/72 p-4 lg:flex"
+          className="relative hidden h-full shrink-0 flex-col overflow-hidden border-r border-black/5 bg-[#f6faf7]/72 p-4 lg:flex"
         >
-          <div className={`mb-3 flex h-12 items-center ${expanded ? "justify-between" : "justify-center"}`}>
+          <div className={`mb-3 flex h-12 shrink-0 items-center ${expanded ? "justify-between" : "justify-center"}`}>
             <Brand compact={!expanded} />
             {expanded && (
               <button
@@ -133,23 +133,29 @@ export function AdminShell({
             )}
           </div>
           {expanded && (
-            <p className="mb-4 px-3 text-[10px] font-black tracking-[0.16em] text-[#0e7c66]">
+            <p className="mb-4 shrink-0 px-3 text-[10px] font-black tracking-[0.16em] text-[#0e7c66]">
               {isSuperAdmin ? "SUPER ADMIN CONSOLE" : "ADMIN CONSOLE"}
             </p>
           )}
-          <AdminNavigation pathname={pathname} collapsed={!expanded} isSuperAdmin={isSuperAdmin} />
-          <Link href="/dashboard" title="Back to dashboard" className={`mt-auto rounded-xl border border-black/8 bg-white/65 text-sm font-bold text-[#5f5a67] transition hover:bg-white ${expanded ? "px-3 py-2.5" : "px-2 py-3 text-center"}`}>
+          <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+            <AdminNavigation pathname={pathname} collapsed={!expanded} isSuperAdmin={isSuperAdmin} />
+          </div>
+          <Link
+            href="/dashboard"
+            title="Back to dashboard"
+            className={`mt-3 shrink-0 rounded-xl border border-black/8 bg-white/65 text-sm font-bold text-[#5a6b62] transition hover:bg-white ${expanded ? "px-3 py-2.5" : "px-2 py-3 text-center"}`}
+          >
             {expanded ? "← Back to dashboard" : "←"}
           </Link>
         </motion.aside>
 
-        <section className="min-w-0 flex-1 bg-[#e6ede8]/65">
-          <header className="flex h-20 items-center justify-between gap-3 border-b border-black/5 bg-[#f6faf7]/35 px-4 backdrop-blur-xl sm:px-6">
+        <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[#e6ede8]/65">
+          <header className="flex h-20 shrink-0 items-center justify-between gap-3 border-b border-black/5 bg-[#f6faf7]/35 px-4 backdrop-blur-xl sm:px-6">
             <div className="flex min-w-0 items-center gap-3">
               <button type="button" onClick={() => setMobileOpen(true)} className="grid size-10 place-items-center rounded-xl bg-[#f6faf7] shadow-sm lg:hidden" aria-label="Open navigation"><Menu size={18} /></button>
               <CommandSearch isStaff isSuperAdmin={isSuperAdmin} />
               <div className="hidden xl:block">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#9a94a0]">{isSuperAdmin ? "Super admin" : "Admin"} session</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#7a8a81]">{isSuperAdmin ? "Super admin" : "Admin"} session</p>
                 <p className="max-w-32 truncate text-xs font-bold">{displayName}</p>
               </div>
             </div>
@@ -167,17 +173,24 @@ export function AdminShell({
             {mobileOpen && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[90] bg-[#0f1a14]/40 backdrop-blur-sm lg:hidden" onMouseDown={(event) => event.target === event.currentTarget && setMobileOpen(false)}>
                 <motion.aside initial={{ x: -320 }} animate={{ x: 0 }} exit={{ x: -320 }} className="flex h-full w-[min(88vw,20rem)] flex-col bg-[#f6faf7] p-5">
-                  <div className="mb-5 flex items-center justify-between"><Brand /><button type="button" onClick={() => setMobileOpen(false)} className="grid size-9 place-items-center rounded-xl bg-[#dce8e1]"><X size={17} /></button></div>
-                  <p className="mb-4 text-[10px] font-black tracking-wider text-[#0e7c66]">{isSuperAdmin ? "SUPER ADMIN" : "ADMIN"}</p>
-                  <AdminNavigation pathname={pathname} collapsed={false} isSuperAdmin={isSuperAdmin} close={() => setMobileOpen(false)} />
+                  <div className="mb-5 flex shrink-0 items-center justify-between"><Brand /><button type="button" onClick={() => setMobileOpen(false)} className="grid size-9 place-items-center rounded-xl bg-[#dce8e1]"><X size={17} /></button></div>
+                  <p className="mb-4 shrink-0 text-[10px] font-black tracking-wider text-[#0e7c66]">{isSuperAdmin ? "SUPER ADMIN" : "ADMIN"}</p>
+                  <div className="min-h-0 flex-1 overflow-y-auto">
+                    <AdminNavigation pathname={pathname} collapsed={false} isSuperAdmin={isSuperAdmin} close={() => setMobileOpen(false)} />
+                  </div>
+                  <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="mt-4 shrink-0 rounded-xl border border-black/8 bg-white px-3 py-2.5 text-sm font-bold text-[#5a6b62]">
+                    ← Back to dashboard
+                  </Link>
                 </motion.aside>
               </motion.div>
             )}
           </AnimatePresence>
 
-          <motion.div key={pathname} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }} className="p-5 sm:p-8">
-            {children}
-          </motion.div>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <motion.div key={pathname} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }} className="p-5 sm:p-8">
+              {children}
+            </motion.div>
+          </div>
         </section>
       </div>
     </main>

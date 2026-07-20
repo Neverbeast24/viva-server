@@ -324,8 +324,9 @@ export async function generateGymPlan(
   context: string,
   availableExercises: string,
 ): Promise<GymPlanPayload> {
-  const parsed = await generateJson<Partial<GymPlanPayload>>(`Create a practical gym / home training plan for this user.
+  const parsed = await generateJson<Partial<GymPlanPayload>>(`Create a practical gym training plan for this user.
 Use their profile, energy, goals, and recent activity. Prefer exercises from the available catalog when possible.
+Include a healthy mix of machines (safer for beginners) and free-weight / bodyweight moves when appropriate.
 Return JSON:
 - "title"
 - "focus": one of full_body, strength, fat_loss, mobility, endurance
@@ -333,7 +334,7 @@ Return JSON:
 - "days_per_week": 2-5
 - "summary": 2 sentences
 - "days": array of { "day", "focus", "exercises": [{ "name", "sets", "rest", "notes" }] }
-  Include 3–5 exercises per day.
+  Include 3–5 exercises per day. Name machines clearly when used (e.g. "Leg press machine").
 
 AVAILABLE EXERCISES:
 ${availableExercises}
@@ -379,6 +380,62 @@ ${context}`);
     trend: String(parsed.trend ?? "Building history").slice(0, 80),
     next_step: String(parsed.next_step ?? "Log one weigh-in this week at the same time of day.").slice(0, 200),
     score: Math.min(100, Math.max(0, Math.round(Number(parsed.score ?? 60)))),
+  };
+}
+
+export type MachineRecommendation = {
+  machine: string;
+  why: string;
+  how_to_use: string;
+  sets: string;
+  demo_slug: string | null;
+  priority: number;
+};
+
+export type MachineRecommendationPayload = {
+  title: string;
+  summary: string;
+  focus: string;
+  recommendations: MachineRecommendation[];
+};
+
+export async function recommendGymMachines(
+  context: string,
+  machineCatalog: string,
+): Promise<MachineRecommendationPayload> {
+  const parsed = await generateJson<Partial<MachineRecommendationPayload>>(`Recommend gym machines for this user based on their profile, goals, energy, and recent training.
+Prefer machines from the catalog. Mix strength machines and cardio machines when useful.
+Return JSON:
+- "title"
+- "summary": 2 calm sentences
+- "focus": short focus label like "Lower body strength" or "Beginner full gym"
+- "recommendations": array of 4–6 items:
+  { "machine", "why", "how_to_use", "sets", "demo_slug", "priority" }
+  - "demo_slug" must match a catalog slug when possible, else null
+  - "priority" 1 (highest) to 6
+  - "sets" like "3 x 12" or "12 minutes steady"
+
+MACHINE CATALOG (name | slug | muscle | equipment | difficulty):
+${machineCatalog}
+
+USER CONTEXT:
+${context}`);
+
+  const rows = Array.isArray(parsed.recommendations) ? parsed.recommendations : [];
+  return {
+    title: String(parsed.title ?? "Your machine picks").slice(0, 120),
+    summary: String(
+      parsed.summary ?? "Start with guided machines for control, then add free weights as confidence grows.",
+    ).slice(0, 500),
+    focus: String(parsed.focus ?? "Balanced gym session").slice(0, 80),
+    recommendations: rows.slice(0, 6).map((row, index) => ({
+      machine: String(row?.machine ?? "Machine").slice(0, 80),
+      why: String(row?.why ?? "Supports your current goal.").slice(0, 220),
+      how_to_use: String(row?.how_to_use ?? "Use a light warm-up set, then work with control.").slice(0, 280),
+      sets: String(row?.sets ?? "3 x 10").slice(0, 40),
+      demo_slug: row?.demo_slug ? String(row.demo_slug).slice(0, 80) : null,
+      priority: Math.max(1, Math.min(6, Math.round(Number(row?.priority ?? index + 1)))),
+    })),
   };
 }
 

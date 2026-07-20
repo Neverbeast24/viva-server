@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { writeAuditLog } from "@/lib/audit";
 import { buildUserContext } from "@/lib/ai/context";
-import { generateGymPlan } from "@/lib/ai/gemini";
+import { generateGymPlan, recommendGymMachines } from "@/lib/ai/gemini";
 import { createClient } from "@/lib/supabase/server";
 
 const sessionSchema = z.object({
@@ -104,7 +104,10 @@ export async function createAiGymPlan() {
     const catalog = (exercises ?? [])
       .map((row) => `${row.name} (${row.muscle_group}, ${row.equipment}, ${row.difficulty})`)
       .join("\n");
-    const plan = await generateGymPlan(context, catalog || "bodyweight squat, push-up, plank, glute bridge");
+    const plan = await generateGymPlan(
+      context,
+      catalog || "bodyweight squat, push-up, plank, glute bridge, leg press, lat pulldown",
+    );
 
     const { data, error } = await supabase
       .from("gym_plans")
@@ -133,6 +136,57 @@ export async function createAiGymPlan() {
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Could not create a gym plan.";
+    return { ok: false, message };
+  }
+}
+
+export async function recommendMachinesWithAi() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, message: "Not signed in." };
+
+  try {
+    const [{ data: machines }, context] = await Promise.all([
+      supabase
+        .from("gym_exercises")
+        .select("slug, name, muscle_group, equipment, difficulty, cues")
+        .in("equipment", ["machine", "cable", "cardio_machine"])
+        .order("name"),
+      buildUserContext(user.id),
+    ]);
+
+    const catalog = (machines ?? [])
+      .map(
+        (row) =>
+          `${row.name} | ${row.slug} | ${row.muscle_group} | ${row.equipment} | ${row.difficulty}`,
+      )
+      .join("\n");
+
+    const recommendation = await recommendGymMachines(
+      context,
+      catalog ||
+        "Leg press machine | leg-press | legs | machine | beginner\nLat pulldown machine | lat-pulldown | back | machine | beginner",
+    );
+
+    await writeAuditLog({
+      action: "gym_machines_recommended",
+      entity: "gym_exercises",
+      metadata: {
+        title: recommendation.title,
+        count: recommendation.recommendations.length,
+      },
+    });
+
+    return {
+      ok: true,
+      message: "Machine recommendations ready.",
+      recommendation,
+    };
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Could not recommend machines.";
     return { ok: false, message };
   }
 }

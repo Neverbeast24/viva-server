@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   Clock3,
+  Cog,
   Dumbbell,
   Flame,
   Play,
@@ -18,7 +19,9 @@ import {
   deleteGymPlan,
   deleteGymSession,
   logGymSession,
+  recommendMachinesWithAi,
 } from "@/app/dashboard/gym/actions";
+import type { MachineRecommendationPayload } from "@/lib/ai/gemini";
 import {
   EmptyState,
   FormField,
@@ -71,7 +74,38 @@ export type GymPlan = {
   created_at: string;
 };
 
-const muscleFilters = ["all", "legs", "chest", "back", "shoulders", "glutes", "core", "cardio", "mobility"] as const;
+const muscleFilters = [
+  "all",
+  "legs",
+  "chest",
+  "back",
+  "shoulders",
+  "arms",
+  "glutes",
+  "core",
+  "hamstrings",
+  "cardio",
+  "mobility",
+] as const;
+
+const equipmentFilters = [
+  { id: "all", label: "All demos" },
+  { id: "machines", label: "Machines" },
+  { id: "cable", label: "Cables" },
+  { id: "cardio_machine", label: "Cardio machines" },
+  { id: "dumbbell", label: "Dumbbells" },
+  { id: "bodyweight", label: "Bodyweight" },
+] as const;
+
+function isMachineGear(equipment: string) {
+  return equipment === "machine" || equipment === "cable" || equipment === "cardio_machine";
+}
+
+function matchesEquipment(equipment: string, filter: (typeof equipmentFilters)[number]["id"]) {
+  if (filter === "all") return true;
+  if (filter === "machines") return equipment === "machine";
+  return equipment === filter;
+}
 
 export function GymView({
   exercises,
@@ -85,15 +119,27 @@ export function GymView({
   const { pending, submit } = useModuleAction(logGymSession);
   const [busy, start] = useTransition();
   const [planning, startPlan] = useTransition();
-  const [filter, setFilter] = useState<(typeof muscleFilters)[number]>("all");
+  const [recommending, startRecommend] = useTransition();
+  const [muscle, setMuscle] = useState<(typeof muscleFilters)[number]>("all");
+  const [equipment, setEquipment] = useState<(typeof equipmentFilters)[number]["id"]>("machines");
   const [activeDemo, setActiveDemo] = useState<GymExercise | null>(null);
+  const [machineRecs, setMachineRecs] = useState<MachineRecommendationPayload | null>(null);
+
+  const bySlug = useMemo(
+    () => new Map(exercises.map((item) => [item.slug, item])),
+    [exercises],
+  );
+
+  const machineCount = exercises.filter((item) => isMachineGear(item.equipment)).length;
 
   const filtered = useMemo(
     () =>
-      filter === "all"
-        ? exercises
-        : exercises.filter((item) => item.muscle_group === filter),
-    [exercises, filter],
+      exercises.filter((item) => {
+        const muscleOk = muscle === "all" || item.muscle_group === muscle;
+        const gearOk = matchesEquipment(item.equipment, equipment);
+        return muscleOk && gearOk;
+      }),
+    [equipment, exercises, muscle],
   );
 
   const totalMinutes = sessions.reduce((sum, row) => sum + (row.duration_minutes ?? 0), 0);
@@ -115,6 +161,25 @@ export function GymView({
     });
   }
 
+  function recommendMachines() {
+    startRecommend(async () => {
+      const result = await recommendMachinesWithAi();
+      if (!result.ok || !("recommendation" in result) || !result.recommendation) {
+        toast.error(result.message);
+        return;
+      }
+      setMachineRecs(result.recommendation);
+      toast.success(result.message);
+    });
+  }
+
+  function openDemoBySlug(slug: string | null) {
+    if (!slug) return;
+    const demo = bySlug.get(slug);
+    if (demo) setActiveDemo(demo);
+    else toast.error("Demo video not found for that machine.");
+  }
+
   return (
     <>
       <PageHeader
@@ -122,15 +187,25 @@ export function GymView({
         title="Train with"
         highlight="intention."
         action={
-          <PrimaryButton disabled={planning} onClick={generatePlan} className="rounded-full px-5">
-            <Sparkles size={14} className="mr-1.5 inline" />
-            {planning ? "Building plan…" : "AI gym plan"}
-          </PrimaryButton>
+          <div className="flex flex-wrap gap-2">
+            <PrimaryButton
+              disabled={recommending}
+              onClick={recommendMachines}
+              className="rounded-full bg-[#5f45e6] px-5"
+            >
+              <Cog size={14} className="mr-1.5 inline" />
+              {recommending ? "Matching…" : "AI machine picks"}
+            </PrimaryButton>
+            <PrimaryButton disabled={planning} onClick={generatePlan} className="rounded-full px-5">
+              <Sparkles size={14} className="mr-1.5 inline" />
+              {planning ? "Building plan…" : "AI gym plan"}
+            </PrimaryButton>
+          </div>
         }
       />
 
       <Stagger>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
             label="Sessions logged"
             value={String(sessions.length)}
@@ -152,23 +227,96 @@ export function GymView({
             icon={Flame}
             className="bg-[#fff3e8] text-[#533621]"
           />
+          <StatCard
+            label="Machine demos"
+            value={String(machineCount)}
+            detail="Guided gym equipment"
+            icon={Cog}
+            className="bg-[#f3f0ff] text-[#3d2f7a]"
+          />
         </div>
       </Stagger>
 
-      <Panel title="Demo exercise library" className="mt-4" right={<Play size={16} className="text-[#5f45e6]" />}>
+      {machineRecs && (
+        <Panel
+          title={machineRecs.title}
+          className="mt-4"
+          right={
+            <span className="rounded-full bg-[#ece7fb] px-3 py-1 text-[11px] font-black text-[#5f45e6]">
+              {machineRecs.focus}
+            </span>
+          }
+        >
+          <p className="mb-4 text-sm leading-6 text-[#6f6b79]">{machineRecs.summary}</p>
+          <div className="grid gap-3 md:grid-cols-2">
+            {[...machineRecs.recommendations]
+              .sort((a, b) => a.priority - b.priority)
+              .map((item) => {
+                const demo = item.demo_slug ? bySlug.get(item.demo_slug) : null;
+                return (
+                  <article
+                    key={`${item.priority}-${item.machine}`}
+                    className="rounded-[1.3rem] border border-[#26222f]/8 bg-[#fdfbf4] p-4 shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[11px] font-black tracking-wide text-[#5f45e6]">
+                          PICK #{item.priority}
+                        </p>
+                        <p className="mt-1 text-sm font-black">{item.machine}</p>
+                      </div>
+                      <span className="rounded-full bg-[#f4efe4] px-2.5 py-1 text-[10px] font-black text-[#6b6675]">
+                        {item.sets}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs leading-5 text-[#6f6b79]">{item.why}</p>
+                    <p className="mt-2 text-xs leading-5 text-[#847f8c]">{item.how_to_use}</p>
+                    {demo && (
+                      <button
+                        type="button"
+                        onClick={() => setActiveDemo(demo)}
+                        className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#26222f] px-3 py-1.5 text-[11px] font-black text-white transition hover:bg-[#5f45e6]"
+                      >
+                        <Play size={12} fill="currentColor" /> Watch demo
+                      </button>
+                    )}
+                  </article>
+                );
+              })}
+          </div>
+        </Panel>
+      )}
+
+      <Panel title="Demo library" className="mt-4" right={<Play size={16} className="text-[#5f45e6]" />}>
+        <div className="mb-3 flex flex-wrap gap-2">
+          {equipmentFilters.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setEquipment(item.id)}
+              className={`rounded-full px-3 py-1.5 text-[11px] font-black transition ${
+                equipment === item.id
+                  ? "bg-[#5f45e6] text-white"
+                  : "bg-[#ece7fb] text-[#5f45e6] hover:bg-white"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
         <div className="mb-4 flex flex-wrap gap-2">
           {muscleFilters.map((item) => (
             <button
               key={item}
               type="button"
-              onClick={() => setFilter(item)}
+              onClick={() => setMuscle(item)}
               className={`rounded-full px-3 py-1.5 text-[11px] font-black capitalize transition ${
-                filter === item
+                muscle === item
                   ? "bg-[#26222f] text-white"
                   : "bg-[#f4efe4] text-[#6b6675] hover:bg-white"
               }`}
             >
-              {item === "all" ? "All demos" : item}
+              {item === "all" ? "All muscles" : item}
             </button>
           ))}
         </div>
@@ -192,6 +340,11 @@ export function GymView({
                     <Play size={18} fill="currentColor" />
                   </span>
                 </span>
+                {isMachineGear(exercise.equipment) && (
+                  <span className="absolute left-3 top-3 rounded-full bg-[#26222f]/85 px-2.5 py-1 text-[10px] font-black text-white backdrop-blur">
+                    Machine
+                  </span>
+                )}
               </div>
               <div className="p-4">
                 <div className="flex items-center justify-between gap-2">
@@ -201,7 +354,7 @@ export function GymView({
                   </span>
                 </div>
                 <p className="mt-1 text-xs capitalize text-[#847f8c]">
-                  {exercise.muscle_group} · {exercise.equipment}
+                  {exercise.muscle_group} · {exercise.equipment.replaceAll("_", " ")}
                 </p>
               </div>
             </button>
@@ -214,7 +367,7 @@ export function GymView({
         <Panel title="Log a gym session">
           <form action={submit} className="grid gap-3 sm:grid-cols-2">
             <FormField label="Session title" hint="Required" className="sm:col-span-2">
-              <input name="title" required placeholder="e.g. Upper body strength" className={fieldClass} />
+              <input name="title" required placeholder="e.g. Machine circuit + cardio" className={fieldClass} />
             </FormField>
             <FormField label="Focus">
               <select name="focus" defaultValue="full_body" className={fieldClass}>
@@ -229,21 +382,21 @@ export function GymView({
               </select>
             </FormField>
             <FormField label="Duration" hint="minutes">
-              <input name="duration_minutes" type="number" min={5} required defaultValue={30} className={fieldClass} />
+              <input name="duration_minutes" type="number" min={5} required defaultValue={45} className={fieldClass} />
             </FormField>
             <FormField label="Calories" hint="optional">
               <input name="calories_burned" type="number" min={0} placeholder="0" className={fieldClass} />
             </FormField>
-            <FormField label="Exercises" hint="one per line" className="sm:col-span-2">
+            <FormField label="Exercises / machines" hint="one per line" className="sm:col-span-2">
               <textarea
                 name="exercises"
                 rows={4}
-                placeholder={"Bodyweight squat\nPush-up\nPlank"}
+                placeholder={"Leg press machine\nLat pulldown\nCable face pull\nTreadmill intervals"}
                 className={`${fieldClass} min-h-28 resize-y`}
               />
             </FormField>
             <FormField label="Notes" className="sm:col-span-2">
-              <input name="notes" placeholder="Felt strong / keep lighter next time" className={fieldClass} />
+              <input name="notes" placeholder="Seat settings / weight used" className={fieldClass} />
             </FormField>
             <PrimaryButton disabled={pending} className="sm:col-span-2">
               {pending ? "Saving…" : "Log session"}
@@ -306,11 +459,27 @@ export function GymView({
                     <p className="text-xs font-black text-[#5f45e6]">{day.day}</p>
                     <p className="mt-1 text-sm font-bold">{day.focus}</p>
                     <ul className="mt-2 space-y-1.5">
-                      {(day.exercises ?? []).map((ex) => (
-                        <li key={`${day.day}-${ex.name}`} className="text-xs text-[#6f6b79]">
-                          <span className="font-bold text-[#332f3c]">{ex.name}</span> · {ex.sets} · rest {ex.rest}
-                        </li>
-                      ))}
+                      {(day.exercises ?? []).map((ex) => {
+                        const linked = exercises.find(
+                          (item) => item.name.toLowerCase() === ex.name.toLowerCase(),
+                        );
+                        return (
+                          <li key={`${day.day}-${ex.name}`} className="text-xs text-[#6f6b79]">
+                            {linked ? (
+                              <button
+                                type="button"
+                                onClick={() => openDemoBySlug(linked.slug)}
+                                className="font-bold text-[#5f45e6] underline-offset-2 hover:underline"
+                              >
+                                {ex.name}
+                              </button>
+                            ) : (
+                              <span className="font-bold text-[#332f3c]">{ex.name}</span>
+                            )}{" "}
+                            · {ex.sets} · rest {ex.rest}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 ))}
@@ -318,7 +487,7 @@ export function GymView({
             </article>
           ))}
           {!plans.length && (
-            <EmptyState>Generate an AI gym plan tailored to your profile and recent energy.</EmptyState>
+            <EmptyState>Generate an AI gym plan with machines matched to your profile.</EmptyState>
           )}
         </div>
       </Panel>
@@ -344,7 +513,8 @@ export function GymView({
                 <div>
                   <p className="text-sm font-black">{activeDemo.name}</p>
                   <p className="mt-0.5 text-xs capitalize text-[#847f8c]">
-                    {activeDemo.muscle_group} · {activeDemo.equipment} · {activeDemo.difficulty}
+                    {activeDemo.muscle_group} · {activeDemo.equipment.replaceAll("_", " ")} ·{" "}
+                    {activeDemo.difficulty}
                   </p>
                 </div>
                 <button
@@ -359,7 +529,7 @@ export function GymView({
               <div className="aspect-video bg-black">
                 <iframe
                   title={`${activeDemo.name} demo`}
-                  src={`${activeDemo.demo_video_url}?rel=0`}
+                  src={`${activeDemo.demo_video_url}${activeDemo.demo_video_url.includes("?") ? "&" : "?"}rel=0`}
                   className="size-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen

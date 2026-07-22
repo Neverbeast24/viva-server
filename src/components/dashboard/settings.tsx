@@ -118,7 +118,7 @@ function BmiScale({
     <div className="mt-4 space-y-3 rounded-2xl border border-ink/6 bg-card p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-wider text-[#948e99]">BMI scale</p>
+          <p className="text-[10px] font-black uppercase tracking-wider text-muted">BMI scale</p>
           <p className="mt-0.5 text-[10px] font-bold text-muted">
             Based on height · weight
             {sexLabel && sex !== "prefer_not_to_say" ? ` · profile sex: ${sexLabel}` : ""}
@@ -162,7 +162,7 @@ function BmiScale({
         </div>
 
         <div
-          className="absolute top-[1.65rem] size-3 -translate-x-1/2 rounded-full border-2 border-white shadow-sm"
+          className="absolute top-[1.65rem] size-3 -translate-x-1/2 rounded-full border-2 border-panel shadow-sm"
           style={{ left: `${markerPct}%`, backgroundColor: category.color }}
           aria-hidden
         />
@@ -405,10 +405,12 @@ export function SettingsView({
                 range for your height.
               </div>
             )}
-            <div className="mt-4 flex items-start gap-3 rounded-2xl bg-accent-soft/70 p-4 text-xs leading-5 text-[#645a78]">
+            <div className="mt-4 flex items-start gap-3 rounded-2xl border border-accent/15 bg-accent-soft/80 p-4 text-xs leading-5 text-ink">
               <BadgeInfo size={16} className="mt-0.5 shrink-0 text-accent" />
-              BMI is a general screening measure, not a diagnosis. Height and weight drive the
-              scale; sex and other profile details help personalize wellness guidance elsewhere.
+              <p>
+                BMI is a general screening measure, not a diagnosis. Height and weight drive the
+                scale; sex and other profile details help personalize wellness guidance elsewhere.
+              </p>
             </div>
           </Panel>
 

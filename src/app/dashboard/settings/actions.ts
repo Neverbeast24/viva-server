@@ -132,7 +132,7 @@ export async function saveHealthProfile(formData: FormData) {
     Number(previous?.height_cm ?? NaN) !== Number(parsed.data.height_cm);
 
   if (weightChanged || heightChanged) {
-    await supabase.from("health_history").insert({
+    const { error: historyError } = await supabase.from("health_history").insert({
       user_id: user.id,
       recorded_at: new Date().toISOString().slice(0, 10),
       weight_kg: parsed.data.weight_kg,
@@ -140,6 +140,7 @@ export async function saveHealthProfile(formData: FormData) {
       source: "profile_update",
       note: "Synced from health profile",
     });
+    if (historyError) return { ok: false, message: historyError.message };
   }
 
   revalidatePath("/dashboard");

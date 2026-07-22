@@ -86,7 +86,7 @@ export function GymOverviewStats({
           value={String(machineCount)}
           detail="Guided gym equipment"
           icon={Cog}
-          className="bg-accent-soft text-[#3d2f7a]"
+          className="bg-accent-soft text-accent-deep"
         />
       </div>
     </Stagger>
@@ -211,20 +211,66 @@ const muscleFilters = [
   "all",
   "legs",
   "inner_thighs",
+  "calves",
+  "glutes",
+  "hamstrings",
   "chest",
   "back",
   "shoulders",
+  "traps",
   "arms",
-  "glutes",
+  "forearms",
   "core",
-  "hamstrings",
+  "lower_back",
+  "full_body",
   "cardio",
   "mobility",
 ] as const;
 
 function muscleFilterLabel(item: (typeof muscleFilters)[number]) {
   if (item === "all") return "All muscles";
+  if (item === "lower_back") return "Lower back";
+  if (item === "full_body") return "Full body";
+  if (item === "inner_thighs") return "Inner thighs";
   return item.replaceAll("_", " ");
+}
+
+function FilterChipRow({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="-mx-1 mb-4 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]">
+      {children}
+    </div>
+  );
+}
+
+function FilterChip({
+  active,
+  onClick,
+  children,
+  tone = "neutral",
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  tone?: "neutral" | "accent";
+}) {
+  const activeClass =
+    tone === "accent" ? "bg-accent text-white" : "bg-inverse text-inverse-fg";
+  const idleClass =
+    tone === "accent"
+      ? "bg-accent-soft text-accent hover:bg-panel"
+      : "bg-surface text-muted hover:bg-panel";
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-black capitalize transition ${
+        active ? activeClass : idleClass
+      }`}
+    >
+      {children}
+    </button>
+  );
 }
 
 export function GymDemosView({ exercises }: { exercises: GymExercise[] }) {
@@ -242,22 +288,13 @@ export function GymDemosView({ exercises }: { exercises: GymExercise[] }) {
       <PageHeader eyebrow="GYM · DEMOS" title="Form first," highlight="then load." />
       <ModuleSubNav items={gymSubNav} />
       <Panel title="Free-weight & bodyweight demos" right={<Play size={16} className="text-accent" />}>
-        <div className="mb-4 flex flex-wrap gap-2">
+        <FilterChipRow>
           {muscleFilters.map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => setMuscle(item)}
-              className={`rounded-full px-3 py-1.5 text-[11px] font-black capitalize transition ${
-                muscle === item
-                  ? "bg-inverse text-inverse-fg"
-                  : "bg-surface text-muted hover:bg-panel"
-              }`}
-            >
+            <FilterChip key={item} active={muscle === item} onClick={() => setMuscle(item)}>
               {muscleFilterLabel(item)}
-            </button>
+            </FilterChip>
           ))}
-        </div>
+        </FilterChipRow>
         <ExerciseGrid exercises={filtered} onSelect={setActiveDemo} />
       </Panel>
       <AnimatePresence>
@@ -376,7 +413,7 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
       )}
 
       <Panel title="Machine demo library" right={<Cog size={16} className="text-accent" />}>
-        <div className="mb-3 flex flex-wrap gap-2">
+        <FilterChipRow>
           {(
             [
               ["all", "All machines"],
@@ -385,34 +422,18 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
               ["cardio_machine", "Cardio machines"],
             ] as const
           ).map(([id, label]) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => selectGear(id)}
-              className={`rounded-full px-3 py-1.5 text-[11px] font-black transition ${
-                gear === id ? "bg-accent text-white" : "bg-accent-soft text-accent hover:bg-panel"
-              }`}
-            >
+            <FilterChip key={id} tone="accent" active={gear === id} onClick={() => selectGear(id)}>
               {label}
-            </button>
+            </FilterChip>
           ))}
-        </div>
-        <div className="mb-4 flex flex-wrap gap-2">
+        </FilterChipRow>
+        <FilterChipRow>
           {muscleFilters.map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => setMuscle(item)}
-              className={`rounded-full px-3 py-1.5 text-[11px] font-black capitalize transition ${
-                muscle === item
-                  ? "bg-inverse text-inverse-fg"
-                  : "bg-surface text-muted hover:bg-panel"
-              }`}
-            >
+            <FilterChip key={item} active={muscle === item} onClick={() => setMuscle(item)}>
               {muscleFilterLabel(item)}
-            </button>
+            </FilterChip>
           ))}
-        </div>
+        </FilterChipRow>
         <ExerciseGrid exercises={filtered} onSelect={setActiveDemo} />
       </Panel>
 

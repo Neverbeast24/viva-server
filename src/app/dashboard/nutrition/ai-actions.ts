@@ -71,14 +71,25 @@ export async function estimateMealWithAi(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, message: "Not signed in." };
 
+  const portionRaw = String(formData.get("portion") ?? "typical").toLowerCase();
+  const portion =
+    portionRaw === "small" || portionRaw === "typical" || portionRaw === "large"
+      ? portionRaw
+      : "typical";
+
   try {
     const context = await buildUserContext(user.id);
-    const estimate = await estimateMealMacros(description || "Meal from photo", context, image);
+    const estimate = await estimateMealMacros(
+      description || "Meal from photo",
+      context,
+      image,
+      portion,
+    );
     return {
       ok: true,
       message: image
-        ? "Macros estimated from your photo — review and log the meal."
-        : "Macros estimated — review and log the meal.",
+        ? "Rough macros from your photo — tweak if needed, then log."
+        : "Rough macros filled in — tweak if needed, then log.",
       estimate,
     };
   } catch (error) {

@@ -9,6 +9,7 @@ import {
   HeartPulse,
   History,
   LayoutDashboard,
+  LifeBuoy,
   Play,
   Refrigerator,
   Settings2,
@@ -120,6 +121,12 @@ export const dashboardNav: NavItem[] = [
       { label: "Health history", href: "/dashboard/settings/history", caption: "Measurements" },
       { label: "Preferences", href: "/dashboard/settings/preferences", caption: "App settings" },
     ],
+  },
+  {
+    icon: LifeBuoy,
+    label: "Support",
+    caption: "Bugs & tickets",
+    href: "/dashboard/support",
   },
 ];
 

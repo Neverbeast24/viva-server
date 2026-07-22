@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BadgeInfo, HeartPulse, Ruler, Scale, Target } from "lucide-react";
+import { BadgeInfo, HeartPulse, Ruler, Scale, Target, VenusAndMars } from "lucide-react";
 import {
   saveHealthProfile,
   saveSettings,
@@ -53,6 +53,18 @@ const BMI_BANDS = [
   { key: "obese", label: "Obese", max: BMI_SCALE_MAX, color: "#b42318" },
 ] as const;
 
+const SEX_LABELS: Record<string, string> = {
+  female: "Female",
+  male: "Male",
+  non_binary: "Non-binary",
+  prefer_not_to_say: "Prefer not to say",
+};
+
+function formatSex(sex: string | null | undefined) {
+  if (!sex) return null;
+  return SEX_LABELS[sex] ?? sex.replaceAll("_", " ");
+}
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
@@ -68,8 +80,19 @@ function weightForBmi(heightCm: number, targetBmi: number) {
   return targetBmi * (heightCm / 100) ** 2;
 }
 
-function BmiScale({ bmi, heightCm, weightKg }: { bmi: number; heightCm: number; weightKg: number }) {
+function BmiScale({
+  bmi,
+  heightCm,
+  weightKg,
+  sex,
+}: {
+  bmi: number;
+  heightCm: number;
+  weightKg: number;
+  sex: string | null;
+}) {
   const category = bmiCategory(bmi);
+  const sexLabel = formatSex(sex);
   const markerPct =
     ((clamp(bmi, BMI_SCALE_MIN, BMI_SCALE_MAX) - BMI_SCALE_MIN) /
       (BMI_SCALE_MAX - BMI_SCALE_MIN)) *
@@ -80,7 +103,7 @@ function BmiScale({ bmi, heightCm, weightKg }: { bmi: number; heightCm: number; 
 
   let guidance: string;
   if (inNormal) {
-    guidance = `You're in the normal range. Aim to stay near ${weightKg.toFixed(1)} kg for your height.`;
+    guidance = `You're in the normal BMI range. Aim to stay near ${weightKg.toFixed(1)} kg for your height.`;
   } else if (bmi < 18.5) {
     const gain = Math.max(0, normalMinKg - weightKg);
     guidance = `To reach a normal BMI, aim for about ${normalMinKg.toFixed(1)}–${normalMaxKg.toFixed(1)} kg (about ${gain.toFixed(1)} kg to gain).`;
@@ -91,8 +114,14 @@ function BmiScale({ bmi, heightCm, weightKg }: { bmi: number; heightCm: number; 
 
   return (
     <div className="mt-4 space-y-3 rounded-2xl border border-[#14221b]/6 bg-[#f6faf7] p-4">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-[10px] font-black uppercase tracking-wider text-[#948e99]">BMI scale</p>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-wider text-[#948e99]">BMI scale</p>
+          <p className="mt-0.5 text-[10px] font-bold text-[#6a7a71]">
+            Based on height · weight
+            {sexLabel && sex !== "prefer_not_to_say" ? ` · profile sex: ${sexLabel}` : ""}
+          </p>
+        </div>
         <span
           className="rounded-full px-2.5 py-1 text-[10px] font-black"
           style={{ backgroundColor: `${category.color}18`, color: category.color }}
@@ -146,6 +175,10 @@ function BmiScale({ bmi, heightCm, weightKg }: { bmi: number; heightCm: number; 
       </div>
 
       <p className="text-xs leading-5 text-[#55665d]">{guidance}</p>
+      <p className="text-[11px] leading-4 text-[#7a8a81]">
+        WHO BMI bands are the same across sexes; body composition still varies, so treat this as a
+        screening cue only.
+      </p>
     </div>
   );
 }
@@ -341,8 +374,8 @@ export function SettingsView({
               {[
                 [Scale, "Weight", profile.weight_kg ? `${profile.weight_kg} kg` : "Not set"],
                 [Ruler, "Height", profile.height_cm ? `${profile.height_cm} cm` : "Not set"],
+                [VenusAndMars, "Sex", formatSex(profile.sex) ?? "Not set"],
                 [HeartPulse, "BMI", bmi ? bmi.toFixed(1) : "Not set"],
-                [Activity, "Activity", profile.activity_level?.replace("_", " ") ?? "Not set"],
               ].map(([Icon, label, value]) => {
                 const SnapshotIcon = Icon as typeof Scale;
                 return (
@@ -357,7 +390,12 @@ export function SettingsView({
               })}
             </div>
             {bmi != null && profile.height_cm != null && profile.weight_kg != null ? (
-              <BmiScale bmi={bmi} heightCm={profile.height_cm} weightKg={profile.weight_kg} />
+              <BmiScale
+                bmi={bmi}
+                heightCm={profile.height_cm}
+                weightKg={profile.weight_kg}
+                sex={profile.sex}
+              />
             ) : (
               <div className="mt-4 rounded-2xl border border-dashed border-[#14221b]/12 bg-[#e8efe9]/40 p-4 text-xs leading-5 text-[#6a7a71]">
                 Add height and weight to see where you sit on the BMI scale and the normal weight
@@ -366,8 +404,8 @@ export function SettingsView({
             )}
             <div className="mt-4 flex items-start gap-3 rounded-2xl bg-[#d7efe6]/70 p-4 text-xs leading-5 text-[#645a78]">
               <BadgeInfo size={16} className="mt-0.5 shrink-0 text-[#0e7c66]" />
-              BMI is a general screening measure, not a diagnosis. VIVRΛNT uses your profile only
-              to personalize wellness guidance.
+              BMI is a general screening measure, not a diagnosis. Height and weight drive the
+              scale; sex and other profile details help personalize wellness guidance elsewhere.
             </div>
           </Panel>
 
@@ -417,7 +455,7 @@ export function SettingsView({
             <span>
               <span className="block">Push notifications</span>
               <span className="mt-0.5 block text-xs font-normal text-[#74847b]">
-                Receive reminders and new VIVRΛNT insights
+                Browser and mobile alerts for tickets, broadcasts, and insights
               </span>
             </span>
             <input

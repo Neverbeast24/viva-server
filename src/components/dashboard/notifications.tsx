@@ -15,6 +15,7 @@ export type NotificationItem = {
   body: string;
   is_read: boolean;
   created_at: string;
+  href?: string | null;
 };
 
 function timeAgo(iso: string) {
@@ -50,11 +51,12 @@ export function Notifications({ items }: { items: NotificationItem[] }) {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  function onRead(id: number) {
+  function onRead(id: number, href?: string | null) {
     setReadOverrides((current) => ({ ...current, [id]: true }));
     start(async () => {
       await markNotificationRead(id);
       router.refresh();
+      if (href) router.push(href);
     });
   }
 
@@ -111,7 +113,7 @@ export function Notifications({ items }: { items: NotificationItem[] }) {
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => onRead(item.id)}
+                  onClick={() => onRead(item.id, item.href)}
                   className={`relative flex w-full items-start gap-3 rounded-xl p-2.5 text-left transition hover:bg-[#f6faf7]/85 ${
                     !item.is_read ? "bg-white/45" : "opacity-65"
                   }`}
@@ -133,7 +135,7 @@ export function Notifications({ items }: { items: NotificationItem[] }) {
               ))}
               {!rows.length && (
                 <p className="rounded-xl border border-dashed border-[#14221b]/10 px-3 py-8 text-center text-xs text-[#7a8a81]">
-                  No notifications yet. Admin broadcasts and VIVRΛNT updates will show here.
+                  No notifications yet. Ticket updates, admin broadcasts, and VIVRΛNT alerts will show here.
                 </p>
               )}
             </div>

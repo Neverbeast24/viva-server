@@ -39,6 +39,9 @@ Fill in:
 2. `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — Supabase Dashboard → Project Settings → API Keys → **Publishable**
 3. Firebase web config from Firebase Console → Project Settings → Your apps
 4. Firebase Web Push certificate (VAPID) for Cloud Messaging
+5. Firebase Admin service account JSON for **server-side** push (`FIREBASE_SERVICE_ACCOUNT_JSON`)
+
+Full notification + mobile walkthrough: see [`NOTIFICATIONS.md`](./NOTIFICATIONS.md).
 
 ## 3. Supabase Auth settings
 

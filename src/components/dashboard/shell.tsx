@@ -20,6 +20,7 @@ import {
   Notifications,
   type NotificationItem,
 } from "@/components/dashboard/notifications";
+import { PushEnrollment } from "@/components/dashboard/push-enrollment";
 import { CommandSearch } from "@/components/dashboard/command-search";
 import { DashboardNavigation } from "@/components/dashboard/dashboard-navigation";
 import { useSidebarCollapsed } from "@/hooks/use-sidebar-collapsed";
@@ -63,6 +64,7 @@ export function DashboardShell({
   isStaff = false,
   isSuperAdmin = false,
   notifications = [],
+  pushEnabled = true,
   children,
 }: {
   displayName: string;
@@ -71,6 +73,7 @@ export function DashboardShell({
   isStaff?: boolean;
   isSuperAdmin?: boolean;
   notifications?: NotificationItem[];
+  pushEnabled?: boolean;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -93,6 +96,7 @@ export function DashboardShell({
 
   return (
     <main className="h-dvh overflow-hidden p-2 sm:p-3">
+      <PushEnrollment enabled={pushEnabled} />
       <div className="glass mx-auto flex h-full w-full overflow-hidden rounded-[1.6rem] border border-white/65 shadow-[0_30px_90px_rgba(20,34,27,.14)]">
         <motion.aside
           animate={{ width: expanded ? 288 : 88 }}

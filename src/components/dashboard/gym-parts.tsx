@@ -120,7 +120,8 @@ function DemoModal({
           <div>
             <p className="text-sm font-black">{exercise.name}</p>
             <p className="mt-0.5 text-xs capitalize text-[#6a7a71]">
-              {exercise.muscle_group} · {exercise.equipment.replaceAll("_", " ")} · {exercise.difficulty}
+              {exercise.muscle_group.replaceAll("_", " ")} · {exercise.equipment.replaceAll("_", " ")} ·{" "}
+              {exercise.difficulty}
             </p>
           </div>
           <button
@@ -191,12 +192,16 @@ function ExerciseGrid({
               </span>
             </div>
             <p className="mt-1 text-xs capitalize text-[#6a7a71]">
-              {exercise.muscle_group} · {exercise.equipment.replaceAll("_", " ")}
+              {exercise.muscle_group.replaceAll("_", " ")} · {exercise.equipment.replaceAll("_", " ")}
             </p>
           </div>
         </button>
       ))}
-      {!exercises.length && <EmptyState>No demos in this filter.</EmptyState>}
+      {!exercises.length && (
+        <EmptyState>
+          No demos match these filters. Try All muscles, or pair Cardio machines with Cardio.
+        </EmptyState>
+      )}
     </div>
   );
 }
@@ -204,6 +209,7 @@ function ExerciseGrid({
 const muscleFilters = [
   "all",
   "legs",
+  "inner_thighs",
   "chest",
   "back",
   "shoulders",
@@ -214,6 +220,11 @@ const muscleFilters = [
   "cardio",
   "mobility",
 ] as const;
+
+function muscleFilterLabel(item: (typeof muscleFilters)[number]) {
+  if (item === "all") return "All muscles";
+  return item.replaceAll("_", " ");
+}
 
 export function GymDemosView({ exercises }: { exercises: GymExercise[] }) {
   const [muscle, setMuscle] = useState<(typeof muscleFilters)[number]>("all");
@@ -242,7 +253,7 @@ export function GymDemosView({ exercises }: { exercises: GymExercise[] }) {
                   : "bg-[#e8efe9] text-[#52635a] hover:bg-white"
               }`}
             >
-              {item === "all" ? "All muscles" : item}
+              {muscleFilterLabel(item)}
             </button>
           ))}
         </div>
@@ -273,6 +284,14 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
       }),
     [gear, machines, muscle],
   );
+
+  function selectGear(next: typeof gear) {
+    setGear(next);
+    // Cardio machines are tagged "cardio" only — reset muscle so the grid doesn't go empty.
+    if (next === "cardio_machine" && muscle !== "all" && muscle !== "cardio") {
+      setMuscle("all");
+    }
+  }
 
   function recommendMachines() {
     startRecommend(async () => {
@@ -368,7 +387,7 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
             <button
               key={id}
               type="button"
-              onClick={() => setGear(id)}
+              onClick={() => selectGear(id)}
               className={`rounded-full px-3 py-1.5 text-[11px] font-black transition ${
                 gear === id ? "bg-[#0e7c66] text-white" : "bg-[#d7efe6] text-[#0e7c66] hover:bg-white"
               }`}
@@ -389,7 +408,7 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
                   : "bg-[#e8efe9] text-[#52635a] hover:bg-white"
               }`}
             >
-              {item === "all" ? "All muscles" : item}
+              {muscleFilterLabel(item)}
             </button>
           ))}
         </div>

@@ -47,6 +47,7 @@ export async function generateInsight(_formData?: FormData) {
       user_id: user.id,
       title: "New VIVRΛNT insight",
       body: insight.title,
+      href: "/dashboard/ai/insights",
       is_read: false,
     });
 

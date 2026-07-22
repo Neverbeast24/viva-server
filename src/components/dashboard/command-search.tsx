@@ -12,6 +12,7 @@ import {
   Dumbbell,
   FileBarChart,
   LayoutDashboard,
+  LifeBuoy,
   LoaderCircle,
   Refrigerator,
   Search,
@@ -46,11 +47,13 @@ const dashboardDestinations = [
   { label: "Goals", detail: "Health targets", href: "/dashboard/settings/goals", icon: Settings2, keywords: "goals targets" },
   { label: "Health history", detail: "Body measurements over time", href: "/dashboard/settings/history", icon: Settings2, keywords: "history measurements weight" },
   { label: "Preferences", detail: "Theme and notifications", href: "/dashboard/settings/preferences", icon: Settings2, keywords: "settings theme timezone" },
+  { label: "Support", detail: "Submit a bug or support ticket", href: "/dashboard/support", icon: LifeBuoy, keywords: "bug ticket help feedback report issue" },
 ] as const;
 
 const adminDestinations = [
   { label: "Admin overview", detail: "Platform health and latest activity", href: "/admin", icon: Shield, keywords: "admin platform overview" },
   { label: "User management", detail: "Roles, access, and account status", href: "/admin/users", icon: Users, keywords: "members accounts role status" },
+  { label: "Support tickets", detail: "Review member bugs and requests", href: "/admin/tickets", icon: LifeBuoy, keywords: "tickets bugs support inbox" },
   { label: "Member activity", detail: "Search all member module logs", href: "/admin/activity", icon: Activity, keywords: "logs records super admin all users" },
   { label: "Permissions", detail: "Role matrix and access model", href: "/admin/roles", icon: Shield, keywords: "permissions roles matrix" },
   { label: "Audit logs", detail: "Administrative change history", href: "/admin/audit", icon: FileBarChart, keywords: "audit events admin actions" },

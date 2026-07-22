@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { writeAuditLog } from "@/lib/audit";
 import { requireStaff } from "@/lib/auth/roles";
+import { notifyUsers } from "@/lib/notifications/notify";
 import { createClient } from "@/lib/supabase/server";
 
 const schema = z.object({
@@ -45,15 +46,17 @@ export async function broadcastNotification(formData: FormData) {
 
   if (!userIds.length) return { ok: false, message: "No members to notify." };
 
-  const rows = userIds.map((user_id) => ({
-    user_id,
+  const result = await notifyUsers({
+    userIds,
     title: parsed.data.title,
     body: parsed.data.body,
-    is_read: false,
-  }));
+    href: "/dashboard",
+    asUserClient: supabase,
+  });
 
-  const { error } = await supabase.from("notifications").insert(rows);
-  if (error) return { ok: false, message: error.message };
+  if (!result.ok) {
+    return { ok: false, message: result.message ?? "Could not send notifications." };
+  }
 
   await writeAuditLog({
     action: "notification_broadcast",
@@ -61,12 +64,18 @@ export async function broadcastNotification(formData: FormData) {
     metadata: {
       title: parsed.data.title,
       target: parsed.data.target,
-      count: rows.length,
+      count: result.inserted,
+      pushed: result.pushed,
     },
   });
 
   revalidatePath("/admin");
   revalidatePath("/admin/settings");
   revalidatePath("/dashboard");
-  return { ok: true, message: `Sent to ${rows.length} member${rows.length === 1 ? "" : "s"}.` };
+  return {
+    ok: true,
+    message: `Sent to ${result.inserted} member${result.inserted === 1 ? "" : "s"}${
+      result.pushed ? ` · ${result.pushed} push delivered` : ""
+    }.`,
+  };
 }

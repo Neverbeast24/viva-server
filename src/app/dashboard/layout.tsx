@@ -18,7 +18,7 @@ export default async function DashboardLayout({
     redirect("/login?next=/dashboard");
   }
 
-  const [{ data: profile }, { data: notifications }] = await Promise.all([
+  const [{ data: profile }, { data: notifications }, { data: settings }] = await Promise.all([
     supabase
       .from("profiles")
       .select("display_name, avatar_url, role, status")
@@ -26,10 +26,15 @@ export default async function DashboardLayout({
       .maybeSingle(),
     supabase
       .from("notifications")
-      .select("id, title, body, is_read, created_at")
+      .select("id, title, body, is_read, created_at, href")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(30),
+    supabase
+      .from("user_settings")
+      .select("notifications_enabled")
+      .eq("user_id", user.id)
+      .maybeSingle(),
   ]);
 
   if (profile?.status === "suspended") {
@@ -51,6 +56,7 @@ export default async function DashboardLayout({
       isStaff={isStaff(profile?.role as UserRole)}
       isSuperAdmin={isSuperAdmin(profile?.role as UserRole)}
       notifications={notifications ?? []}
+      pushEnabled={settings?.notifications_enabled ?? true}
     >
       {children}
     </DashboardShell>

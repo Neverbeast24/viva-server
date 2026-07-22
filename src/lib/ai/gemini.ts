@@ -263,9 +263,18 @@ export async function estimateMealMacros(
   description: string,
   context: string,
   image?: MealImageInput,
+  portion: "small" | "typical" | "large" = "typical",
 ): Promise<MealEstimate> {
+  const portionHint =
+    portion === "small"
+      ? "User said this was a SMALL / light portion — estimate on the low side."
+      : portion === "large"
+        ? "User said this was a LARGE / generous portion — estimate on the high side."
+        : "User said this was a TYPICAL plate / bowl size.";
+
   const parsed = await generateJson<Partial<MealEstimate>>(
     `Estimate nutrition for this meal${image ? " from the attached photo and any description" : ""}.
+The user does NOT have a food scale — give best-guess approximations, not lab precision.
 Return ONLY one valid JSON object (no markdown, no comments, no trailing commas).
 Keys:
 - "meal_name": short cleaned name (max 8 words)
@@ -274,9 +283,10 @@ Keys:
 - "protein_g": number (grams)
 - "carbs_g": number (grams)
 - "fat_g": number (grams)
-- "tip": one short coaching tip (plain text, escape quotes if needed)
+- "tip": one short coaching tip (plain text, escape quotes if needed). Mention that numbers are estimates.
 
-Use realistic portion sizes. If the photo is unclear, estimate conservatively and say so in tip.
+${portionHint}
+If the photo is unclear, estimate conservatively and say so in tip.
 Do not invent medical advice.
 
 MEAL DESCRIPTION:

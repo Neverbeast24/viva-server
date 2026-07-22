@@ -1,9 +1,19 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { Apple, Camera, Droplets, Flame, ImagePlus, Sparkles, Trash2, X } from "lucide-react";
+import {
+  Apple,
+  Camera,
+  Droplets,
+  Flame,
+  Hand,
+  ImagePlus,
+  Sparkles,
+  Trash2,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
-import { deleteMeal, logMeal } from "@/app/dashboard/nutrition/actions";
+import { addWaterIntake, deleteMeal, logMeal } from "@/app/dashboard/nutrition/actions";
 import { estimateMealWithAi } from "@/app/dashboard/nutrition/ai-actions";
 import {
   EmptyState,
@@ -30,10 +40,102 @@ type Meal = {
   logged_at: string;
 };
 
+type PortionSize = "small" | "typical" | "large";
+
+type QuickMeal = {
+  name: string;
+  meal_type: "breakfast" | "lunch" | "dinner" | "snack";
+  calories: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  hint: string;
+};
+
 const nutritionSubNav = [
   { href: "/dashboard/nutrition", label: "Overview" },
   { href: "/dashboard/nutrition/log", label: "Log meal" },
 ] as const;
+
+const PORTION_SCALE: Record<PortionSize, number> = {
+  small: 0.75,
+  typical: 1,
+  large: 1.35,
+};
+
+/** Ready-made estimates so users never need a scale or label. */
+const QUICK_MEALS: QuickMeal[] = [
+  {
+    name: "Eggs & toast",
+    meal_type: "breakfast",
+    calories: 350,
+    protein_g: 18,
+    carbs_g: 30,
+    fat_g: 16,
+    hint: "2 eggs + 1–2 toast",
+  },
+  {
+    name: "Oatmeal & fruit",
+    meal_type: "breakfast",
+    calories: 320,
+    protein_g: 10,
+    carbs_g: 55,
+    fat_g: 6,
+    hint: "1 bowl",
+  },
+  {
+    name: "Chicken rice bowl",
+    meal_type: "lunch",
+    calories: 550,
+    protein_g: 35,
+    carbs_g: 55,
+    fat_g: 15,
+    hint: "palm protein + fist rice",
+  },
+  {
+    name: "Salad with protein",
+    meal_type: "lunch",
+    calories: 380,
+    protein_g: 30,
+    carbs_g: 18,
+    fat_g: 18,
+    hint: "big bowl + chicken/tofu",
+  },
+  {
+    name: "Fish & veggies",
+    meal_type: "dinner",
+    calories: 420,
+    protein_g: 32,
+    carbs_g: 20,
+    fat_g: 18,
+    hint: "palm fish + veggies",
+  },
+  {
+    name: "Protein snack",
+    meal_type: "snack",
+    calories: 200,
+    protein_g: 15,
+    carbs_g: 12,
+    fat_g: 8,
+    hint: "yogurt, shake, or nuts",
+  },
+];
+
+const WATER_PRESETS = [
+  { label: "+1 glass", amount_ml: 250, detail: "250 ml" },
+  { label: "+1 bottle", amount_ml: 500, detail: "500 ml" },
+  { label: "+1 big bottle", amount_ml: 750, detail: "750 ml" },
+] as const;
+
+function scaleMacros(meal: QuickMeal, portion: PortionSize) {
+  const scale = PORTION_SCALE[portion];
+  return {
+    calories: Math.round(meal.calories * scale),
+    protein_g: Math.round(meal.protein_g * scale * 10) / 10,
+    carbs_g: Math.round(meal.carbs_g * scale * 10) / 10,
+    fat_g: Math.round(meal.fat_g * scale * 10) / 10,
+  };
+}
 
 export function NutritionView({
   meals,
@@ -50,14 +152,18 @@ export function NutritionView({
   const photoRef = useRef<HTMLInputElement>(null);
   const [deleting, startDelete] = useTransition();
   const [estimating, startEstimate] = useTransition();
+  const [addingWater, startWater] = useTransition();
   const [mealName, setMealName] = useState("");
   const [mealType, setMealType] = useState("lunch");
   const [description, setDescription] = useState("");
+  const [portion, setPortion] = useState<PortionSize>("typical");
   const [calories, setCalories] = useState("");
   const [protein, setProtein] = useState("");
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
   const [tip, setTip] = useState<string | null>(null);
+  const [estimateSource, setEstimateSource] = useState<"ai" | "quick" | null>(null);
+  const [selectedQuick, setSelectedQuick] = useState<QuickMeal | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
 
@@ -76,6 +182,22 @@ export function NutritionView({
     ),
   );
 
+  function applyMacros(next: {
+    meal_name?: string;
+    meal_type?: string;
+    calories: number;
+    protein_g: number;
+    carbs_g: number;
+    fat_g: number;
+  }) {
+    if (next.meal_name) setMealName(next.meal_name);
+    if (next.meal_type) setMealType(next.meal_type);
+    setCalories(String(next.calories));
+    setProtein(String(next.protein_g));
+    setCarbs(String(next.carbs_g));
+    setFat(String(next.fat_g));
+  }
+
   function clearPhoto() {
     setPhotoFile(null);
     setPhotoPreview((prev) => {
@@ -92,15 +214,39 @@ export function NutritionView({
     setPhotoPreview(URL.createObjectURL(file));
   }
 
+  function pickQuickMeal(meal: QuickMeal, nextPortion = portion, announce = true) {
+    const scaled = scaleMacros(meal, nextPortion);
+    applyMacros({
+      meal_name: meal.name,
+      meal_type: meal.meal_type,
+      ...scaled,
+    });
+    setSelectedQuick(meal);
+    setDescription("");
+    setTip(
+      `${meal.hint}. Numbers are rough averages for a ${nextPortion} portion — close enough for daily tracking.`,
+    );
+    setEstimateSource("quick");
+    if (announce) toast.success("Approx macros filled — review and log.");
+  }
+
+  function choosePortion(next: PortionSize) {
+    setPortion(next);
+    if (selectedQuick && estimateSource === "quick") {
+      pickQuickMeal(selectedQuick, next, false);
+    }
+  }
+
   function estimate() {
     startEstimate(async () => {
       if (!description.trim() && !photoFile) {
-        toast.error("Describe the meal or attach a photo first.");
+        toast.error("Describe the meal, attach a photo, or pick a quick meal.");
         return;
       }
       const formData = new FormData();
       if (description.trim()) formData.set("description", description.trim());
       if (photoFile) formData.set("photo", photoFile);
+      formData.set("portion", portion);
 
       const result = await estimateMealWithAi(formData);
       if (!result.ok || !("estimate" in result) || !result.estimate) {
@@ -108,14 +254,21 @@ export function NutritionView({
         return;
       }
       const { estimate: e } = result;
-      setMealName(e.meal_name);
-      setMealType(e.meal_type);
-      setCalories(String(e.calories));
-      setProtein(String(e.protein_g));
-      setCarbs(String(e.carbs_g));
-      setFat(String(e.fat_g));
+      applyMacros(e);
       setTip(e.tip);
+      setSelectedQuick(null);
+      setEstimateSource("ai");
       toast.success(result.message);
+    });
+  }
+
+  function logWater(amount_ml: number) {
+    startWater(async () => {
+      const formData = new FormData();
+      formData.set("amount_ml", String(amount_ml));
+      const result = await addWaterIntake(formData);
+      if (result.ok) toast.success(result.message);
+      else toast.error(result.message);
     });
   }
 
@@ -130,13 +283,83 @@ export function NutritionView({
 
       {mode === "log" && (
         <>
+          <Panel title="No scale needed" className="mb-4" right={<Hand size={16} className="text-[#0e7c66]" />}>
+            <p className="text-sm leading-6 text-[#4a5a52]">
+              You don’t need exact numbers. Pick a quick meal, describe what you ate, or snap a
+              photo — we fill approximate calories and protein for you. Trends matter more than
+              perfect grams.
+            </p>
+            <ul className="mt-3 grid gap-2 text-xs leading-5 text-[#6a7a71] sm:grid-cols-3">
+              <li className="rounded-xl bg-[#e8efe9]/70 px-3 py-2">
+                <span className="font-black text-[#0e7c66]">Palm</span> ≈ protein serving
+              </li>
+              <li className="rounded-xl bg-[#e8efe9]/70 px-3 py-2">
+                <span className="font-black text-[#0e7c66]">Fist</span> ≈ carbs / rice / pasta
+              </li>
+              <li className="rounded-xl bg-[#e8efe9]/70 px-3 py-2">
+                <span className="font-black text-[#0e7c66]">Thumb</span> ≈ fats / oils / nuts
+              </li>
+            </ul>
+          </Panel>
+
+          <Panel title="1. Portion size" className="mb-4">
+            <p className="mb-3 text-xs text-[#6a7a71]">
+              Compared to your usual plate — this scales quick picks and AI estimates.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {(
+                [
+                  ["small", "Small / light"],
+                  ["typical", "Typical"],
+                  ["large", "Large / generous"],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => choosePortion(value)}
+                  className={`focus-ring rounded-xl border px-3.5 py-2.5 text-xs font-black transition ${
+                    portion === value
+                      ? "border-[#0e7c66]/35 bg-[#0e7c66] text-white"
+                      : "border-[#14221b]/10 bg-[#e8efe9]/70 text-[#0e7c66] hover:bg-white"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel title="2. Quick meals" className="mb-4">
+            <p className="mb-3 text-xs text-[#6a7a71]">
+              One tap fills rough macros. No weighing, no labels.
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {QUICK_MEALS.map((meal) => (
+                <button
+                  key={meal.name}
+                  type="button"
+                  onClick={() => pickQuickMeal(meal)}
+                  className="focus-ring rounded-2xl border border-[#14221b]/8 bg-[#f6faf7]/80 px-3.5 py-3 text-left transition hover:border-[#0e7c66]/25 hover:bg-white"
+                >
+                  <span className="block text-sm font-black text-[#14221b]">{meal.name}</span>
+                  <span className="mt-0.5 block text-[11px] text-[#6a7a71]">{meal.hint}</span>
+                  <span className="mt-2 block text-[11px] font-bold text-[#0e7c66]">
+                    ~{scaleMacros(meal, portion).calories} kcal · ~
+                    {scaleMacros(meal, portion).protein_g}g protein
+                  </span>
+                </button>
+              ))}
+            </div>
+          </Panel>
+
           <Panel
-            title="AI meal estimate"
+            title="3. Or describe / photo"
             className="mb-4"
             right={<Sparkles size={16} className="text-[#0e7c66]" />}
           >
             <div className="space-y-3">
-              <FormField label="Describe your meal" hint="Optional if you attach a photo">
+              <FormField label="What did you eat?" hint="Plain language is enough">
                 <input
                   name="description"
                   value={description}
@@ -187,18 +410,28 @@ export function NutritionView({
                   className="ml-auto"
                 >
                   <Camera size={14} className="mr-1.5 inline" />
-                  {estimating ? "Estimating…" : "Estimate macros"}
+                  {estimating ? "Estimating…" : "Estimate for me"}
                 </PrimaryButton>
               </div>
 
               <p className="text-xs leading-5 text-[#6a7a71]">
-                AI fills the log form below. Review the numbers, then tap Log meal.
+                AI returns approximate macros for your {portion} portion. Review below, then log.
               </p>
               {tip && <p className="text-sm font-semibold text-[#0e7c66]">{tip}</p>}
             </div>
           </Panel>
 
-          <Panel title="Log a meal" className="mb-4">
+          <Panel
+            title="4. Review & log"
+            className="mb-4"
+            right={
+              estimateSource ? (
+                <span className="rounded-full bg-[#d7efe6] px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-[#0e7c66]">
+                  {estimateSource === "ai" ? "AI estimate" : "Quick estimate"}
+                </span>
+              ) : null
+            }
+          >
             <form action={submit} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
               <FormField label="Meal" hint="Required" className="sm:col-span-2">
                 <input
@@ -223,18 +456,18 @@ export function NutritionView({
                   <option value="snack">Snack</option>
                 </select>
               </FormField>
-              <FormField label="Calories" hint="kcal">
+              <FormField label="Calories" hint="approx kcal">
                 <input
                   name="calories"
                   type="number"
                   min={0}
                   value={calories}
                   onChange={(event) => setCalories(event.target.value)}
-                  placeholder="0"
+                  placeholder="auto"
                   className={fieldClass}
                 />
               </FormField>
-              <FormField label="Protein" hint="grams">
+              <FormField label="Protein" hint="approx g">
                 <input
                   name="protein_g"
                   type="number"
@@ -242,11 +475,11 @@ export function NutritionView({
                   step="0.1"
                   value={protein}
                   onChange={(event) => setProtein(event.target.value)}
-                  placeholder="0"
+                  placeholder="auto"
                   className={fieldClass}
                 />
               </FormField>
-              <FormField label="Carbs" hint="grams">
+              <FormField label="Carbs" hint="approx g">
                 <input
                   name="carbs_g"
                   type="number"
@@ -254,11 +487,11 @@ export function NutritionView({
                   step="0.1"
                   value={carbs}
                   onChange={(event) => setCarbs(event.target.value)}
-                  placeholder="0"
+                  placeholder="auto"
                   className={fieldClass}
                 />
               </FormField>
-              <FormField label="Fat" hint="grams">
+              <FormField label="Fat" hint="approx g">
                 <input
                   name="fat_g"
                   type="number"
@@ -266,10 +499,14 @@ export function NutritionView({
                   step="0.1"
                   value={fat}
                   onChange={(event) => setFat(event.target.value)}
-                  placeholder="0"
+                  placeholder="auto"
                   className={fieldClass}
                 />
               </FormField>
+              <p className="text-xs leading-5 text-[#6a7a71] sm:col-span-2 lg:col-span-6">
+                Leave macros blank only if you just want the meal name on your log. Prefer a quick
+                meal or estimate so your daily totals stay useful.
+              </p>
               <PrimaryButton disabled={pending} className="sm:col-span-2 lg:col-span-6">
                 {pending ? "Saving…" : "Log meal"}
               </PrimaryButton>
@@ -309,6 +546,30 @@ export function NutritionView({
             />
           </div>
 
+          <Panel
+            title="Log water"
+            className="mt-4"
+            right={<Droplets size={16} className="text-[#0e7c66]" />}
+          >
+            <p className="mb-3 text-xs leading-5 text-[#6a7a71]">
+              Tap a glass or bottle — no need to measure milliliters yourself.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {WATER_PRESETS.map((preset) => (
+                <button
+                  key={preset.amount_ml}
+                  type="button"
+                  disabled={addingWater}
+                  onClick={() => logWater(preset.amount_ml)}
+                  className="focus-ring rounded-xl border border-[#14221b]/10 bg-[#e8fbf8] px-3.5 py-2.5 text-xs font-black text-[#183d3a] transition hover:bg-white disabled:opacity-60"
+                >
+                  {preset.label}
+                  <span className="ml-1.5 font-semibold text-[#6a7a71]">{preset.detail}</span>
+                </button>
+              ))}
+            </div>
+          </Panel>
+
           <Panel title="Logged meals" className="mt-4">
             <div className="space-y-2">
               {meals.map((meal) => (
@@ -318,7 +579,7 @@ export function NutritionView({
                   meta={meal.meal_type}
                   right={
                     <span className="flex items-center gap-3">
-                      <span className="text-xs font-black">{meal.calories ?? 0} kcal</span>
+                      <span className="text-xs font-black">~{meal.calories ?? 0} kcal</span>
                       <button
                         type="button"
                         disabled={deleting}

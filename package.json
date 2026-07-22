@@ -18,11 +18,13 @@
     "@supabase/supabase-js": "^2.110.7",
     "clsx": "^2.1.1",
     "firebase": "^12.16.0",
+    "firebase-admin": "^14.2.0",
     "lucide-react": "^1.24.0",
     "motion": "^12.42.2",
     "next": "^16.2.10",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "server-only": "^0.0.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3"

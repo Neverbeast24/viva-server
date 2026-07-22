@@ -8,6 +8,7 @@ import {
   Activity,
   ClipboardList,
   LayoutDashboard,
+  LifeBuoy,
   LogOut,
   Menu,
   PanelLeftClose,
@@ -19,12 +20,18 @@ import {
 } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { signOut } from "@/app/dashboard/actions";
+import {
+  Notifications,
+  type NotificationItem,
+} from "@/components/dashboard/notifications";
+import { PushEnrollment } from "@/components/dashboard/push-enrollment";
 import { CommandSearch } from "@/components/dashboard/command-search";
 import { useSidebarCollapsed } from "@/hooks/use-sidebar-collapsed";
 
 const baseNav = [
   { href: "/admin", label: "Overview", caption: "Platform pulse", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", caption: "Roles and access", icon: Users },
+  { href: "/admin/tickets", label: "Tickets", caption: "Bugs & support", icon: LifeBuoy },
   { href: "/admin/roles", label: "Permissions", caption: "Access model", icon: Shield },
   { href: "/admin/audit", label: "Audit logs", caption: "Admin changes", icon: ClipboardList },
   { href: "/admin/settings", label: "System", caption: "Service health", icon: Settings2 },
@@ -86,10 +93,14 @@ function AdminNavigation({
 export function AdminShell({
   displayName,
   isSuperAdmin,
+  notifications = [],
+  pushEnabled = true,
   children,
 }: {
   displayName: string;
   isSuperAdmin: boolean;
+  notifications?: NotificationItem[];
+  pushEnabled?: boolean;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -111,6 +122,7 @@ export function AdminShell({
 
   return (
     <main className="h-dvh overflow-hidden p-2 sm:p-3">
+      <PushEnrollment enabled={pushEnabled} />
       <div className="glass mx-auto flex h-full w-full overflow-hidden rounded-[1.6rem] border border-white/65 shadow-[0_30px_90px_rgba(20,34,27,.14)]">
         <motion.aside
           animate={{ width: expanded ? 288 : 88 }}
@@ -159,14 +171,17 @@ export function AdminShell({
                 <p className="max-w-32 truncate text-xs font-bold">{displayName}</p>
               </div>
             </div>
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="focus-ring inline-flex items-center gap-2 rounded-full border border-[#c45c2a]/15 bg-[#faf3ed] px-4 py-2.5 text-xs font-black text-[#a84b22] shadow-sm transition hover:-translate-y-0.5 hover:border-[#c45c2a]/35 hover:bg-[#f5e4d8]"
-              >
-                <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
-              </button>
-            </form>
+            <div className="flex items-center gap-2">
+              <Notifications items={notifications} />
+              <form action={signOut}>
+                <button
+                  type="submit"
+                  className="focus-ring inline-flex items-center gap-2 rounded-full border border-[#c45c2a]/15 bg-[#faf3ed] px-4 py-2.5 text-xs font-black text-[#a84b22] shadow-sm transition hover:-translate-y-0.5 hover:border-[#c45c2a]/35 hover:bg-[#f5e4d8]"
+                >
+                  <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
+                </button>
+              </form>
+            </div>
           </header>
 
           <AnimatePresence>

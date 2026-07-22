@@ -19,8 +19,9 @@ VIVRΛNT Web includes:
 - **Auth & data layer** — Supabase Auth + Postgres with Row Level Security
 - **AI services** — Google Gemini coaching across modules
 - **Push & storage** — Firebase Cloud Messaging and Firebase Storage
+- **Support tickets** — member bug reports with staff inbox + push alerts
 
-Domain logic runs mainly through **Next.js Server Actions** and App Router pages. A thin HTTP surface covers auth, search, and the FCM service worker. A full public REST API for Flutter mobile remains on the roadmap.
+Domain logic runs mainly through **Next.js Server Actions** and App Router pages. A thin HTTP surface covers auth, search, device-token registration, and the FCM service worker. Native Android/iOS apps register FCM tokens via `POST /api/device-tokens` (see [`NOTIFICATIONS.md`](./NOTIFICATIONS.md)).
 
 ---
 

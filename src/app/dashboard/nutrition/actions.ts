@@ -63,3 +63,61 @@ export async function deleteMeal(id: number) {
   revalidatePath("/dashboard/nutrition");
   return { ok: true, message: "Meal removed." };
 }
+
+const waterSchema = z.object({
+  amount_ml: z.coerce.number().int().min(50).max(2000),
+});
+
+/** One-tap water logging — no need to type ml. Adds to today's check-in total. */
+export async function addWaterIntake(formData: FormData) {
+  const parsed = waterSchema.safeParse({
+    amount_ml: formData.get("amount_ml"),
+  });
+  if (!parsed.success) return { ok: false, message: "Pick a glass or bottle size." };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, message: "Not signed in." };
+
+  const today = new Date().toISOString().slice(0, 10);
+  const { data: existing } = await supabase
+    .from("daily_checkins")
+    .select("water_ml")
+    .eq("user_id", user.id)
+    .eq("checkin_date", today)
+    .maybeSingle();
+
+  const nextWater = Math.min(
+    20000,
+    Math.max(0, (existing?.water_ml ?? 0) + parsed.data.amount_ml),
+  );
+
+  const { error } = await supabase.from("daily_checkins").upsert(
+    {
+      user_id: user.id,
+      checkin_date: today,
+      water_ml: nextWater,
+    },
+    { onConflict: "user_id,checkin_date" },
+  );
+  if (error) return { ok: false, message: error.message };
+
+  await writeAuditLog({
+    action: "water_logged",
+    entity: "daily_checkins",
+    metadata: { amount_ml: parsed.data.amount_ml, water_ml: nextWater },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/nutrition");
+  revalidatePath("/dashboard/nutrition/log");
+  return {
+    ok: true,
+    message:
+      parsed.data.amount_ml >= 500
+        ? `+${parsed.data.amount_ml} ml bottle logged.`
+        : `+${parsed.data.amount_ml} ml glass logged.`,
+  };
+}

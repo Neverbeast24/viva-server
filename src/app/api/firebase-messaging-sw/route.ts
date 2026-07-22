@@ -21,12 +21,33 @@ firebase.initializeApp(${JSON.stringify(config)});
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification?.title || "VIVRΛNT";
+  const title = payload.notification?.title || payload.data?.title || "VIVRΛNT";
   const options = {
-    body: payload.notification?.body || "You have a new wellbeing update.",
+    body: payload.notification?.body || payload.data?.body || "You have a new wellbeing update.",
     icon: "/vivrant-mark.png",
+    data: {
+      href: payload.data?.href || "/dashboard",
+    },
   };
   self.registration.showNotification(title, options);
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const href = event.notification.data?.href || "/dashboard";
+  const origin = self.location.origin;
+  const targetUrl = href.startsWith("http") ? href : origin + href;
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((windowClients) => {
+      for (const client of windowClients) {
+        if ("focus" in client) {
+          client.navigate(targetUrl);
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) return clients.openWindow(targetUrl);
+    }),
+  );
 });
 `;
 

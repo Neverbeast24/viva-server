@@ -16,14 +16,14 @@ export function PageHeader({
 }) {
   return (
     <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-      <div>
+      <div className="min-w-0">
         <p className="text-[11px] font-black tracking-[0.2em] text-accent">{eyebrow}</p>
         <h1 className="font-display mt-2 text-4xl leading-[1.05] sm:text-5xl">
           {title}{" "}
           {highlight && <span className="gradient-text italic">{highlight}</span>}
         </h1>
       </div>
-      {action}
+      {action ? <div className="flex shrink-0 flex-wrap items-center gap-2 self-start sm:self-end">{action}</div> : null}
     </div>
   );
 }
@@ -151,7 +151,7 @@ export function PrimaryButton({
   return (
     <button
       {...props}
-      className={`focus-ring rounded-xl bg-inverse px-4 py-3 text-sm font-black text-inverse-fg shadow-[0_8px_18px_rgba(var(--shadow-color),.16)] transition hover:-translate-y-0.5 hover:bg-accent hover:shadow-[0_12px_24px_rgba(14,124,102,.28)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+      className={`focus-ring inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-inverse px-4 py-3 text-sm font-black text-inverse-fg shadow-[0_8px_18px_rgba(var(--shadow-color),.16)] transition hover:-translate-y-0.5 hover:bg-accent hover:shadow-[0_12px_24px_rgba(14,124,102,.28)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
     >
       {children}
     </button>

@@ -124,7 +124,7 @@ export function GroceriesView({
         highlight="smarter."
         action={
           <PrimaryButton disabled={planning} onClick={buildPlan} className="rounded-full px-5">
-            <Sparkles size={14} className="mr-1.5" />
+            <Sparkles size={14} className="shrink-0" />
             {planning ? "Planning…" : "AI meal + list"}
           </PrimaryButton>
         }

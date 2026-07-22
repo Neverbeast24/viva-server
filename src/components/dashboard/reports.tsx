@@ -91,7 +91,7 @@ export function ReportsView({ data }: { data: ReportsData }) {
         highlight="story."
         action={
           <PrimaryButton disabled={writing} onClick={writeStory} className="rounded-full px-5">
-            <Sparkles size={14} className="mr-1.5" />
+            <Sparkles size={14} className="shrink-0" />
             {writing ? "Writing…" : "AI weekly story"}
           </PrimaryButton>
         }

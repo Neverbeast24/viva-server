@@ -197,7 +197,7 @@ function PantryOverview({ items }: { items: PantryItem[] }) {
           />
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
           {[
             {
               href: "/dashboard/pantry/items",
@@ -227,13 +227,13 @@ function PantryOverview({ items }: { items: PantryItem[] }) {
             <Link
               key={card.href}
               href={card.href}
-              className="rounded-[1.4rem] border border-ink/8 bg-card p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-accent/25 hover:shadow-md"
+              title={card.detail}
+              className="inline-flex items-center gap-2.5 rounded-full border border-ink/8 bg-card px-4 py-2.5 text-sm font-black shadow-sm transition hover:-translate-y-0.5 hover:border-accent/25 hover:shadow-md"
             >
-              <span className="grid size-10 place-items-center rounded-xl bg-accent-soft text-accent">
-                <card.icon size={18} />
+              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
+                <card.icon size={15} />
               </span>
-              <p className="mt-4 text-sm font-black">{card.title}</p>
-              <p className="mt-1 text-xs leading-5 text-muted">{card.detail}</p>
+              <span className="truncate">{card.title}</span>
             </Link>
           ))}
         </div>
@@ -280,7 +280,7 @@ function PantryOverview({ items }: { items: PantryItem[] }) {
             restock.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
-            <Link href="/dashboard/pantry/add">
+            <Link href="/dashboard/pantry/add" className="inline-flex">
               <PrimaryButton className="rounded-full px-5">Add an item</PrimaryButton>
             </Link>
             <Link
@@ -307,7 +307,7 @@ function PantryItems({ items }: { items: PantryItem[] }) {
         title="Full"
         highlight="inventory."
         action={
-          <Link href="/dashboard/pantry/add">
+          <Link href="/dashboard/pantry/add" className="inline-flex">
             <PrimaryButton className="rounded-full px-5">Add item</PrimaryButton>
           </Link>
         }

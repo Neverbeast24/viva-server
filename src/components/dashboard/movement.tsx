@@ -86,7 +86,7 @@ export function MovementView({
         action={
           mode === "log" ? (
             <PrimaryButton disabled={suggesting} onClick={suggest} className="rounded-full px-5">
-              <Sparkles size={14} className="mr-1.5" />
+              <Sparkles size={14} className="shrink-0" />
               {suggesting ? "Planning…" : "Suggest workout"}
             </PrimaryButton>
           ) : undefined

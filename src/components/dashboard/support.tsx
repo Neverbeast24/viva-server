@@ -108,7 +108,7 @@ export function SupportView({ tickets }: { tickets: SupportTicket[] }) {
             />
           </FormField>
           <PrimaryButton type="submit" disabled={pending} className="sm:col-span-2">
-            <Bug size={14} className="mr-1.5 inline" />
+            <Bug size={14} className="shrink-0" />
             {pending ? "Sending…" : "Submit ticket"}
           </PrimaryButton>
         </form>

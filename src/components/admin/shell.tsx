@@ -75,13 +75,13 @@ function AdminNavigation({
               collapsed ? "justify-center px-2" : "gap-3 px-3"
             } ${active ? "bg-inverse text-inverse-fg shadow-lg" : "text-muted hover:bg-panel/80 hover:text-ink"}`}
           >
-            <span className={`grid size-9 shrink-0 place-items-center rounded-xl ${active ? "bg-panel/10" : "bg-surface-soft group-hover:bg-surface-soft"}`}>
+            <span className={`grid size-9 shrink-0 place-items-center rounded-xl ${active ? "bg-inverse-fg/10" : "bg-surface-soft group-hover:bg-surface-soft"}`}>
               <item.icon size={17} />
             </span>
             {!collapsed && (
               <span className="min-w-0">
                 <span className="block text-sm font-black">{item.label}</span>
-                <span className={`block truncate text-[10px] font-semibold ${active ? "text-white/55" : "text-muted"}`}>{item.caption}</span>
+                <span className={`block truncate text-[10px] font-semibold ${active ? "text-inverse-fg/55" : "text-muted"}`}>{item.caption}</span>
               </span>
             )}
           </Link>

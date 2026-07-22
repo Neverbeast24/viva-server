@@ -99,7 +99,7 @@ function NavGroup({
       >
         <span
           className={`grid size-9 shrink-0 place-items-center rounded-xl transition ${
-            active ? "bg-panel/10" : "bg-surface-soft group-hover:bg-surface-soft"
+            active ? "bg-inverse-fg/10" : "bg-surface-soft group-hover:bg-surface-soft"
           }`}
         >
           <item.icon size={17} />
@@ -107,7 +107,7 @@ function NavGroup({
         {!collapsed && (
           <span className="min-w-0">
             <span className="block text-sm font-black">{item.label}</span>
-            <span className={`block truncate text-[10px] font-semibold ${active ? "text-white/55" : "text-muted"}`}>
+            <span className={`block truncate text-[10px] font-semibold ${active ? "text-inverse-fg/55" : "text-muted"}`}>
               {item.caption}
             </span>
           </span>
@@ -129,12 +129,12 @@ function NavGroup({
           title={collapsed ? item.label : undefined}
           className={`focus-ring group flex min-w-0 flex-1 items-center py-2.5 transition ${
             collapsed ? "justify-center px-2" : "gap-3 px-3"
-          } ${active && open ? "text-ink" : active ? "text-white" : "text-muted hover:text-ink"}`}
+          } ${active && open ? "text-ink" : active ? "text-inverse-fg" : "text-muted hover:text-ink"}`}
         >
           <span
             className={`grid size-9 shrink-0 place-items-center rounded-xl transition ${
               active && !open
-                ? "bg-panel/10"
+                ? "bg-inverse-fg/10"
                 : active
                   ? "bg-accent-soft text-accent"
                   : "bg-surface-soft group-hover:bg-surface-soft"
@@ -147,7 +147,7 @@ function NavGroup({
               <span className="block text-sm font-black">{item.label}</span>
               <span
                 className={`block truncate text-[10px] font-semibold ${
-                  active && !open ? "text-white/55" : "text-muted"
+                  active && !open ? "text-inverse-fg/55" : "text-muted"
                 }`}
               >
                 {item.caption}
@@ -161,7 +161,7 @@ function NavGroup({
             onClick={onToggle}
             aria-label={`${open ? "Collapse" : "Expand"} ${item.label}`}
             className={`mr-2 grid size-8 shrink-0 place-items-center rounded-xl transition ${
-              active && !open ? "text-white/80 hover:bg-panel/10" : "text-muted hover:bg-panel"
+              active && !open ? "text-inverse-fg/80 hover:bg-inverse-fg/10" : "text-muted hover:bg-panel"
             }`}
           >
             <ChevronDown size={16} className={`transition ${open ? "rotate-180" : ""}`} />

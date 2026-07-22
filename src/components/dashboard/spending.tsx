@@ -191,7 +191,7 @@ export function SpendingOverview({
         highlight="budget."
         action={
           <PrimaryButton disabled={coaching} onClick={coach} className="rounded-full px-5">
-            <Sparkles size={14} className="mr-1.5" />
+            <Sparkles size={14} className="shrink-0" />
             {coaching ? "Coaching…" : "Budget coach"}
           </PrimaryButton>
         }
@@ -251,7 +251,7 @@ export function SpendingOverview({
             }
           />
           <div className="mt-4 flex flex-wrap gap-2">
-            <Link href="/dashboard/spending/budget">
+            <Link href="/dashboard/spending/budget" className="inline-flex">
               <PrimaryButton className="rounded-full px-5">Edit monthly budget</PrimaryButton>
             </Link>
             <Link
@@ -263,7 +263,7 @@ export function SpendingOverview({
           </div>
         </Panel>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div className="mt-4 grid gap-2 sm:grid-cols-3">
           {[
             {
               href: "/dashboard/spending/log",
@@ -287,13 +287,13 @@ export function SpendingOverview({
             <Link
               key={card.href}
               href={card.href}
-              className="rounded-[1.4rem] border border-ink/8 bg-card p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-accent/25 hover:shadow-md"
+              title={card.detail}
+              className="inline-flex items-center gap-2.5 rounded-full border border-ink/8 bg-card px-4 py-2.5 text-sm font-black shadow-sm transition hover:-translate-y-0.5 hover:border-accent/25 hover:shadow-md"
             >
-              <span className="grid size-10 place-items-center rounded-xl bg-accent-soft text-accent">
-                <card.icon size={18} />
+              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
+                <card.icon size={15} />
               </span>
-              <p className="mt-4 text-sm font-black">{card.title}</p>
-              <p className="mt-1 text-xs leading-5 text-muted">{card.detail}</p>
+              <span className="truncate">{card.title}</span>
             </Link>
           ))}
         </div>
@@ -567,9 +567,9 @@ export function SpendingSheet({
         title="Sheet"
         highlight="ledger."
         action={
-          <Link href="/dashboard/spending/log">
+          <Link href="/dashboard/spending/log" className="inline-flex">
             <PrimaryButton className="rounded-full px-5">
-              <Plus size={14} className="mr-1.5" />
+              <Plus size={14} />
               Log expense
             </PrimaryButton>
           </Link>

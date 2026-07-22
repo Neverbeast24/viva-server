@@ -318,7 +318,7 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
             onClick={recommendMachines}
             className="rounded-full bg-accent px-5"
           >
-            <Cog size={14} className="mr-1.5 inline" />
+            <Cog size={14} className="shrink-0" />
             {recommending ? "Matching…" : "AI machine picks"}
           </PrimaryButton>
         }
@@ -548,7 +548,7 @@ export function GymPlansView({
         highlight="fit you."
         action={
           <PrimaryButton disabled={planning} onClick={generatePlan} className="rounded-full px-5">
-            <Sparkles size={14} className="mr-1.5 inline" />
+            <Sparkles size={14} className="shrink-0" />
             {planning ? "Building plan…" : "Generate AI plan"}
           </PrimaryButton>
         }

@@ -409,7 +409,7 @@ export function NutritionView({
                   onClick={estimate}
                   className="ml-auto"
                 >
-                  <Camera size={14} className="mr-1.5 inline" />
+                  <Camera size={14} className="shrink-0" />
                   {estimating ? "Estimating…" : "Estimate for me"}
                 </PrimaryButton>
               </div>

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { estimateGroceryPrice } from "@/lib/groceries/ph-price-catalog";
 import { createClient } from "@/lib/supabase/server";
 
 const itemSchema = z.object({
@@ -10,6 +11,7 @@ const itemSchema = z.object({
   category: z
     .enum(["produce", "protein", "dairy", "grains", "pantry", "snacks", "drinks", "household", "other"])
     .default("other"),
+  estimated_price: z.coerce.number().min(0).max(50000).optional(),
 });
 
 export async function addGroceryItem(formData: FormData) {
@@ -17,6 +19,7 @@ export async function addGroceryItem(formData: FormData) {
     name: formData.get("name"),
     quantity: formData.get("quantity") || undefined,
     category: formData.get("category") || "other",
+    estimated_price: formData.get("estimated_price") || undefined,
   });
   if (!parsed.success) return { ok: false, message: "Enter an item name." };
 
@@ -26,11 +29,17 @@ export async function addGroceryItem(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, message: "Not signed in." };
 
+  const estimatedPrice =
+    parsed.data.estimated_price != null && !Number.isNaN(parsed.data.estimated_price)
+      ? Math.round(parsed.data.estimated_price)
+      : estimateGroceryPrice(parsed.data.name, parsed.data.quantity, parsed.data.category);
+
   const { error } = await supabase.from("grocery_items").insert({
     user_id: user.id,
     name: parsed.data.name,
     quantity: parsed.data.quantity ?? null,
     category: parsed.data.category,
+    estimated_price: estimatedPrice,
   });
   if (error) return { ok: false, message: error.message };
 

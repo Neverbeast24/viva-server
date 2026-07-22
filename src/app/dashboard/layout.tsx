@@ -32,7 +32,7 @@ export default async function DashboardLayout({
       .limit(30),
     supabase
       .from("user_settings")
-      .select("notifications_enabled")
+      .select("notifications_enabled, theme")
       .eq("user_id", user.id)
       .maybeSingle(),
   ]);
@@ -57,6 +57,7 @@ export default async function DashboardLayout({
       isSuperAdmin={isSuperAdmin(profile?.role as UserRole)}
       notifications={notifications ?? []}
       pushEnabled={settings?.notifications_enabled ?? true}
+      theme={settings?.theme ?? null}
     >
       {children}
     </DashboardShell>

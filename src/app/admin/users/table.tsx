@@ -18,10 +18,10 @@ export function UsersTable({
   const viewerIsSuper = viewerRole === "super_admin";
 
   return (
-    <div className="overflow-hidden rounded-[1.6rem] border border-[#14221b]/8 bg-[#f6faf7]/85 shadow-sm">
+    <div className="overflow-hidden rounded-[1.6rem] border border-ink/8 bg-card/85 shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[760px] text-left text-sm">
-          <thead className="border-b border-[#14221b]/8 bg-[#e8efe9]/70 text-xs font-black tracking-wide text-[#6f8077]">
+          <thead className="border-b border-ink/8 bg-surface/70 text-xs font-black tracking-wide text-muted">
             <tr>
               <th className="px-5 py-4">ID</th>
               <th className="px-5 py-4">Name</th>
@@ -39,12 +39,12 @@ export function UsersTable({
               const canEditThisStatus = viewerIsSuper || !targetIsSuper;
 
               return (
-                <tr key={user.user_id} className="border-b border-black/5 last:border-0">
-                  <td className="px-5 py-4 font-mono text-[11px] text-[#7a8a81]">
+                <tr key={user.user_id} className="border-b border-ink/5 last:border-0">
+                  <td className="px-5 py-4 font-mono text-[11px] text-muted">
                     {user.user_id.slice(0, 8)}…
                   </td>
                   <td className="px-5 py-4 font-bold">{user.display_name}</td>
-                  <td className="px-5 py-4 text-[#55665d]">{user.email ?? "—"}</td>
+                  <td className="px-5 py-4 text-muted">{user.email ?? "—"}</td>
                   <td className="px-5 py-4">
                     <RoleSelect
                       key={`${user.user_id}-role-${user.role}`}
@@ -62,7 +62,7 @@ export function UsersTable({
                       canManage={canEditThisStatus}
                     />
                   </td>
-                  <td className="px-5 py-4 text-[#6f8077]">
+                  <td className="px-5 py-4 text-muted">
                     {new Date(user.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-5 py-4">
@@ -101,7 +101,7 @@ function UserActions({
             toast.error("Could not copy user ID");
           }
         }}
-        className="focus-ring inline-flex items-center gap-1 rounded-lg border border-[#14221b]/10 bg-white/70 px-2.5 py-1.5 text-[11px] font-bold text-[#0e7c66] transition hover:bg-[#d7efe6]"
+        className="focus-ring inline-flex items-center gap-1 rounded-lg border border-ink/10 bg-panel/70 px-2.5 py-1.5 text-[11px] font-bold text-accent transition hover:bg-accent-soft"
       >
         <Copy size={12} /> ID
       </button>
@@ -118,8 +118,8 @@ function UserActions({
         }}
         className={`focus-ring inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 text-[11px] font-bold transition disabled:opacity-60 ${
           nextStatus === "suspended"
-            ? "border-[#c45c2a]/20 bg-[#f8ece4] text-[#a84b22] hover:bg-[#ffe4d4]"
-            : "border-[#26bea9]/25 bg-[#e6faf6] text-[#0f8f80] hover:bg-[#d7f5ef]"
+            ? "border-ember/20 bg-ember/15 text-ember hover:bg-[#ffe4d4]"
+            : "border-[#26bea9]/25 bg-accent-soft text-accent hover:bg-[#d7f5ef]"
         }`}
       >
         {nextStatus === "suspended" ? <ShieldBan size={12} /> : <ShieldCheck size={12} />}
@@ -165,7 +165,7 @@ function RoleSelect({
           }
         });
       }}
-      className="rounded-xl border border-[#14221b]/10 bg-[#e8efe9]/70 px-2 py-1.5 text-xs font-bold outline-none focus:border-[#0e7c66]/45"
+      className="rounded-xl border border-ink/10 bg-surface/70 px-2 py-1.5 text-xs font-bold outline-none focus:border-accent/45"
     >
       {roleOptions.map(([optionValue, label]) => (
         <option key={optionValue} value={optionValue}>
@@ -206,7 +206,7 @@ function StatusSelect({
           }
         });
       }}
-      className="rounded-xl border border-[#14221b]/10 bg-[#e8efe9]/70 px-2 py-1.5 text-xs font-bold capitalize outline-none focus:border-[#0e7c66]/45"
+      className="rounded-xl border border-ink/10 bg-surface/70 px-2 py-1.5 text-xs font-bold capitalize outline-none focus:border-accent/45"
     >
       <option value="active">Active</option>
       <option value="suspended">Suspended</option>

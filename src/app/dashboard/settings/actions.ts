@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { z } from "zod";
 import { writeAuditLog } from "@/lib/audit";
 import { createClient } from "@/lib/supabase/server";
+import { THEME_COOKIE } from "@/lib/theme";
 
 const settingsSchema = z.object({
   theme: z.enum(["light", "dark", "system"]),
@@ -33,6 +35,13 @@ export async function saveSettings(formData: FormData) {
     updated_at: new Date().toISOString(),
   });
   if (error) return { ok: false, message: error.message };
+
+  const cookieStore = await cookies();
+  cookieStore.set(THEME_COOKIE, parsed.data.theme, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+  });
 
   revalidatePath("/dashboard/settings");
   await writeAuditLog({

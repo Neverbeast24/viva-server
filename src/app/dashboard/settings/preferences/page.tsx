@@ -18,7 +18,7 @@ export default async function PreferencesSettingsPage() {
     <SettingsView
       section="preferences"
       settings={{
-        theme: data?.theme ?? "light",
+        theme: data?.theme ?? "system",
         notifications_enabled: data?.notifications_enabled ?? true,
         weekly_report_enabled: data?.weekly_report_enabled ?? true,
         timezone: data?.timezone ?? "Asia/Manila",

@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  AlertTriangle,
   Apple,
   BrainCircuit,
   ClipboardList,
@@ -10,11 +11,13 @@ import {
   History,
   LayoutDashboard,
   LifeBuoy,
+  PackagePlus,
   Play,
   Refrigerator,
   Settings2,
   ShoppingBasket,
   Sparkles,
+  Tags,
   Target,
   UserRound,
   WalletCards,
@@ -86,12 +89,25 @@ export const dashboardNav: NavItem[] = [
     label: "Pantry",
     caption: "Stock at a glance",
     href: "/dashboard/pantry",
+    children: [
+      { label: "Overview", href: "/dashboard/pantry", caption: "Stock pulse" },
+      { label: "All items", href: "/dashboard/pantry/items", caption: "Full inventory" },
+      { label: "Categories", href: "/dashboard/pantry/categories", caption: "Browse by type" },
+      { label: "Low stock", href: "/dashboard/pantry/low-stock", caption: "Needs restock" },
+      { label: "Add item", href: "/dashboard/pantry/add", caption: "Log new stock" },
+    ],
   },
   {
     icon: WalletCards,
     label: "Spending",
-    caption: "Wellness budget",
+    caption: "Monthly budget",
     href: "/dashboard/spending",
+    children: [
+      { label: "Overview", href: "/dashboard/spending", caption: "This month" },
+      { label: "Log expense", href: "/dashboard/spending/log", caption: "Add a purchase" },
+      { label: "Sheet view", href: "/dashboard/spending/sheet", caption: "Excel-style ledger" },
+      { label: "Monthly budget", href: "/dashboard/spending/budget", caption: "Edit monthly amount" },
+    ],
   },
   {
     icon: FileBarChart,
@@ -145,11 +161,28 @@ export const settingsSubNav = [
   { href: "/dashboard/settings/preferences", label: "Preferences", icon: HeartPulse },
 ] as const;
 
+export const spendingSubNav = [
+  { href: "/dashboard/spending", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/spending/log", label: "Log", icon: WalletCards },
+  { href: "/dashboard/spending/sheet", label: "Sheet", icon: FileBarChart },
+  { href: "/dashboard/spending/budget", label: "Monthly budget", icon: Target },
+] as const;
+
+export const pantrySubNav = [
+  { href: "/dashboard/pantry", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/pantry/items", label: "Items", icon: Refrigerator },
+  { href: "/dashboard/pantry/categories", label: "Categories", icon: Tags },
+  { href: "/dashboard/pantry/low-stock", label: "Low stock", icon: AlertTriangle },
+  { href: "/dashboard/pantry/add", label: "Add", icon: PackagePlus },
+] as const;
+
 export function pathMatches(pathname: string, href: string) {
   if (href === "/dashboard") return pathname === "/dashboard";
   if (href === "/dashboard/gym") return pathname === "/dashboard/gym";
   if (href === "/dashboard/nutrition") return pathname === "/dashboard/nutrition";
   if (href === "/dashboard/movement") return pathname === "/dashboard/movement";
+  if (href === "/dashboard/pantry") return pathname === "/dashboard/pantry";
+  if (href === "/dashboard/spending") return pathname === "/dashboard/spending";
   if (href === "/dashboard/ai") return pathname === "/dashboard/ai";
   if (href === "/dashboard/settings") return pathname === "/dashboard/settings";
   return pathname === href || pathname.startsWith(`${href}/`);

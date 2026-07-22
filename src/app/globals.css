@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  /* Opt out of browser forced/auto dark mode, which inverts backgrounds and
-     breaks contrast (e.g. dark text on dark buttons). */
-  color-scheme: light only;
+  color-scheme: light;
 
   /* VIVA botanical palette — jade, forest ink, sea-glass (not cream/violet). */
   --ink: #14221b;
@@ -17,7 +17,80 @@
   --paper: #e7eee9;
   --card: #f6faf7;
   --line: rgba(20, 34, 27, 0.11);
+  --surface: #e8efe9;
   --surface-soft: #dce8e1;
+  --panel: #ffffff;
+  --inverse: #14221b;
+  --inverse-fg: #ffffff;
+  /* Always-dark forest fills for featured panels / intentional contrast blocks. */
+  --solid: #14221b;
+  --solid-fg: #ffffff;
+  --warm: #eae4d6;
+  --body-0: #eef4f0;
+  --body-1: #e3ebe5;
+  --glow-accent: rgba(14, 124, 102, 0.12);
+  --glow-cyan: rgba(42, 157, 143, 0.1);
+  --glow-ember: rgba(196, 92, 42, 0.05);
+  --glass-bg: rgba(246, 250, 247, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.72);
+  --glass-shadow: rgba(20, 34, 27, 0.1);
+  --glass-inset: rgba(255, 255, 255, 0.75);
+  --shadow-color: 20, 34, 27;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --ink: #e8f0eb;
+  --muted: #9aaba2;
+  --violet: #3db896;
+  --accent: #3db896;
+  --accent-soft: #1a3d34;
+  --accent-deep: #2a9d8f;
+  --ember: #e07a4a;
+  --cyan: #4ec4b6;
+  --paper: #0f1612;
+  --card: #17201a;
+  --line: rgba(232, 240, 235, 0.12);
+  --surface: #1c2620;
+  --surface-soft: #24302a;
+  --panel: #1c2620;
+  --inverse: #e8f0eb;
+  --inverse-fg: #0f1612;
+  --solid: #0a100d;
+  --solid-fg: #e8f0eb;
+  --warm: #2a322c;
+  --body-0: #0c1210;
+  --body-1: #121a16;
+  --glow-accent: rgba(61, 184, 150, 0.14);
+  --glow-cyan: rgba(78, 196, 182, 0.1);
+  --glow-ember: rgba(224, 122, 74, 0.08);
+  --glass-bg: rgba(23, 32, 26, 0.82);
+  --glass-border: rgba(232, 240, 235, 0.1);
+  --glass-shadow: rgba(0, 0, 0, 0.45);
+  --glass-inset: rgba(255, 255, 255, 0.04);
+  --shadow-color: 0, 0, 0;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-deep: var(--accent-deep);
+  --color-ember: var(--ember);
+  --color-cyan: var(--cyan);
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-panel: var(--panel);
+  --color-inverse: var(--inverse);
+  --color-inverse-fg: var(--inverse-fg);
+  --color-solid: var(--solid);
+  --color-solid-fg: var(--solid-fg);
+  --color-warm: var(--warm);
 }
 
 /* Element defaults live in the base layer so Tailwind utilities (e.g.
@@ -36,10 +109,10 @@
     margin: 0;
     color: var(--ink);
     background:
-      radial-gradient(circle at 8% 0%, rgba(14, 124, 102, 0.12), transparent 28rem),
-      radial-gradient(circle at 92% 6%, rgba(42, 157, 143, 0.1), transparent 24rem),
-      radial-gradient(circle at 48% 100%, rgba(196, 92, 42, 0.05), transparent 28rem),
-      linear-gradient(180deg, #eef4f0 0%, var(--paper) 45%, #e3ebe5 100%);
+      radial-gradient(circle at 8% 0%, var(--glow-accent), transparent 28rem),
+      radial-gradient(circle at 92% 6%, var(--glow-cyan), transparent 24rem),
+      radial-gradient(circle at 48% 100%, var(--glow-ember), transparent 28rem),
+      linear-gradient(180deg, var(--body-0) 0%, var(--paper) 45%, var(--body-1) 100%);
     font-family: var(--font-body), "Segoe UI", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
@@ -53,6 +126,11 @@
   a {
     color: inherit;
     text-decoration: none;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 35%, transparent);
+    color: var(--ink);
   }
 }
 
@@ -75,11 +153,11 @@
   }
 
   .glass {
-    background: rgba(246, 250, 247, 0.78);
-    border: 1px solid rgba(255, 255, 255, 0.72);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     box-shadow:
-      0 24px 80px rgba(20, 34, 27, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.75);
+      0 24px 80px var(--glass-shadow),
+      inset 0 1px 0 var(--glass-inset);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
@@ -99,15 +177,19 @@
     pointer-events: none;
   }
 
+  .dark .noise::after {
+    opacity: 0.1;
+  }
+
   .gradient-text {
     color: transparent;
-    background: linear-gradient(115deg, #0a5c4c 8%, #0e7c66 42%, #2a9d8f 78%, #c45c2a 100%);
+    background: linear-gradient(115deg, var(--accent-deep) 8%, var(--accent) 42%, var(--cyan) 78%, var(--ember) 100%);
     background-clip: text;
     -webkit-background-clip: text;
   }
 
   .focus-ring:focus-visible {
-    outline: 3px solid rgba(14, 124, 102, 0.28);
+    outline: 3px solid color-mix(in srgb, var(--accent) 28%, transparent);
     outline-offset: 3px;
   }
 
@@ -131,7 +213,7 @@
 
   .hover-lift:hover {
     transform: translateY(-4px);
-    box-shadow: 0 22px 50px rgba(20, 34, 27, 0.12);
+    box-shadow: 0 22px 50px rgba(var(--shadow-color), 0.12);
   }
 
   .animate-marquee {

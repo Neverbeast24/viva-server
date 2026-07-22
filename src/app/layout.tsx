@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Instrument_Serif, Space_Grotesk } from "next/font/google";
+import { cookies } from "next/headers";
 import { Providers } from "@/components/providers";
+import { THEME_COOKIE, isThemePreference, themeBootScript } from "@/lib/theme";
 import "./globals.css";
 
 const displayFont = Bricolage_Grotesque({
@@ -21,7 +23,11 @@ const bodyFont = Space_Grotesk({
 });
 
 export const viewport: Viewport = {
-  colorScheme: "light",
+  colorScheme: "dark light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#eef4f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c1210" },
+  ],
 };
 
 export const metadata: Metadata = {
@@ -36,17 +42,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const cookieStore = await cookies();
+  const cookieTheme = cookieStore.get(THEME_COOKIE)?.value;
+  const initialTheme = isThemePreference(cookieTheme) ? cookieTheme : null;
+
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       data-scroll-behavior="smooth"
       className={`${displayFont.variable} ${accentFont.variable} ${bodyFont.variable}`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+      </head>
       <body>
-        <Providers>{children}</Providers>
+        <Providers initialTheme={initialTheme}>{children}</Providers>
       </body>
     </html>
   );

@@ -36,7 +36,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
           <SocialAuth next={safeNext} />
 
-          <p className="mt-6 text-center text-[11px] leading-5 text-[#7a8a81]">
+          <p className="mt-6 text-center text-[11px] leading-5 text-muted">
             By continuing, you agree to use VIVRΛNT for wellness guidance only.
             It does not replace professional medical care.
           </p>

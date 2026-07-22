@@ -283,27 +283,27 @@ export function NutritionView({
 
       {mode === "log" && (
         <>
-          <Panel title="No scale needed" className="mb-4" right={<Hand size={16} className="text-[#0e7c66]" />}>
+          <Panel title="No scale needed" className="mb-4" right={<Hand size={16} className="text-accent" />}>
             <p className="text-sm leading-6 text-[#4a5a52]">
               You don’t need exact numbers. Pick a quick meal, describe what you ate, or snap a
               photo — we fill approximate calories and protein for you. Trends matter more than
               perfect grams.
             </p>
-            <ul className="mt-3 grid gap-2 text-xs leading-5 text-[#6a7a71] sm:grid-cols-3">
-              <li className="rounded-xl bg-[#e8efe9]/70 px-3 py-2">
-                <span className="font-black text-[#0e7c66]">Palm</span> ≈ protein serving
+            <ul className="mt-3 grid gap-2 text-xs leading-5 text-muted sm:grid-cols-3">
+              <li className="rounded-xl bg-surface/70 px-3 py-2">
+                <span className="font-black text-accent">Palm</span> ≈ protein serving
               </li>
-              <li className="rounded-xl bg-[#e8efe9]/70 px-3 py-2">
-                <span className="font-black text-[#0e7c66]">Fist</span> ≈ carbs / rice / pasta
+              <li className="rounded-xl bg-surface/70 px-3 py-2">
+                <span className="font-black text-accent">Fist</span> ≈ carbs / rice / pasta
               </li>
-              <li className="rounded-xl bg-[#e8efe9]/70 px-3 py-2">
-                <span className="font-black text-[#0e7c66]">Thumb</span> ≈ fats / oils / nuts
+              <li className="rounded-xl bg-surface/70 px-3 py-2">
+                <span className="font-black text-accent">Thumb</span> ≈ fats / oils / nuts
               </li>
             </ul>
           </Panel>
 
           <Panel title="1. Portion size" className="mb-4">
-            <p className="mb-3 text-xs text-[#6a7a71]">
+            <p className="mb-3 text-xs text-muted">
               Compared to your usual plate — this scales quick picks and AI estimates.
             </p>
             <div className="flex flex-wrap gap-2">
@@ -320,8 +320,8 @@ export function NutritionView({
                   onClick={() => choosePortion(value)}
                   className={`focus-ring rounded-xl border px-3.5 py-2.5 text-xs font-black transition ${
                     portion === value
-                      ? "border-[#0e7c66]/35 bg-[#0e7c66] text-white"
-                      : "border-[#14221b]/10 bg-[#e8efe9]/70 text-[#0e7c66] hover:bg-white"
+                      ? "border-accent/35 bg-accent text-white"
+                      : "border-ink/10 bg-surface/70 text-accent hover:bg-panel"
                   }`}
                 >
                   {label}
@@ -331,7 +331,7 @@ export function NutritionView({
           </Panel>
 
           <Panel title="2. Quick meals" className="mb-4">
-            <p className="mb-3 text-xs text-[#6a7a71]">
+            <p className="mb-3 text-xs text-muted">
               One tap fills rough macros. No weighing, no labels.
             </p>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -340,11 +340,11 @@ export function NutritionView({
                   key={meal.name}
                   type="button"
                   onClick={() => pickQuickMeal(meal)}
-                  className="focus-ring rounded-2xl border border-[#14221b]/8 bg-[#f6faf7]/80 px-3.5 py-3 text-left transition hover:border-[#0e7c66]/25 hover:bg-white"
+                  className="focus-ring rounded-2xl border border-ink/8 bg-card/80 px-3.5 py-3 text-left transition hover:border-accent/25 hover:bg-panel"
                 >
-                  <span className="block text-sm font-black text-[#14221b]">{meal.name}</span>
-                  <span className="mt-0.5 block text-[11px] text-[#6a7a71]">{meal.hint}</span>
-                  <span className="mt-2 block text-[11px] font-bold text-[#0e7c66]">
+                  <span className="block text-sm font-black text-ink">{meal.name}</span>
+                  <span className="mt-0.5 block text-[11px] text-muted">{meal.hint}</span>
+                  <span className="mt-2 block text-[11px] font-bold text-accent">
                     ~{scaleMacros(meal, portion).calories} kcal · ~
                     {scaleMacros(meal, portion).protein_g}g protein
                   </span>
@@ -356,7 +356,7 @@ export function NutritionView({
           <Panel
             title="3. Or describe / photo"
             className="mb-4"
-            right={<Sparkles size={16} className="text-[#0e7c66]" />}
+            right={<Sparkles size={16} className="text-accent" />}
           >
             <div className="space-y-3">
               <FormField label="What did you eat?" hint="Plain language is enough">
@@ -380,7 +380,7 @@ export function NutritionView({
                 <button
                   type="button"
                   onClick={() => photoRef.current?.click()}
-                  className="focus-ring inline-flex items-center gap-2 rounded-xl border border-[#14221b]/10 bg-[#e8efe9]/70 px-3.5 py-2.5 text-xs font-black text-[#0e7c66] transition hover:bg-white"
+                  className="focus-ring inline-flex items-center gap-2 rounded-xl border border-ink/10 bg-surface/70 px-3.5 py-2.5 text-xs font-black text-accent transition hover:bg-panel"
                 >
                   <ImagePlus size={15} />
                   {photoFile ? "Change photo" : "Attach meal photo"}
@@ -391,12 +391,12 @@ export function NutritionView({
                     <img
                       src={photoPreview}
                       alt="Meal preview"
-                      className="size-14 rounded-xl border border-[#14221b]/8 object-cover"
+                      className="size-14 rounded-xl border border-ink/8 object-cover"
                     />
                     <button
                       type="button"
                       onClick={clearPhoto}
-                      className="absolute -right-1.5 -top-1.5 grid size-6 place-items-center rounded-full bg-[#14221b] text-white"
+                      className="absolute -right-1.5 -top-1.5 grid size-6 place-items-center rounded-full bg-inverse text-inverse-fg"
                       aria-label="Remove photo"
                     >
                       <X size={12} />
@@ -414,10 +414,10 @@ export function NutritionView({
                 </PrimaryButton>
               </div>
 
-              <p className="text-xs leading-5 text-[#6a7a71]">
+              <p className="text-xs leading-5 text-muted">
                 AI returns approximate macros for your {portion} portion. Review below, then log.
               </p>
-              {tip && <p className="text-sm font-semibold text-[#0e7c66]">{tip}</p>}
+              {tip && <p className="text-sm font-semibold text-accent">{tip}</p>}
             </div>
           </Panel>
 
@@ -426,7 +426,7 @@ export function NutritionView({
             className="mb-4"
             right={
               estimateSource ? (
-                <span className="rounded-full bg-[#d7efe6] px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-[#0e7c66]">
+                <span className="rounded-full bg-accent-soft px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-accent">
                   {estimateSource === "ai" ? "AI estimate" : "Quick estimate"}
                 </span>
               ) : null
@@ -503,7 +503,7 @@ export function NutritionView({
                   className={fieldClass}
                 />
               </FormField>
-              <p className="text-xs leading-5 text-[#6a7a71] sm:col-span-2 lg:col-span-6">
+              <p className="text-xs leading-5 text-muted sm:col-span-2 lg:col-span-6">
                 Leave macros blank only if you just want the meal name on your log. Prefer a quick
                 meal or estimate so your daily totals stay useful.
               </p>
@@ -523,7 +523,7 @@ export function NutritionView({
               value={String(totalCalories)}
               detail={`${meals.length} meals · ${Math.round(totalProtein)}g protein`}
               icon={Flame}
-              className="bg-gradient-to-br from-[#0a5c4c] to-[#0e7c66] text-white"
+              className="bg-gradient-to-br from-accent-deep to-accent text-white"
             />
             <StatCard
               label="Water"
@@ -535,23 +535,23 @@ export function NutritionView({
                   : `${Math.max(0, Math.round(waterGoal * 1000 - waterMl))} ml to go`
               }
               icon={Droplets}
-              className="bg-[#e8fbf8] text-[#183d3a]"
+              className="bg-accent-soft text-accent-deep"
             />
             <StatCard
               label="Diet quality"
               value={`${dietScore}%`}
               detail={meals.length ? "Based on today’s logs" : "Log a meal to score"}
               icon={Apple}
-              className="bg-[#fff3e8] text-[#533621]"
+              className="bg-ember/10 text-ember"
             />
           </div>
 
           <Panel
             title="Log water"
             className="mt-4"
-            right={<Droplets size={16} className="text-[#0e7c66]" />}
+            right={<Droplets size={16} className="text-accent" />}
           >
-            <p className="mb-3 text-xs leading-5 text-[#6a7a71]">
+            <p className="mb-3 text-xs leading-5 text-muted">
               Tap a glass or bottle — no need to measure milliliters yourself.
             </p>
             <div className="flex flex-wrap gap-2">
@@ -561,10 +561,10 @@ export function NutritionView({
                   type="button"
                   disabled={addingWater}
                   onClick={() => logWater(preset.amount_ml)}
-                  className="focus-ring rounded-xl border border-[#14221b]/10 bg-[#e8fbf8] px-3.5 py-2.5 text-xs font-black text-[#183d3a] transition hover:bg-white disabled:opacity-60"
+                  className="focus-ring rounded-xl border border-ink/10 bg-accent-soft px-3.5 py-2.5 text-xs font-black text-accent-deep transition hover:bg-panel disabled:opacity-60"
                 >
                   {preset.label}
-                  <span className="ml-1.5 font-semibold text-[#6a7a71]">{preset.detail}</span>
+                  <span className="ml-1.5 font-semibold text-muted">{preset.detail}</span>
                 </button>
               ))}
             </div>
@@ -590,7 +590,7 @@ export function NutritionView({
                             else toast.error(result.message);
                           })
                         }
-                        className="grid size-8 place-items-center rounded-lg text-[#8a9a91] transition hover:bg-[#f8ece4] hover:text-[#c45c2a]"
+                        className="grid size-8 place-items-center rounded-lg text-muted transition hover:bg-ember/15 hover:text-ember"
                         aria-label={`Delete ${meal.meal_name}`}
                       >
                         <Trash2 size={14} />

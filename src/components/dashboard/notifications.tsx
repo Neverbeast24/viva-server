@@ -77,7 +77,7 @@ export function Notifications({ items }: { items: NotificationItem[] }) {
         whileTap={{ scale: 0.92 }}
         aria-label="Notifications"
         onClick={() => setOpen((value) => !value)}
-        className="focus-ring relative grid size-10 place-items-center rounded-full bg-[#f6faf7] text-[#4f5f56] shadow-sm transition hover:-translate-y-0.5"
+        className="focus-ring relative grid size-10 place-items-center rounded-full bg-card text-muted shadow-sm transition hover:-translate-y-0.5"
       >
         <Bell size={17} />
         {unread > 0 && (
@@ -100,12 +100,12 @@ export function Notifications({ items }: { items: NotificationItem[] }) {
                 <button
                   type="button"
                   onClick={onMarkAll}
-                  className="rounded-full bg-[#d7efe6] px-2.5 py-1 text-[10px] font-bold text-[#0e7c66] transition hover:bg-[#c5e8db]"
+                  className="rounded-full bg-accent-soft px-2.5 py-1 text-[10px] font-bold text-accent transition hover:bg-accent-soft"
                 >
                   Mark {unread} read
                 </button>
               ) : (
-                <span className="px-2 py-1 text-[10px] font-bold text-[#7e8e85]">All read</span>
+                <span className="px-2 py-1 text-[10px] font-bold text-muted">All read</span>
               )}
             </div>
             <div className="mt-2 max-h-80 space-y-1 overflow-y-auto">
@@ -114,27 +114,27 @@ export function Notifications({ items }: { items: NotificationItem[] }) {
                   key={item.id}
                   type="button"
                   onClick={() => onRead(item.id, item.href)}
-                  className={`relative flex w-full items-start gap-3 rounded-xl p-2.5 text-left transition hover:bg-[#f6faf7]/85 ${
-                    !item.is_read ? "bg-white/45" : "opacity-65"
+                  className={`relative flex w-full items-start gap-3 rounded-xl p-2.5 text-left transition hover:bg-card/85 ${
+                    !item.is_read ? "bg-panel/45" : "opacity-65"
                   }`}
                 >
-                  <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#d7efe6] text-[#0e7c66]">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
                     <Sparkles size={16} />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-xs font-bold">{item.title}</span>
-                    <span className="block truncate text-[11px] text-[#6a7a71]">{item.body}</span>
+                    <span className="block truncate text-[11px] text-muted">{item.body}</span>
                   </span>
-                  <span className="shrink-0 text-[10px] text-[#8a9a91]">
+                  <span className="shrink-0 text-[10px] text-muted">
                     {timeAgo(item.created_at)}
                   </span>
                   {!item.is_read && (
-                    <span className="absolute right-2 top-2 size-1.5 rounded-full bg-[#0e7c66]" />
+                    <span className="absolute right-2 top-2 size-1.5 rounded-full bg-accent" />
                   )}
                 </button>
               ))}
               {!rows.length && (
-                <p className="rounded-xl border border-dashed border-[#14221b]/10 px-3 py-8 text-center text-xs text-[#7a8a81]">
+                <p className="rounded-xl border border-dashed border-ink/10 px-3 py-8 text-center text-xs text-muted">
                   No notifications yet. Ticket updates, admin broadcasts, and VIVRΛNT alerts will show here.
                 </p>
               )}

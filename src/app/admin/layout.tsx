@@ -20,7 +20,7 @@ export default async function AdminLayout({
       .limit(30),
     supabase
       .from("user_settings")
-      .select("notifications_enabled")
+      .select("notifications_enabled, theme")
       .eq("user_id", user.id)
       .maybeSingle(),
   ]);
@@ -31,6 +31,7 @@ export default async function AdminLayout({
       isSuperAdmin={isSuperAdmin(profile?.role as UserRole)}
       notifications={notifications ?? []}
       pushEnabled={settings?.notifications_enabled ?? true}
+      theme={settings?.theme ?? null}
     >
       {children}
     </AdminShell>

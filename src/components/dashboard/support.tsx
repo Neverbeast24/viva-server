@@ -27,10 +27,10 @@ export type SupportTicket = {
 };
 
 const STATUS_STYLE: Record<string, string> = {
-  open: "bg-[#fff3e8] text-[#c45c2a]",
+  open: "bg-ember/10 text-ember",
   in_progress: "bg-[#e8f0ff] text-[#3b6fd8]",
-  resolved: "bg-[#d7efe6] text-[#0e7c66]",
-  closed: "bg-[#e8efe9] text-[#6a7a71]",
+  resolved: "bg-accent-soft text-accent",
+  closed: "bg-surface text-muted",
 };
 
 function statusLabel(status: string) {
@@ -56,7 +56,7 @@ export function SupportView({ tickets }: { tickets: SupportTicket[] }) {
       <Panel
         title="Submit a ticket"
         className="mb-4"
-        right={<MessageSquarePlus size={16} className="text-[#0e7c66]" />}
+        right={<MessageSquarePlus size={16} className="text-accent" />}
       >
         <form ref={formRef} action={submit} className="grid gap-3 sm:grid-cols-2">
           <FormField label="Category">
@@ -116,18 +116,18 @@ export function SupportView({ tickets }: { tickets: SupportTicket[] }) {
 
       <Panel
         title="Your tickets"
-        right={<LifeBuoy size={16} className="text-[#0e7c66]" />}
+        right={<LifeBuoy size={16} className="text-accent" />}
       >
         <div className="space-y-2">
           {tickets.map((ticket) => (
             <div
               key={ticket.id}
-              className="rounded-2xl border border-[#14221b]/6 bg-[#e8efe9]/45 px-4 py-3"
+              className="rounded-2xl border border-ink/6 bg-surface/45 px-4 py-3"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="text-sm font-bold">{ticket.subject}</p>
-                  <p className="mt-0.5 text-xs capitalize text-[#6a7a71]">
+                  <p className="mt-0.5 text-xs capitalize text-muted">
                     #{ticket.id} · {ticket.category} · {ticket.priority} priority ·{" "}
                     {new Date(ticket.created_at).toLocaleString()}
                   </p>
@@ -140,9 +140,9 @@ export function SupportView({ tickets }: { tickets: SupportTicket[] }) {
                   {statusLabel(ticket.status)}
                 </span>
               </div>
-              <p className="mt-3 text-xs leading-5 text-[#55665d]">{ticket.description}</p>
+              <p className="mt-3 text-xs leading-5 text-muted">{ticket.description}</p>
               {ticket.admin_note && (
-                <p className="mt-3 rounded-xl bg-[#d7efe6]/70 px-3 py-2 text-xs leading-5 text-[#0e7c66]">
+                <p className="mt-3 rounded-xl bg-accent-soft/70 px-3 py-2 text-xs leading-5 text-accent">
                   <span className="font-black">Staff note:</span> {ticket.admin_note}
                 </p>
               )}

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { buildUserContext } from "@/lib/ai/context";
 import { planGroceriesFromPantry } from "@/lib/ai/gemini";
+import { estimateGroceryPrice } from "@/lib/groceries/ph-price-catalog";
 import { createClient } from "@/lib/supabase/server";
 
 const categories = new Set([
@@ -36,7 +37,7 @@ export async function generateSmartGroceryPlan() {
 }
 
 export async function addPlanItemsToList(
-  items: { name: string; category: string; quantity: string }[],
+  items: { name: string; category: string; quantity: string; estimated_price?: number }[],
 ) {
   const supabase = await createClient();
   const {
@@ -45,12 +46,22 @@ export async function addPlanItemsToList(
   if (!user) return { ok: false, message: "Not signed in." };
   if (!items.length) return { ok: false, message: "No items to add." };
 
-  const rows = items.slice(0, 12).map((item) => ({
-    user_id: user.id,
-    name: item.name.slice(0, 120),
-    quantity: item.quantity.slice(0, 40),
-    category: categories.has(item.category) ? item.category : "other",
-  }));
+  const rows = items.slice(0, 12).map((item) => {
+    const category = categories.has(item.category) ? item.category : "other";
+    const quantity = item.quantity.slice(0, 40);
+    const name = item.name.slice(0, 120);
+    const price =
+      item.estimated_price != null && item.estimated_price > 0
+        ? Math.round(item.estimated_price)
+        : estimateGroceryPrice(name, quantity, category);
+    return {
+      user_id: user.id,
+      name,
+      quantity,
+      category,
+      estimated_price: price,
+    };
+  });
 
   const { error } = await supabase.from("grocery_items").insert(rows);
   if (error) return { ok: false, message: error.message };

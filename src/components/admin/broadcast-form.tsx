@@ -23,32 +23,32 @@ export function BroadcastForm({
   return (
     <form
       action={onSubmit}
-      className="rounded-[1.4rem] border border-[#14221b]/8 bg-[#f6faf7] p-5 shadow-sm"
+      className="rounded-[1.4rem] border border-ink/8 bg-card p-5 shadow-sm"
     >
       <div className="grid gap-3 sm:grid-cols-2">
-        <label className="block text-xs font-bold text-[#55665d]">
+        <label className="block text-xs font-bold text-muted">
           Title
           <input
             name="title"
             required
             maxLength={120}
             placeholder="Weekly reminder"
-            className="mt-1.5 w-full rounded-xl border border-[#14221b]/10 bg-white px-3 py-2.5 text-sm font-semibold text-[#1e2f26]"
+            className="mt-1.5 w-full rounded-xl border border-ink/10 bg-panel px-3 py-2.5 text-sm font-semibold text-ink"
           />
         </label>
-        <label className="block text-xs font-bold text-[#55665d]">
+        <label className="block text-xs font-bold text-muted">
           Audience
           <select
             name="target"
             defaultValue="all"
-            className="mt-1.5 w-full rounded-xl border border-[#14221b]/10 bg-white px-3 py-2.5 text-sm font-semibold text-[#1e2f26]"
+            className="mt-1.5 w-full rounded-xl border border-ink/10 bg-panel px-3 py-2.5 text-sm font-semibold text-ink"
           >
             <option value="all">All active members</option>
             <option value="one">One member</option>
           </select>
         </label>
       </div>
-      <label className="mt-3 block text-xs font-bold text-[#55665d]">
+      <label className="mt-3 block text-xs font-bold text-muted">
         Message
         <textarea
           name="body"
@@ -56,15 +56,15 @@ export function BroadcastForm({
           maxLength={500}
           rows={3}
           placeholder="Keep logging meals and movement this week…"
-          className="mt-1.5 w-full rounded-xl border border-[#14221b]/10 bg-white px-3 py-2.5 text-sm font-semibold text-[#1e2f26]"
+          className="mt-1.5 w-full rounded-xl border border-ink/10 bg-panel px-3 py-2.5 text-sm font-semibold text-ink"
         />
       </label>
-      <label className="mt-3 block text-xs font-bold text-[#55665d]">
+      <label className="mt-3 block text-xs font-bold text-muted">
         Member (if one)
         <select
           name="user_id"
           defaultValue=""
-          className="mt-1.5 w-full rounded-xl border border-[#14221b]/10 bg-white px-3 py-2.5 text-sm font-semibold text-[#1e2f26]"
+          className="mt-1.5 w-full rounded-xl border border-ink/10 bg-panel px-3 py-2.5 text-sm font-semibold text-ink"
         >
           <option value="">Select member…</option>
           {members.map((member) => (

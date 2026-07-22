@@ -140,21 +140,21 @@ export function TodayView({ data }: { data: TodayData }) {
                 suffix={data.energy != null ? "/100" : undefined}
                 detail={data.hasCheckin ? "From today’s check-in" : "Check in to start"}
                 icon={Activity}
-                className="bg-gradient-to-br from-[#0a5c4c] to-[#0e7c66] text-white"
+                className="bg-gradient-to-br from-accent-deep to-accent text-white"
               />
               <StatCard
                 label="Daily steps"
                 value={steps.toLocaleString()}
                 detail={`${stepPct}% of ${stepGoal.toLocaleString()} goal`}
                 icon={Waves}
-                className="bg-[#e8fbf8] text-[#183d3a]"
+                className="bg-accent-soft text-accent-deep"
               />
               <StatCard
                 label="Mindful spend"
                 value={`₱${data.spendToday.toLocaleString()}`}
                 detail={data.spendToday === 0 ? "No spend logged today" : "Logged today"}
                 icon={WalletCards}
-                className="bg-[#fff3e8] text-[#533621]"
+                className="bg-ember/10 text-ember"
               />
             </div>
 
@@ -162,7 +162,7 @@ export function TodayView({ data }: { data: TodayData }) {
               <Panel
                 title="Energy this week"
                 right={
-                  <span className="rounded-full bg-[#e8f5f0] px-3 py-1.5 text-xs font-bold text-[#0e7c66]">
+                  <span className="rounded-full bg-accent-soft px-3 py-1.5 text-xs font-bold text-accent">
                     {data.hasCheckin ? "Live" : "Sample-ready"}
                   </span>
                 }
@@ -174,9 +174,9 @@ export function TodayView({ data }: { data: TodayData }) {
                 variants={{ hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0 } }}
                 className="relative overflow-hidden rounded-[1.6rem] bg-[#16352c] p-6 text-white"
               >
-                <div className="absolute -right-10 -top-10 size-36 rounded-full bg-[#0e7c66]/40 blur-3xl" />
+                <div className="absolute -right-10 -top-10 size-36 rounded-full bg-accent/40 blur-3xl" />
                 <div className="relative">
-                  <span className="grid size-10 place-items-center rounded-xl bg-white/10">
+                  <span className="grid size-10 place-items-center rounded-xl bg-panel/10">
                     <Moon size={19} className="text-[#7ec8b8]" />
                   </span>
                   <p className="mt-8 text-xs font-bold text-white/45">SLEEP WINDOW</p>
@@ -195,27 +195,27 @@ export function TodayView({ data }: { data: TodayData }) {
           <Stagger>
             <Panel
               title="Today’s rhythm"
-              right={<ListChecks size={18} className="text-[#65756c]" />}
+              right={<ListChecks size={18} className="text-muted" />}
             >
               <div className="space-y-5">
                 {rhythm.map((item) => (
                   <Link key={item.label} href={item.href} className="flex items-center gap-3">
                     <span
                       className={`grid size-9 place-items-center rounded-xl ${
-                        item.done ? "bg-[#d7efe6] text-[#0e7c66]" : "bg-[#dce8e1] text-[#5a6b62]"
+                        item.done ? "bg-accent-soft text-accent" : "bg-surface-soft text-muted"
                       }`}
                     >
                       <item.icon size={16} />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className={`truncate text-sm font-bold ${item.done ? "text-[#7a8a81] line-through" : ""}`}>
+                      <p className={`truncate text-sm font-bold ${item.done ? "text-muted line-through" : ""}`}>
                         {item.label}
                       </p>
-                      <p className="mt-0.5 text-[10px] text-[#84948b]">{item.time}</p>
+                      <p className="mt-0.5 text-[10px] text-muted">{item.time}</p>
                     </div>
                     <span
                       className={`size-4 rounded-full border-2 ${
-                        item.done ? "border-[#0e7c66] bg-[#0e7c66]" : "border-[#cfdcd4]"
+                        item.done ? "border-accent bg-accent" : "border-[#cfdcd4]"
                       }`}
                     />
                   </Link>
@@ -226,26 +226,26 @@ export function TodayView({ data }: { data: TodayData }) {
             <motion.article
               variants={{ hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0 } }}
               whileHover={{ scale: 1.015 }}
-              className="rounded-[1.6rem] bg-gradient-to-br from-[#d7efe6] via-[#e8f5f0] to-[#eef4f0] p-5"
+              className="rounded-[1.6rem] bg-gradient-to-br from-accent-soft via-accent-soft to-paper p-5"
             >
               <div className="flex items-center justify-between">
-                <span className="grid size-10 place-items-center rounded-xl bg-[#f6faf7] text-[#0e7c66] shadow-sm">
+                <span className="grid size-10 place-items-center rounded-xl bg-card text-accent shadow-sm">
                   <Sparkles size={18} />
                 </span>
-                <span className="text-[10px] font-black tracking-wider text-[#5a6b62]">
+                <span className="text-[10px] font-black tracking-wider text-muted">
                   {data.latestInsight ? "LATEST INSIGHT" : "VIVRΛNT SUGGESTS"}
                 </span>
               </div>
-              <p className="mt-5 text-sm font-black text-[#1e2f26]">{suggestionTitle}</p>
-              <p className="mt-2 text-sm font-bold leading-6 text-[#3d4a42]">{suggestion}</p>
+              <p className="mt-5 text-sm font-black text-ink">{suggestionTitle}</p>
+              <p className="mt-2 text-sm font-bold leading-6 text-muted">{suggestion}</p>
               {data.latestInsight?.score != null && (
-                <p className="mt-3 text-[11px] font-bold text-[#6f8077]">
+                <p className="mt-3 text-[11px] font-bold text-muted">
                   Decision score {data.latestInsight.score}/100
                 </p>
               )}
               <Link
                 href="/dashboard/ai"
-                className="mt-5 flex w-fit items-center gap-1 text-xs font-black text-[#0e7c66] transition hover:gap-2"
+                className="mt-5 flex w-fit items-center gap-1 text-xs font-black text-accent transition hover:gap-2"
               >
                 Ask VIVRΛNT <ChevronRight size={13} />
               </Link>

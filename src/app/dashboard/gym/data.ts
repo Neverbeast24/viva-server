@@ -1,4 +1,9 @@
 import { requireUser } from "@/lib/auth/roles";
+import {
+  buildRoutineScaling,
+  pickGoalTargetDate,
+  type RoutineScaling,
+} from "@/lib/health/body-metrics";
 import { isMachineGear, type GymExercise, type GymPlan, type GymSession } from "@/lib/gym";
 
 const emptyGymData = {
@@ -9,13 +14,14 @@ const emptyGymData = {
   demoCount: 0,
   totalMinutes: 0,
   totalCalories: 0,
+  scaling: null as RoutineScaling | null,
 };
 
 export async function loadGymData() {
   const { supabase, user } = await requireUser();
 
   try {
-    const [exercises, sessions, plans] = await Promise.all([
+    const [exercises, sessions, plans, profile, goals] = await Promise.all([
       supabase
         .from("gym_exercises")
         .select(
@@ -33,6 +39,17 @@ export async function loadGymData() {
         .select("id, title, focus, level, days_per_week, summary, days, created_at")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
+        .limit(12),
+      supabase
+        .from("profiles")
+        .select("height_cm, weight_kg, goal_weight_kg")
+        .eq("user_id", user.id)
+        .maybeSingle(),
+      supabase
+        .from("health_goals")
+        .select("category, unit, target_date")
+        .eq("user_id", user.id)
+        .eq("status", "active")
         .limit(12),
     ]);
 
@@ -56,6 +73,13 @@ export async function loadGymData() {
       days: Array.isArray(row.days) ? row.days : [],
     }));
 
+    const scaling = buildRoutineScaling({
+      height_cm: profile.data?.height_cm ?? null,
+      weight_kg: profile.data?.weight_kg ?? null,
+      goal_weight_kg: profile.data?.goal_weight_kg ?? null,
+      target_date: pickGoalTargetDate(goals.data),
+    });
+
     return {
       exercises: exerciseRows,
       sessions: sessionRows,
@@ -64,6 +88,7 @@ export async function loadGymData() {
       demoCount: exerciseRows.filter((item) => !isMachineGear(item.equipment)).length,
       totalMinutes: sessionRows.reduce((sum, row) => sum + (row.duration_minutes ?? 0), 0),
       totalCalories: sessionRows.reduce((sum, row) => sum + (row.calories_burned ?? 0), 0),
+      scaling,
     };
   } catch (error) {
     console.error("[gym] loadGymData failed:", error);

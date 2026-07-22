@@ -49,7 +49,7 @@ export function AvatarEditor({
   }
 
   return (
-    <div className="flex flex-col items-center gap-4 rounded-[1.4rem] border border-[#14221b]/8 bg-[#e8efe9]/45 p-5 sm:flex-row sm:items-start">
+    <div className="flex flex-col items-center gap-4 rounded-[1.4rem] border border-ink/8 bg-surface/45 p-5 sm:flex-row sm:items-start">
       <div className="relative">
         {preview ? (
           <Image
@@ -61,7 +61,7 @@ export function AvatarEditor({
             className="size-24 rounded-full border-2 border-white object-cover shadow-md"
           />
         ) : (
-          <span className="grid size-24 place-items-center rounded-full bg-gradient-to-br from-[#3db896] to-[#7ec8b8] text-2xl font-black text-white shadow-md">
+          <span className="grid size-24 place-items-center rounded-full bg-gradient-to-br from-accent to-cyan text-2xl font-black text-white shadow-md">
             {initials}
           </span>
         )}
@@ -69,7 +69,7 @@ export function AvatarEditor({
           type="button"
           disabled={pending}
           onClick={() => inputRef.current?.click()}
-          className="absolute -bottom-1 -right-1 grid size-9 place-items-center rounded-full bg-[#14221b] text-white shadow-lg transition hover:bg-[#0e7c66] disabled:opacity-60"
+          className="absolute -bottom-1 -right-1 grid size-9 place-items-center rounded-full bg-inverse text-inverse-fg shadow-lg transition hover:bg-accent disabled:opacity-60"
           title="Change avatar"
         >
           <Camera size={15} />
@@ -77,7 +77,7 @@ export function AvatarEditor({
       </div>
       <div className="min-w-0 flex-1 text-center sm:text-left">
         <p className="text-sm font-black">{displayName}</p>
-        <p className="mt-1 text-xs leading-5 text-[#6a7a71]">
+        <p className="mt-1 text-xs leading-5 text-muted">
           Upload a square photo (JPG, PNG, WEBP, or GIF · max 5MB). Saved to Supabase Storage.
         </p>
         <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
@@ -94,7 +94,7 @@ export function AvatarEditor({
               type="button"
               disabled={pending}
               onClick={onRemove}
-              className="inline-flex items-center gap-1 rounded-full border border-[#c45c2a]/20 bg-[#faf3ed] px-4 py-2 text-xs font-black text-[#a84b22] disabled:opacity-60"
+              className="inline-flex items-center gap-1 rounded-full border border-ember/20 bg-ember/10 px-4 py-2 text-xs font-black text-ember disabled:opacity-60"
             >
               <Trash2 size={13} /> Remove
             </button>

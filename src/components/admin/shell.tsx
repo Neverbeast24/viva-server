@@ -26,6 +26,7 @@ import {
 } from "@/components/dashboard/notifications";
 import { PushEnrollment } from "@/components/dashboard/push-enrollment";
 import { CommandSearch } from "@/components/dashboard/command-search";
+import { ThemeSync } from "@/components/theme-sync";
 import { useSidebarCollapsed } from "@/hooks/use-sidebar-collapsed";
 
 const baseNav = [
@@ -72,15 +73,15 @@ function AdminNavigation({
             title={collapsed ? item.label : undefined}
             className={`focus-ring group relative flex items-center rounded-2xl py-2.5 transition ${
               collapsed ? "justify-center px-2" : "gap-3 px-3"
-            } ${active ? "bg-[#14221b] text-white shadow-lg" : "text-[#3d4a42] hover:bg-white/80 hover:text-[#14221b]"}`}
+            } ${active ? "bg-inverse text-inverse-fg shadow-lg" : "text-muted hover:bg-panel/80 hover:text-ink"}`}
           >
-            <span className={`grid size-9 shrink-0 place-items-center rounded-xl ${active ? "bg-white/10" : "bg-[#dce8e1] group-hover:bg-[#cfdcd4]"}`}>
+            <span className={`grid size-9 shrink-0 place-items-center rounded-xl ${active ? "bg-panel/10" : "bg-surface-soft group-hover:bg-surface-soft"}`}>
               <item.icon size={17} />
             </span>
             {!collapsed && (
               <span className="min-w-0">
                 <span className="block text-sm font-black">{item.label}</span>
-                <span className={`block truncate text-[10px] font-semibold ${active ? "text-white/55" : "text-[#718179]"}`}>{item.caption}</span>
+                <span className={`block truncate text-[10px] font-semibold ${active ? "text-white/55" : "text-muted"}`}>{item.caption}</span>
               </span>
             )}
           </Link>
@@ -95,12 +96,14 @@ export function AdminShell({
   isSuperAdmin,
   notifications = [],
   pushEnabled = true,
+  theme = null,
   children,
 }: {
   displayName: string;
   isSuperAdmin: boolean;
   notifications?: NotificationItem[];
   pushEnabled?: boolean;
+  theme?: string | null;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -122,14 +125,15 @@ export function AdminShell({
 
   return (
     <main className="h-dvh overflow-hidden p-2 sm:p-3">
+      <ThemeSync theme={theme} />
       <PushEnrollment enabled={pushEnabled} />
-      <div className="glass mx-auto flex h-full w-full overflow-hidden rounded-[1.6rem] border border-white/65 shadow-[0_30px_90px_rgba(20,34,27,.14)]">
+      <div className="glass mx-auto flex h-full w-full overflow-hidden rounded-[1.6rem] border border-panel/65 shadow-[0_30px_90px_rgba(var(--shadow-color),.14)]">
         <motion.aside
           animate={{ width: expanded ? 288 : 88 }}
           transition={{ type: "spring", stiffness: 320, damping: 30 }}
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
-          className="relative hidden h-full shrink-0 flex-col overflow-hidden border-r border-black/5 bg-[#f6faf7]/72 p-4 lg:flex"
+          className="relative hidden h-full shrink-0 flex-col overflow-hidden border-r border-ink/5 bg-card/72 p-4 lg:flex"
         >
           <div className={`mb-3 flex h-12 shrink-0 items-center ${expanded ? "justify-between gap-2" : "justify-center"}`}>
             <Brand compact={!expanded} />
@@ -137,7 +141,7 @@ export function AdminShell({
               <button
                 type="button"
                 onClick={() => setCollapsed(!collapsed)}
-                className={`grid size-9 place-items-center rounded-xl transition hover:bg-white ${collapsed ? "text-[#0e7c66]" : "text-[#65756c]"}`}
+                className={`grid size-9 place-items-center rounded-xl transition hover:bg-panel ${collapsed ? "text-accent" : "text-muted"}`}
                 title={collapsed ? "Pin sidebar open" : "Collapse sidebar (hover to peek)"}
               >
                 {collapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
@@ -145,7 +149,7 @@ export function AdminShell({
             )}
           </div>
           {expanded && (
-            <p className="mb-4 shrink-0 px-3 text-[10px] font-black tracking-[0.16em] text-[#0e7c66]">
+            <p className="mb-4 shrink-0 px-3 text-[10px] font-black tracking-[0.16em] text-accent">
               {isSuperAdmin ? "SUPER ADMIN CONSOLE" : "ADMIN CONSOLE"}
             </p>
           )}
@@ -155,19 +159,19 @@ export function AdminShell({
           <Link
             href="/dashboard"
             title="Back to dashboard"
-            className={`mt-3 shrink-0 rounded-xl border border-black/8 bg-white/65 text-sm font-bold text-[#5a6b62] transition hover:bg-white ${expanded ? "px-3 py-2.5" : "px-2 py-3 text-center"}`}
+            className={`mt-3 shrink-0 rounded-xl border border-ink/8 bg-panel/65 text-sm font-bold text-muted transition hover:bg-panel ${expanded ? "px-3 py-2.5" : "px-2 py-3 text-center"}`}
           >
             {expanded ? "← Back to dashboard" : "←"}
           </Link>
         </motion.aside>
 
-        <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[#e6ede8]/65">
-          <header className="flex h-20 shrink-0 items-center justify-between gap-3 border-b border-black/5 bg-[#f6faf7]/35 px-4 backdrop-blur-xl sm:px-6">
+        <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-paper/65">
+          <header className="flex h-20 shrink-0 items-center justify-between gap-3 border-b border-ink/5 bg-card/35 px-4 backdrop-blur-xl sm:px-6">
             <div className="flex min-w-0 items-center gap-3">
-              <button type="button" onClick={() => setMobileOpen(true)} className="grid size-10 place-items-center rounded-xl bg-[#f6faf7] shadow-sm lg:hidden" aria-label="Open navigation"><Menu size={18} /></button>
+              <button type="button" onClick={() => setMobileOpen(true)} className="grid size-10 place-items-center rounded-xl bg-card shadow-sm lg:hidden" aria-label="Open navigation"><Menu size={18} /></button>
               <CommandSearch isStaff isSuperAdmin={isSuperAdmin} />
               <div className="hidden xl:block">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#7a8a81]">{isSuperAdmin ? "Super admin" : "Admin"} session</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted">{isSuperAdmin ? "Super admin" : "Admin"} session</p>
                 <p className="max-w-32 truncate text-xs font-bold">{displayName}</p>
               </div>
             </div>
@@ -176,7 +180,7 @@ export function AdminShell({
               <form action={signOut}>
                 <button
                   type="submit"
-                  className="focus-ring inline-flex items-center gap-2 rounded-full border border-[#c45c2a]/15 bg-[#faf3ed] px-4 py-2.5 text-xs font-black text-[#a84b22] shadow-sm transition hover:-translate-y-0.5 hover:border-[#c45c2a]/35 hover:bg-[#f5e4d8]"
+                  className="focus-ring inline-flex items-center gap-2 rounded-full border border-ember/15 bg-ember/10 px-4 py-2.5 text-xs font-black text-ember shadow-sm transition hover:-translate-y-0.5 hover:border-ember/35 hover:bg-ember/20"
                 >
                   <LogOut size={14} /> <span className="hidden sm:inline">Sign out</span>
                 </button>
@@ -186,14 +190,14 @@ export function AdminShell({
 
           <AnimatePresence>
             {mobileOpen && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[90] bg-[#0f1a14]/40 backdrop-blur-sm lg:hidden" onMouseDown={(event) => event.target === event.currentTarget && setMobileOpen(false)}>
-                <motion.aside initial={{ x: -320 }} animate={{ x: 0 }} exit={{ x: -320 }} className="flex h-full w-[min(88vw,20rem)] flex-col bg-[#f6faf7] p-5">
-                  <div className="mb-5 flex shrink-0 items-center justify-between"><Brand /><button type="button" onClick={() => setMobileOpen(false)} className="grid size-9 place-items-center rounded-xl bg-[#dce8e1]"><X size={17} /></button></div>
-                  <p className="mb-4 shrink-0 text-[10px] font-black tracking-wider text-[#0e7c66]">{isSuperAdmin ? "SUPER ADMIN" : "ADMIN"}</p>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[90] bg-solid/40 backdrop-blur-sm lg:hidden" onMouseDown={(event) => event.target === event.currentTarget && setMobileOpen(false)}>
+                <motion.aside initial={{ x: -320 }} animate={{ x: 0 }} exit={{ x: -320 }} className="flex h-full w-[min(88vw,20rem)] flex-col bg-card p-5">
+                  <div className="mb-5 flex shrink-0 items-center justify-between"><Brand /><button type="button" onClick={() => setMobileOpen(false)} className="grid size-9 place-items-center rounded-xl bg-surface-soft"><X size={17} /></button></div>
+                  <p className="mb-4 shrink-0 text-[10px] font-black tracking-wider text-accent">{isSuperAdmin ? "SUPER ADMIN" : "ADMIN"}</p>
                   <div className="min-h-0 flex-1 overflow-y-auto">
                     <AdminNavigation pathname={pathname} collapsed={false} isSuperAdmin={isSuperAdmin} close={() => setMobileOpen(false)} />
                   </div>
-                  <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="mt-4 shrink-0 rounded-xl border border-black/8 bg-white px-3 py-2.5 text-sm font-bold text-[#5a6b62]">
+                  <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="mt-4 shrink-0 rounded-xl border border-ink/8 bg-panel px-3 py-2.5 text-sm font-bold text-muted">
                     ← Back to dashboard
                   </Link>
                 </motion.aside>

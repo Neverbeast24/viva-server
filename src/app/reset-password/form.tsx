@@ -6,7 +6,7 @@ import { motion } from "motion/react";
 import { ArrowRight, Loader2, LockKeyhole } from "lucide-react";
 
 const inputShell =
-  "flex items-center gap-3 rounded-2xl border border-[#14221b]/10 bg-[#f6faf7]/90 px-4 py-3.5 shadow-sm transition focus-within:border-[#0e7c66]/40 focus-within:ring-4 focus-within:ring-[#0e7c66]/8";
+  "flex items-center gap-3 rounded-2xl border border-ink/10 bg-card/90 px-4 py-3.5 shadow-sm transition focus-within:border-accent/40 focus-within:ring-4 focus-within:ring-accent/8";
 
 export function ResetPasswordForm() {
   const router = useRouter();
@@ -61,7 +61,7 @@ export function ResetPasswordForm() {
       <label className="block">
         <span className="mb-2 block text-xs font-bold text-[#615d69]">New password</span>
         <span className={inputShell}>
-          <LockKeyhole size={17} className="text-[#9b96a1]" />
+          <LockKeyhole size={17} className="text-muted" />
           <input
             value={password}
             onChange={(event) => setPassword(event.target.value)}
@@ -78,7 +78,7 @@ export function ResetPasswordForm() {
       <label className="block">
         <span className="mb-2 block text-xs font-bold text-[#615d69]">Confirm password</span>
         <span className={inputShell}>
-          <LockKeyhole size={17} className="text-[#9b96a1]" />
+          <LockKeyhole size={17} className="text-muted" />
           <input
             value={confirm}
             onChange={(event) => setConfirm(event.target.value)}
@@ -96,7 +96,7 @@ export function ResetPasswordForm() {
         whileHover={{ y: -2 }}
         whileTap={{ scale: 0.985 }}
         disabled={pending}
-        className="focus-ring group flex w-full items-center justify-center gap-2 rounded-2xl bg-[#14221b] px-5 py-4 text-sm font-black text-white shadow-[0_16px_34px_rgba(20,34,27,.18)] transition hover:bg-[#0e7c66] disabled:cursor-not-allowed disabled:opacity-70"
+        className="focus-ring group flex w-full items-center justify-center gap-2 rounded-2xl bg-inverse px-5 py-4 text-sm font-black text-inverse-fg shadow-[0_16px_34px_rgba(var(--shadow-color),.18)] transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-70"
       >
         {pending ? (
           <Loader2 size={16} className="animate-spin" />

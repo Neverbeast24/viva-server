@@ -201,9 +201,9 @@ export function HeroPanel() {
       className="relative hidden overflow-hidden bg-[#1b1826] p-12 text-white lg:flex lg:flex-col"
     >
       {/* Ambient glow + grid backdrop */}
-      <div className="animate-glow absolute -left-32 top-24 size-[30rem] rounded-full bg-[#0e7c66]/28 blur-[100px]" />
+      <div className="animate-glow absolute -left-32 top-24 size-[30rem] rounded-full bg-accent/28 blur-[100px]" />
       <div className="animate-glow-slow absolute -bottom-44 right-0 size-[32rem] rounded-full bg-[#0fb3ab]/20 blur-[110px]" />
-      <div className="animate-glow-slow absolute left-1/3 top-1/2 size-[22rem] rounded-full bg-[#c45c2a]/10 blur-[110px]" />
+      <div className="animate-glow-slow absolute left-1/3 top-1/2 size-[22rem] rounded-full bg-ember/10 blur-[110px]" />
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.04]"
         style={{
@@ -257,7 +257,7 @@ export function HeroPanel() {
                 data.effectAllowed = "copy";
               }}
               onClick={() => collect(food, index)}
-              className="focus-ring grid size-12 cursor-grab place-items-center rounded-2xl border border-white/10 bg-white/6 text-2xl backdrop-blur-md transition-colors active:cursor-grabbing hover:border-white/30 hover:bg-white/12"
+              className="focus-ring grid size-12 cursor-grab place-items-center rounded-2xl border border-panel/10 bg-panel/6 text-2xl backdrop-blur-md transition-colors active:cursor-grabbing hover:border-panel/30 hover:bg-panel/12"
             >
               {food.emoji}
             </motion.button>
@@ -271,7 +271,7 @@ export function HeroPanel() {
           <motion.div
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-full border border-white/10 bg-white/6 px-3.5 py-2 text-xs font-black backdrop-blur-xl"
+            className="rounded-full border border-panel/10 bg-panel/6 px-3.5 py-2 text-xs font-black backdrop-blur-xl"
           >
             {score} pts
             <span className="ml-2 font-semibold text-white/40">
@@ -306,7 +306,7 @@ export function HeroPanel() {
             <motion.span
               key={label}
               whileHover={{ y: -3, scale: 1.05, backgroundColor: "rgba(255,255,255,0.14)" }}
-              className="cursor-default rounded-full border border-white/12 bg-white/6 px-4 py-1.5 text-xs font-bold text-white/75 backdrop-blur-md"
+              className="cursor-default rounded-full border border-panel/12 bg-panel/6 px-4 py-1.5 text-xs font-bold text-white/75 backdrop-blur-md"
             >
               {label}
             </motion.span>
@@ -342,7 +342,7 @@ export function HeroPanel() {
           y: { duration: 5.5, repeat: Infinity, ease: "easeInOut" },
           scale: { type: "spring", stiffness: 300, damping: 18 },
         }}
-        className="absolute bottom-[16%] right-[10%] z-20 grid size-16 place-items-center rounded-full border bg-white/8 shadow-[0_20px_50px_rgba(10,6,30,.5)] backdrop-blur-xl"
+        className="absolute bottom-[16%] right-[10%] z-20 grid size-16 place-items-center rounded-full border bg-panel/8 shadow-[0_20px_50px_rgba(10,6,30,.5)] backdrop-blur-xl"
       >
         <ShoppingCart size={22} className="text-white/85" />
         <AnimatePresence>
@@ -351,7 +351,7 @@ export function HeroPanel() {
               key={cartCount}
               initial={{ scale: 0.4, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="absolute -right-1 -top-1 grid size-6 place-items-center rounded-full bg-[#0e7c66] text-[10px] font-black text-white shadow-lg"
+              className="absolute -right-1 -top-1 grid size-6 place-items-center rounded-full bg-accent text-[10px] font-black text-white shadow-lg"
             >
               {cartCount}
             </motion.span>
@@ -370,7 +370,7 @@ export function HeroPanel() {
             className={`absolute bottom-[7%] right-[6%] z-20 max-w-64 rounded-2xl border px-4 py-2.5 text-xs font-bold shadow-[0_18px_45px_rgba(0,0,0,.35)] backdrop-blur-xl ${
               toast.tone === "good"
                 ? "border-emerald-400/30 bg-emerald-950/70 text-emerald-100"
-                : "border-[#c45c2a]/30 bg-[#3a1d12]/80 text-[#ffd2b8]"
+                : "border-ember/30 bg-[#3a1d12]/80 text-[#ffd2b8]"
             }`}
           >
             {toast.text}

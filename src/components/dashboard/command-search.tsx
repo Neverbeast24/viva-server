@@ -37,8 +37,15 @@ const dashboardDestinations = [
   { label: "Gym sessions", detail: "Log and review gym training", href: "/dashboard/gym/sessions", icon: Weight, keywords: "session log history" },
   { label: "Gym plans", detail: "AI training programs", href: "/dashboard/gym/plans", icon: Weight, keywords: "plan program ai" },
   { label: "Groceries", detail: "Manage your shopping list", href: "/dashboard/groceries", icon: ShoppingBasket, keywords: "shopping food list buy" },
-  { label: "Pantry", detail: "Track food and stock levels", href: "/dashboard/pantry", icon: Refrigerator, keywords: "inventory kitchen stock" },
+  { label: "Pantry", detail: "Stock overview", href: "/dashboard/pantry", icon: Refrigerator, keywords: "inventory kitchen stock" },
+  { label: "Pantry items", detail: "Full inventory and stock levels", href: "/dashboard/pantry/items", icon: Refrigerator, keywords: "pantry inventory items" },
+  { label: "Pantry categories", detail: "Browse stock by food type", href: "/dashboard/pantry/categories", icon: Refrigerator, keywords: "pantry category vegetables grains" },
+  { label: "Low stock", detail: "Items that need restocking", href: "/dashboard/pantry/low-stock", icon: Refrigerator, keywords: "pantry low restock empty" },
+  { label: "Add pantry item", detail: "Log something new on the shelf", href: "/dashboard/pantry/add", icon: Refrigerator, keywords: "pantry add stock" },
   { label: "Spending", detail: "Review health and grocery expenses", href: "/dashboard/spending", icon: WalletCards, keywords: "money expense budget cost" },
+  { label: "Log expense", detail: "Add a wellness or grocery purchase", href: "/dashboard/spending/log", icon: WalletCards, keywords: "add expense log purchase" },
+  { label: "Spending sheet", detail: "Excel-style ledger of expenses", href: "/dashboard/spending/sheet", icon: WalletCards, keywords: "excel sheet ledger table edit" },
+  { label: "Monthly budget", detail: "Set or edit monthly spending budget", href: "/dashboard/spending/budget", icon: WalletCards, keywords: "budget money monthly allowance" },
   { label: "Reports", detail: "See trends across your wellbeing", href: "/dashboard/reports", icon: FileBarChart, keywords: "analytics trends weekly data" },
   { label: "Ask VIVRΛNT", detail: "Chat with your health coach", href: "/dashboard/ai", icon: BrainCircuit, keywords: "assistant ask chat" },
   { label: "AI insights", detail: "Saved recommendations", href: "/dashboard/ai/insights", icon: BrainCircuit, keywords: "insight recommendation" },
@@ -214,19 +221,19 @@ export function CommandSearch({
       <button
         type="button"
         onClick={openSearch}
-        className="focus-ring group hidden min-w-0 items-center gap-3 rounded-xl border border-black/6 bg-[#f6faf7]/90 px-3.5 py-2 text-left shadow-[0_5px_16px_rgba(55,45,37,.06)] transition hover:-translate-y-0.5 hover:border-[#0e7c66]/20 sm:flex sm:w-80"
+        className="focus-ring group hidden min-w-0 items-center gap-3 rounded-xl border border-ink/6 bg-card/90 px-3.5 py-2 text-left shadow-[0_5px_16px_rgba(55,45,37,.06)] transition hover:-translate-y-0.5 hover:border-accent/20 sm:flex sm:w-80"
         aria-label="Global search"
       >
-        <Search size={15} className="shrink-0 text-[#8c8793] group-hover:text-[#0e7c66]" />
-        <span className="min-w-0 flex-1 truncate text-sm text-[#98939e]">
+        <Search size={15} className="shrink-0 text-muted group-hover:text-accent" />
+        <span className="min-w-0 flex-1 truncate text-sm text-muted">
           Search pages and your data
         </span>
-        <kbd className="flex items-center gap-0.5 rounded-md border border-black/7 bg-white/75 px-1.5 py-1 text-[10px] font-bold text-[#817c88]">
+        <kbd className="flex items-center gap-0.5 rounded-md border border-ink/7 bg-panel/75 px-1.5 py-1 text-[10px] font-bold text-muted">
           <Command size={10} /> K
         </kbd>
       </button>
 
-      <button type="button" onClick={openSearch} className="focus-ring grid size-10 place-items-center rounded-full bg-[#f6faf7] text-[#4f5f56] shadow-sm sm:hidden" aria-label="Global search">
+      <button type="button" onClick={openSearch} className="focus-ring grid size-10 place-items-center rounded-full bg-card text-muted shadow-sm sm:hidden" aria-label="Global search">
         <Search size={17} />
       </button>
 
@@ -238,7 +245,7 @@ export function CommandSearch({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[999] flex items-start justify-center bg-[#0f1a14]/45 px-4 pt-[9vh] backdrop-blur-md"
+                className="fixed inset-0 z-[999] flex items-start justify-center bg-solid/45 px-4 pt-[9vh] backdrop-blur-md"
                 onMouseDown={(event) => {
                   if (event.target === event.currentTarget) setOpen(false);
                 }}
@@ -251,13 +258,13 @@ export function CommandSearch({
                   role="dialog"
                   aria-modal="true"
                   aria-label="Global search"
-                  className="w-full max-w-2xl overflow-hidden rounded-[1.4rem] border border-white/70 bg-[#f8f4eb]/95 shadow-[0_35px_100px_rgba(20,15,35,.35)] backdrop-blur-2xl"
+                  className="w-full max-w-2xl overflow-hidden rounded-[1.4rem] border border-panel/70 bg-card/95 shadow-[0_35px_100px_rgba(20,15,35,.35)] backdrop-blur-2xl"
                 >
-                  <div className="flex items-center gap-3 border-b border-black/6 px-5">
+                  <div className="flex items-center gap-3 border-b border-ink/6 px-5">
                     {loading ? (
-                      <LoaderCircle size={20} className="animate-spin text-[#0e7c66]" />
+                      <LoaderCircle size={20} className="animate-spin text-accent" />
                     ) : (
-                      <Search size={20} className="text-[#0e7c66]" />
+                      <Search size={20} className="text-accent" />
                     )}
                     <input
                       ref={inputRef}
@@ -268,9 +275,9 @@ export function CommandSearch({
                       }}
                       onKeyDown={handleKeys}
                       placeholder="Search pages, meals, workouts, groceries, members…"
-                      className="h-16 min-w-0 flex-1 bg-transparent text-base font-semibold outline-none placeholder:font-normal placeholder:text-[#9b96a1]"
+                      className="h-16 min-w-0 flex-1 bg-transparent text-base font-semibold outline-none placeholder:font-normal placeholder:text-muted"
                     />
-                    <button type="button" onClick={() => setOpen(false)} className="grid size-8 place-items-center rounded-lg text-[#918c97] transition hover:bg-black/5" aria-label="Close search">
+                    <button type="button" onClick={() => setOpen(false)} className="grid size-8 place-items-center rounded-lg text-muted transition hover:bg-ink/8" aria-label="Close search">
                       <X size={16} />
                     </button>
                   </div>
@@ -284,20 +291,20 @@ export function CommandSearch({
                         onClick={() => visit(item.href)}
                         className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition ${
                           activeIndex === index
-                            ? "bg-[#0e7c66] text-white shadow-[0_8px_24px_rgba(14,124,102,.22)]"
-                            : "text-[#302b37] hover:bg-white/65"
+                            ? "bg-accent text-white shadow-[0_8px_24px_rgba(14,124,102,.22)]"
+                            : "text-ink hover:bg-panel/65"
                         }`}
                       >
-                        <span className={`grid size-10 shrink-0 place-items-center rounded-xl ${activeIndex === index ? "bg-white/15" : "bg-[#ebe5fb] text-[#0e7c66]"}`}>
+                        <span className={`grid size-10 shrink-0 place-items-center rounded-xl ${activeIndex === index ? "bg-panel/15" : "bg-accent-soft text-accent"}`}>
                           <item.icon size={18} />
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-sm font-black">{item.label}</span>
-                          <span className={`block truncate text-xs ${activeIndex === index ? "text-white/65" : "text-[#89848f]"}`}>
+                          <span className={`block truncate text-xs ${activeIndex === index ? "text-white/65" : "text-muted"}`}>
                             {item.detail}
                           </span>
                         </span>
-                        <span className={`shrink-0 text-[10px] font-black uppercase tracking-wider ${activeIndex === index ? "text-white/55" : "text-[#a39eaa]"}`}>
+                        <span className={`shrink-0 text-[10px] font-black uppercase tracking-wider ${activeIndex === index ? "text-white/55" : "text-muted"}`}>
                           {item.category}
                         </span>
                       </button>
@@ -305,14 +312,14 @@ export function CommandSearch({
                     {!results.length && !loading && (
                       <div className="px-5 py-12 text-center">
                         <p className="font-display text-xl">Nothing found</p>
-                        <p className="mt-1 text-sm text-[#8b8691]">
+                        <p className="mt-1 text-sm text-muted">
                           Try a page, meal, workout, grocery item, or member name.
                         </p>
                       </div>
                     )}
                   </div>
 
-                  <footer className="flex items-center gap-4 border-t border-black/6 bg-white/30 px-5 py-3 text-[10px] font-bold text-[#918c97]">
+                  <footer className="flex items-center gap-4 border-t border-ink/6 bg-panel/30 px-5 py-3 text-[10px] font-bold text-muted">
                     <span>↑↓ Navigate</span><span>↵ Open</span><span>esc Close</span>
                     <span className="ml-auto">Live results from Supabase</span>
                   </footer>

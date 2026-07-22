@@ -37,7 +37,7 @@ export default async function AdminRolesPage() {
   return (
     <>
       <h1 className="font-display text-4xl">Roles & Permissions</h1>
-      <p className="mt-2 text-sm text-[#5a6b62]">
+      <p className="mt-2 text-sm text-muted">
         VIVRΛNT supports three roles aligned with the master documentation.
       </p>
 
@@ -45,25 +45,25 @@ export default async function AdminRolesPage() {
         {roleCounts.map(({ role, count }) => (
           <article
             key={role}
-            className="rounded-[1.5rem] border border-[#14221b]/8 bg-[#f6faf7]/85 p-5 shadow-sm"
+            className="rounded-[1.5rem] border border-ink/8 bg-card/85 p-5 shadow-sm"
           >
             <div className="flex items-center justify-between">
-              <p className="text-xs font-black tracking-wide text-[#0e7c66]">
+              <p className="text-xs font-black tracking-wide text-accent">
                 {ROLE_LABELS[role].toUpperCase()}
               </p>
-              <span className="rounded-full bg-[#d7efe6] px-2.5 py-1 text-[10px] font-black text-[#0e7c66]">
+              <span className="rounded-full bg-accent-soft px-2.5 py-1 text-[10px] font-black text-accent">
                 {count} {count === 1 ? "member" : "members"}
               </span>
             </div>
-            <p className="mt-3 text-sm leading-6 text-[#55665d]">{roleDescriptions[role]}</p>
+            <p className="mt-3 text-sm leading-6 text-muted">{roleDescriptions[role]}</p>
           </article>
         ))}
       </div>
 
-      <div className="mt-8 overflow-hidden rounded-[1.6rem] border border-[#14221b]/8 bg-[#f6faf7]/85 shadow-sm">
+      <div className="mt-8 overflow-hidden rounded-[1.6rem] border border-ink/8 bg-card/85 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="border-b border-[#14221b]/8 bg-[#e8efe9]/70 text-xs font-black text-[#6f8077]">
+            <thead className="border-b border-ink/8 bg-surface/70 text-xs font-black text-muted">
               <tr>
                 <th className="px-5 py-4">Module</th>
                 <th className="px-5 py-4">User</th>
@@ -73,7 +73,7 @@ export default async function AdminRolesPage() {
             </thead>
             <tbody>
               {permissions.map((row) => (
-                <tr key={row.module} className="border-b border-black/5 last:border-0">
+                <tr key={row.module} className="border-b border-ink/5 last:border-0">
                   <td className="px-5 py-4 font-bold">{row.module}</td>
                   <td className="px-5 py-4">{row.user}</td>
                   <td className="px-5 py-4">{row.admin}</td>
@@ -86,12 +86,12 @@ export default async function AdminRolesPage() {
       </div>
 
       <div className="mt-8">
-        <p className="mb-3 text-xs font-black tracking-wide text-[#6f8077]">ALL MODULES</p>
+        <p className="mb-3 text-xs font-black tracking-wide text-muted">ALL MODULES</p>
         <div className="flex flex-wrap gap-2">
           {MODULES.map((module) => (
             <span
               key={module}
-              className="rounded-full border border-[#14221b]/10 bg-[#e8efe9]/70 px-3 py-1.5 text-xs font-bold text-[#5f5a67]"
+              className="rounded-full border border-ink/10 bg-surface/70 px-3 py-1.5 text-xs font-bold text-[#5f5a67]"
             >
               {module}
             </span>

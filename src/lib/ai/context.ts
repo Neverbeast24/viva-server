@@ -1,3 +1,5 @@
+import { buildRoutineScaling, pickGoalTargetDate } from "@/lib/health/body-metrics";
+import { getPhCalendarDate, priceMarketContext } from "@/lib/groceries/ph-price-catalog";
 import { createClient } from "@/lib/supabase/server";
 
 function dayStartIso() {
@@ -61,13 +63,13 @@ export async function buildUserContext(userId: string, options?: { memberId?: st
         .limit(20),
       supabase
         .from("grocery_items")
-        .select("name, quantity, category, is_checked")
+        .select("name, quantity, category, is_checked, estimated_price")
         .eq("user_id", targetId)
         .eq("is_checked", false)
         .limit(20),
       supabase
         .from("health_goals")
-        .select("title, category, target_value, current_value, unit, status")
+        .select("title, category, target_value, current_value, unit, target_date, status")
         .eq("user_id", targetId)
         .eq("status", "active")
         .limit(12),
@@ -85,18 +87,57 @@ export async function buildUserContext(userId: string, options?: { memberId?: st
         .limit(8),
     ]);
 
+  const profileData = profile.data ?? null;
+  const goalsData = goals.data ?? [];
+  const expenseRows = expenses.data ?? [];
+  const groceryRows = groceries.data ?? [];
+  const ph = getPhCalendarDate();
+  const market = priceMarketContext();
+  const spentThisMonth = expenseRows
+    .filter((row) => String(row.spent_at ?? "").slice(0, 10) >= ph.monthStart)
+    .reduce((sum, row) => sum + Number(row.amount ?? 0), 0);
+  const monthlyBudget = Number(profileData?.monthly_health_budget ?? 2000);
+  const openListTotal = groceryRows.reduce(
+    (sum, row) => sum + Number(row.estimated_price ?? 0),
+    0,
+  );
+  const remainingBudget = Math.max(0, monthlyBudget - spentThisMonth);
+  const routine_scaling = buildRoutineScaling({
+    height_cm: profileData?.height_cm ?? null,
+    weight_kg: profileData?.weight_kg ?? null,
+    goal_weight_kg: profileData?.goal_weight_kg ?? null,
+    target_date: pickGoalTargetDate(goalsData),
+  });
+
   return JSON.stringify(
     {
-      today: new Date().toISOString().slice(0, 10),
-      timezone: "Asia/Manila",
-      health_profile: profile.data ?? null,
+      today: ph.isoDate,
+      timezone: market.timezone,
+      ph_calendar: {
+        year: ph.year,
+        month: ph.month,
+        month_label: ph.monthLabel,
+        month_start: ph.monthStart,
+      },
+      grocery_price_market: market,
+      health_profile: profileData,
+      routine_scaling,
+      budget_for_groceries: {
+        currency: "PHP",
+        monthly_health_budget: monthlyBudget,
+        spent_this_month: Math.round(spentThisMonth),
+        remaining_budget: Math.round(remainingBudget),
+        open_list_estimated_total: Math.round(openListTotal),
+        room_for_new_items: Math.max(0, Math.round(remainingBudget - openListTotal)),
+        budget_month: ph.monthLabel,
+      },
       checkins_last_7_days: checkins.data ?? [],
       meals_today: meals.data ?? [],
       workouts_today: workouts.data ?? [],
-      recent_expenses: expenses.data ?? [],
+      recent_expenses: expenseRows,
       pantry_items: pantry.data ?? [],
-      open_grocery_list: groceries.data ?? [],
-      active_goals: goals.data ?? [],
+      open_grocery_list: groceryRows,
+      active_goals: goalsData,
       health_history: history.data ?? [],
       recent_gym_sessions: gymSessions.data ?? [],
     },

@@ -101,14 +101,14 @@ export function ReportsView({ data }: { data: ReportsData }) {
           <Panel
             title={story.title}
             className="mb-4"
-            right={<span className="text-xs font-black text-[#0e7c66]">{story.score}/100</span>}
+            right={<span className="text-xs font-black text-accent">{story.score}/100</span>}
           >
-            <p className="text-sm leading-7 text-[#55665d]">{story.story}</p>
+            <p className="text-sm leading-7 text-muted">{story.story}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {story.focuses.map((focus) => (
                 <span
                   key={focus}
-                  className="rounded-full bg-[#d7efe6] px-3 py-1 text-[11px] font-black text-[#0e7c66]"
+                  className="rounded-full bg-accent-soft px-3 py-1 text-[11px] font-black text-accent"
                 >
                   {focus}
                 </span>
@@ -123,21 +123,21 @@ export function ReportsView({ data }: { data: ReportsData }) {
             value={String(data.checkins)}
             detail="This month"
             icon={Activity}
-            className="bg-gradient-to-br from-[#0a5c4c] to-[#0e7c66] text-white"
+            className="bg-gradient-to-br from-accent-deep to-accent text-white"
           />
           <StatCard
             label="Meals logged"
             value={String(data.meals)}
             detail={`${data.totalCalories.toLocaleString()} kcal recorded`}
             icon={Utensils}
-            className="bg-[#e8fbf8] text-[#183d3a]"
+            className="bg-accent-soft text-accent-deep"
           />
           <StatCard
             label="Workouts"
             value={String(data.workouts)}
             detail={`${data.totalWorkoutMinutes} active minutes`}
             icon={Dumbbell}
-            className="bg-[#fff3e8] text-[#533621]"
+            className="bg-ember/10 text-ember"
           />
           <StatCard
             label="Health spend"
@@ -154,14 +154,14 @@ export function ReportsView({ data }: { data: ReportsData }) {
             value={String(data.gymSessions)}
             detail={`${data.gymMinutes} gym minutes`}
             icon={Weight}
-            className="bg-[#e8f5f0] text-[#3d2f7a]"
+            className="bg-accent-soft text-[#3d2f7a]"
           />
           <StatCard
             label="Active goals"
             value={String(data.activeGoals)}
             detail="From your profile"
             icon={Target}
-            className="bg-[#e5f4ef] text-[#1f4a5c]"
+            className="bg-accent-soft text-[#1f4a5c]"
           />
           <StatCard
             label="Body history"
@@ -176,7 +176,7 @@ export function ReportsView({ data }: { data: ReportsData }) {
           <Panel
             title="Activity this week"
             right={
-              <span className="rounded-full bg-[#e8f5f0] px-3 py-1.5 text-xs font-bold text-[#0e7c66]">
+              <span className="rounded-full bg-accent-soft px-3 py-1.5 text-xs font-bold text-accent">
                 Check-ins + logs
               </span>
             }
@@ -193,7 +193,7 @@ export function ReportsView({ data }: { data: ReportsData }) {
                 <div key={row.category}>
                   <div className="mb-2 flex justify-between text-sm font-bold">
                     <span className="capitalize">{row.category}</span>
-                    <span className="text-[#6a7a71]">₱{row.total.toLocaleString()}</span>
+                    <span className="text-muted">₱{row.total.toLocaleString()}</span>
                   </div>
                   <Progress value={(row.total / maxCategory) * 100} />
                 </div>
@@ -204,11 +204,11 @@ export function ReportsView({ data }: { data: ReportsData }) {
         </div>
 
         <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_1.5fr]">
-          <Panel title="Monthly insight" right={<Flame size={17} className="text-[#c45c2a]" />}>
-            <p className="text-sm leading-7 text-[#55665d]">{buildSummary(data)}</p>
+          <Panel title="Monthly insight" right={<Flame size={17} className="text-ember" />}>
+            <p className="text-sm leading-7 text-muted">{buildSummary(data)}</p>
             <Link
               href="/dashboard/ai"
-              className="mt-5 inline-flex items-center gap-1 text-xs font-black text-[#0e7c66] transition hover:gap-2"
+              className="mt-5 inline-flex items-center gap-1 text-xs font-black text-accent transition hover:gap-2"
             >
               Ask VIVRΛNT <ArrowUpRight size={13} />
             </Link>

@@ -1,4 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import {
+  catalogHintForPrompt,
+  estimateGroceryPrice,
+} from "@/lib/groceries/ph-price-catalog";
 
 export type InsightPayload = {
   title: string;
@@ -25,6 +29,7 @@ export type GroceryPlanItem = {
   name: string;
   category: string;
   quantity: string;
+  estimated_price: number;
 };
 
 export type GroceryPlan = {
@@ -32,6 +37,8 @@ export type GroceryPlan = {
   summary: string;
   meals: string[];
   items: GroceryPlanItem[];
+  estimated_total: number;
+  budget_note: string;
 };
 
 export type WorkoutSuggestion = {
@@ -318,33 +325,63 @@ ${context}`,
 }
 
 export async function planGroceriesFromPantry(context: string): Promise<GroceryPlan> {
-  const parsed = await generateJson<Partial<GroceryPlan>>(`Create a practical grocery + meal plan from pantry stock and open list.
+  const parsed = await generateJson<
+    Partial<GroceryPlan> & { items?: Partial<GroceryPlanItem>[] }
+  >(`Create a practical grocery + meal plan from pantry stock and open list.
+Stay inside the user's remaining monthly health budget (see health_profile.monthly_health_budget, recent_expenses, and budget_for_groceries when present).
+Every item MUST include a realistic Philippine peso estimated_price for the stated quantity.
+Use grocery_price_market / ph_calendar for the CURRENT Asia/Manila year and month — prices shift with seasonality and year (do not use outdated static prices).
+Prefer affordable staples when budget is tight.
+The sum of item estimated_price values must not exceed remaining grocery budget when provided; if budget is very tight, suggest fewer cheaper items.
 Return JSON:
 - "title": short plan name
-- "summary": 2 sentences
+- "summary": 2 sentences (mention budget fit)
 - "meals": array of 3 dinner/lunch ideas using what they have when possible
-- "items": array of { "name", "category", "quantity" }
+- "items": array of { "name", "category", "quantity", "estimated_price" }
   category must be one of: produce, protein, dairy, grains, pantry, snacks, drinks, household, other
   Prefer 6–12 shopping items. Avoid duplicates already clearly on the open grocery list.
+- "budget_note": 1 sentence on how this list fits the allotted budget
+- "estimated_total": number (sum of item prices)
+
+${catalogHintForPrompt()}
 
 USER CONTEXT:
 ${context}`);
 
   const items = Array.isArray(parsed.items) ? parsed.items : [];
+  const normalized = items.slice(0, 12).map((item) => {
+    const name = String(item?.name ?? "Item").slice(0, 80);
+    const category = String(item?.category ?? "other");
+    const quantity = String(item?.quantity ?? "1").slice(0, 40);
+    const aiPrice = Number(item?.estimated_price);
+    const estimated_price =
+      Number.isFinite(aiPrice) && aiPrice > 0
+        ? Math.round(aiPrice)
+        : estimateGroceryPrice(name, quantity, category);
+    return { name, category, quantity, estimated_price };
+  });
+
+  const estimated_total = normalized.reduce((sum, item) => sum + item.estimated_price, 0);
+
   return {
     title: String(parsed.title ?? "This week's smart list").slice(0, 120),
     summary: String(parsed.summary ?? "A few focused items to support your meals.").slice(0, 600),
     meals: (Array.isArray(parsed.meals) ? parsed.meals : []).map((m) => String(m).slice(0, 120)).slice(0, 5),
-    items: items.slice(0, 12).map((item) => ({
-      name: String(item?.name ?? "Item").slice(0, 80),
-      category: String(item?.category ?? "other"),
-      quantity: String(item?.quantity ?? "1").slice(0, 40),
-    })),
+    items: normalized,
+    estimated_total: Math.round(Number(parsed.estimated_total ?? estimated_total)),
+    budget_note: String(
+      parsed.budget_note ?? `List totals about ₱${estimated_total.toLocaleString("en-PH")}.`,
+    ).slice(0, 300),
   };
 }
 
 export async function suggestWorkout(context: string): Promise<WorkoutSuggestion> {
-  const parsed = await generateJson<Partial<WorkoutSuggestion>>(`Suggest ONE workout for today based on energy, mood, steps, and goals.
+  const parsed = await generateJson<Partial<WorkoutSuggestion>>(`Suggest ONE workout for today based on energy, mood, steps, goals, and routine_scaling.
+Honor BMI band and pace forecast when present:
+- underweight: prefer strength / short walks; avoid long hard cardio
+- overweight / obese: prefer low-impact walk, cycle, yoga, or light strength; keep duration in session_minutes
+- if suggested_kg_per_week is aggressive, keep today's session easier and sustainable
+Mention BMI band or target-date pace briefly in "reason" when available.
 Return JSON:
 - "title"
 - "activity_type": one of walk, run, strength, cycle, yoga, other
@@ -470,7 +507,15 @@ export async function generateGymPlan(
   availableExercises: string,
 ): Promise<GymPlanPayload> {
   const parsed = await generateJson<Partial<GymPlanPayload>>(`Create a practical gym training plan for this user.
-Use their profile, energy, goals, and recent activity. Prefer exercises from the available catalog when possible.
+Use their profile, energy, goals, recent activity, and especially routine_scaling (BMI band + target-date forecast).
+Scale the plan explicitly:
+- Match days_per_week and session length to routine_scaling.days_per_week / session_minutes
+- Match focus to routine_scaling.focus (map to full_body, strength, fat_loss, mobility, or endurance)
+- underweight → strength / muscle gain, fewer long cardio blocks
+- overweight / obese → joint-friendly machines first, controlled tempo, sustainable fat_loss or full_body
+- If pace_note says the forecast is aggressive, do NOT amp intensity — keep volume moderate and note sustainability in summary
+- Mention BMI band and target date (if any) in the summary
+Prefer exercises from the available catalog when possible.
 Include a healthy mix of machines (safer for beginners) and free-weight / bodyweight moves when appropriate.
 Return JSON:
 - "title"
@@ -548,7 +593,8 @@ export async function recommendGymMachines(
   context: string,
   machineCatalog: string,
 ): Promise<MachineRecommendationPayload> {
-  const parsed = await generateJson<Partial<MachineRecommendationPayload>>(`Recommend gym machines for this user based on their profile, goals, energy, and recent training.
+  const parsed = await generateJson<Partial<MachineRecommendationPayload>>(`Recommend gym machines for this user based on their profile, goals, energy, recent training, and routine_scaling (BMI + target-date pace).
+For higher BMI bands prefer seated / supported machines and low-impact cardio machines. For underweight prefer strength machines that support progressive overload.
 Prefer machines from the catalog. Mix strength machines and cardio machines when useful.
 Return JSON:
 - "title"

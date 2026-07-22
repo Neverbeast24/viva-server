@@ -1,0 +1,211 @@
+export type BmiBand = "underweight" | "normal" | "overweight" | "obese";
+
+export type RoutineScaling = {
+  bmi: number | null;
+  band: BmiBand | null;
+  band_label: string | null;
+  height_cm: number | null;
+  weight_kg: number | null;
+  goal_weight_kg: number | null;
+  kg_to_goal: number | null;
+  target_date: string | null;
+  weeks_remaining: number | null;
+  suggested_kg_per_week: number | null;
+  pace_note: string | null;
+  focus: string;
+  days_per_week: string;
+  session_minutes: string;
+  intensity: string;
+  tips: string[];
+  summary: string;
+};
+
+const BAND_LABELS: Record<BmiBand, string> = {
+  underweight: "Underweight",
+  normal: "Normal",
+  overweight: "Overweight",
+  obese: "Obese",
+};
+
+export function computeBmi(heightCm: number, weightKg: number) {
+  if (!(heightCm > 0) || !(weightKg > 0)) return null;
+  return weightKg / (heightCm / 100) ** 2;
+}
+
+export function bmiBand(bmi: number): BmiBand {
+  if (bmi < 18.5) return "underweight";
+  if (bmi < 25) return "normal";
+  if (bmi < 30) return "overweight";
+  return "obese";
+}
+
+export function weightForBmi(heightCm: number, targetBmi: number) {
+  return targetBmi * (heightCm / 100) ** 2;
+}
+
+function weeksUntil(targetDate: string, today = new Date()) {
+  const target = new Date(`${targetDate}T00:00:00`);
+  if (Number.isNaN(target.getTime())) return null;
+  const start = new Date(today);
+  start.setHours(0, 0, 0, 0);
+  const ms = target.getTime() - start.getTime();
+  if (ms <= 0) return 0;
+  return Math.max(1, Math.ceil(ms / (7 * 24 * 60 * 60 * 1000)));
+}
+
+function resolveGoalWeight(
+  heightCm: number | null,
+  weightKg: number | null,
+  goalWeightKg: number | null,
+  band: BmiBand | null,
+) {
+  if (goalWeightKg != null && goalWeightKg > 0) return goalWeightKg;
+  if (heightCm == null || weightKg == null || band == null || band === "normal") return null;
+  if (band === "underweight") return weightForBmi(heightCm, 18.5);
+  return weightForBmi(heightCm, 24.9);
+}
+
+function bandRoutine(band: BmiBand | null, paceKgPerWeek: number | null) {
+  const aggressive = paceKgPerWeek != null && Math.abs(paceKgPerWeek) > 0.75;
+
+  switch (band) {
+    case "underweight":
+      return {
+        focus: "strength + muscle gain",
+        days_per_week: "3–4",
+        session_minutes: "35–50",
+        intensity: "moderate progressive overload",
+        tips: [
+          "Prioritize compound strength over long cardio.",
+          "Use machines for safe load progression, then free weights.",
+          "Pair training with a calorie surplus and protein-forward meals.",
+        ],
+      };
+    case "overweight":
+      return {
+        focus: aggressive ? "fat loss with joint-friendly strength" : "fat loss + strength retention",
+        days_per_week: aggressive ? "4–5" : "3–4",
+        session_minutes: aggressive ? "30–45" : "35–55",
+        intensity: "moderate; keep form strict",
+        tips: [
+          "Blend strength machines with steady cardio (walk, bike, elliptical).",
+          "Keep weekly weight change near 0.25–0.75 kg for sustainability.",
+          "Log gym sessions so AI plans can tighten volume over time.",
+        ],
+      };
+    case "obese":
+      return {
+        focus: "low-impact consistency + strength foundation",
+        days_per_week: "3–5 short sessions",
+        session_minutes: "20–40",
+        intensity: "easy-to-moderate; protect joints",
+        tips: [
+          "Prefer machines, cables, and seated work before free weights.",
+          "Add daily walks in Movement; keep gym days short but frequent.",
+          "If the target date forces >0.75 kg/week, extend the date rather than intensity.",
+        ],
+      };
+    case "normal":
+    default:
+      return {
+        focus: "balanced strength + conditioning",
+        days_per_week: "3–4",
+        session_minutes: "35–55",
+        intensity: "moderate",
+        tips: [
+          "Maintain BMI with mixed strength and light cardio.",
+          "Use Gym AI plans for structured weeks; Movement for daily steps.",
+          "If chasing a goal weight, keep pace under ~0.5 kg/week.",
+        ],
+      };
+  }
+}
+
+export function pickGoalTargetDate(
+  goals: { category?: string | null; unit?: string | null; target_date?: string | null }[] | null,
+) {
+  const dated = (goals ?? []).filter((goal) => goal.target_date);
+  if (!dated.length) return null;
+  const weightLike = dated.filter((goal) => {
+    const unit = (goal.unit ?? "").toLowerCase();
+    const category = (goal.category ?? "").toLowerCase();
+    return unit.includes("kg") || category === "movement" || category === "nutrition";
+  });
+  const pool = weightLike.length ? weightLike : dated;
+  return [...pool].sort((a, b) => String(a.target_date).localeCompare(String(b.target_date)))[0]
+    ?.target_date ?? null;
+}
+
+export function buildRoutineScaling(input: {
+  height_cm?: number | null;
+  weight_kg?: number | null;
+  goal_weight_kg?: number | null;
+  target_date?: string | null;
+  today?: Date;
+}): RoutineScaling {
+  const height = input.height_cm ?? null;
+  const weight = input.weight_kg ?? null;
+  const bmi =
+    height != null && weight != null ? computeBmi(height, weight) : null;
+  const band = bmi != null ? bmiBand(bmi) : null;
+  const goalWeight = resolveGoalWeight(height, weight, input.goal_weight_kg ?? null, band);
+  const kgToGoal =
+    goalWeight != null && weight != null ? Number((goalWeight - weight).toFixed(1)) : null;
+  const targetDate = input.target_date ?? null;
+  const weeks =
+    targetDate != null ? weeksUntil(targetDate, input.today ?? new Date()) : null;
+  const suggestedKgPerWeek =
+    kgToGoal != null && weeks != null && weeks > 0
+      ? Number((kgToGoal / weeks).toFixed(2))
+      : null;
+
+  const routine = bandRoutine(band, suggestedKgPerWeek);
+
+  let paceNote: string | null = null;
+  if (suggestedKgPerWeek != null && kgToGoal != null && weeks != null) {
+    const abs = Math.abs(suggestedKgPerWeek);
+    const direction = kgToGoal > 0 ? "gain" : "lose";
+    if (weeks === 0) {
+      paceNote = "Target date is today or past — set a new date for a realistic forecast.";
+    } else if (abs > 1) {
+      paceNote = `Forecast asks ~${abs.toFixed(2)} kg/${direction === "gain" ? "gain" : "loss"} per week — too aggressive. Prefer extending the target date.`;
+    } else if (abs > 0.75) {
+      paceNote = `Ambitious pace: ~${abs.toFixed(2)} kg/${direction} per week over ${weeks} week(s). Keep sessions sustainable.`;
+    } else {
+      paceNote = `On track for ~${abs.toFixed(2)} kg/${direction} per week over ${weeks} week(s).`;
+    }
+  } else if (kgToGoal != null) {
+    paceNote =
+      kgToGoal === 0
+        ? "At goal weight — focus on maintenance routines."
+        : `About ${Math.abs(kgToGoal).toFixed(1)} kg to ${kgToGoal > 0 ? "gain" : "lose"}. Add a target date on Goals for a weekly pace forecast.`;
+  } else if (band) {
+    paceNote = "Add height, weight, goal weight, and a target date to unlock pace-based plans.";
+  }
+
+  const summaryParts = [
+    band ? `BMI ${bmi!.toFixed(1)} (${BAND_LABELS[band]})` : "BMI not set",
+    routine.focus,
+    targetDate ? `target ${targetDate}` : null,
+  ].filter(Boolean);
+
+  return {
+    bmi: bmi != null ? Number(bmi.toFixed(1)) : null,
+    band,
+    band_label: band ? BAND_LABELS[band] : null,
+    height_cm: height,
+    weight_kg: weight,
+    goal_weight_kg: goalWeight,
+    kg_to_goal: kgToGoal,
+    target_date: targetDate,
+    weeks_remaining: weeks,
+    suggested_kg_per_week: suggestedKgPerWeek,
+    pace_note: paceNote,
+    focus: routine.focus,
+    days_per_week: routine.days_per_week,
+    session_minutes: routine.session_minutes,
+    intensity: routine.intensity,
+    tips: routine.tips,
+    summary: summaryParts.join(" · "),
+  };
+}

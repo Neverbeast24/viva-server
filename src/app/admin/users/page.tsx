@@ -15,7 +15,7 @@ export default async function AdminUsersPage() {
   return (
     <>
       <h1 className="font-display text-4xl">User Management</h1>
-      <p className="mt-2 text-sm text-[#5a6b62]">
+      <p className="mt-2 text-sm text-muted">
         View and manage all VIVRΛNT accounts. Update roles and account status.
       </p>
       <div className="mt-8">

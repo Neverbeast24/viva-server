@@ -10,6 +10,14 @@ const pantrySchema = z.object({
   stock_level: z.coerce.number().int().min(0).max(100),
 });
 
+function revalidatePantry() {
+  revalidatePath("/dashboard/pantry");
+  revalidatePath("/dashboard/pantry/items");
+  revalidatePath("/dashboard/pantry/categories");
+  revalidatePath("/dashboard/pantry/low-stock");
+  revalidatePath("/dashboard/pantry/add");
+}
+
 export async function addPantryItem(formData: FormData) {
   const parsed = pantrySchema.safeParse({
     name: formData.get("name"),
@@ -30,7 +38,7 @@ export async function addPantryItem(formData: FormData) {
   });
   if (error) return { ok: false, message: error.message };
 
-  revalidatePath("/dashboard/pantry");
+  revalidatePantry();
   return { ok: true, message: "Pantry item added." };
 }
 
@@ -48,7 +56,7 @@ export async function updatePantryStock(id: number, stockLevel: number) {
     .eq("id", id)
     .eq("user_id", user.id);
   if (error) return { ok: false, message: error.message };
-  revalidatePath("/dashboard/pantry");
+  revalidatePantry();
   return { ok: true, message: "Stock level updated." };
 }
 
@@ -64,6 +72,6 @@ export async function deletePantryItem(id: number) {
     .eq("id", id)
     .eq("user_id", user.id);
   if (error) return { ok: false, message: error.message };
-  revalidatePath("/dashboard/pantry");
+  revalidatePantry();
   return { ok: true, message: "Pantry item removed." };
 }

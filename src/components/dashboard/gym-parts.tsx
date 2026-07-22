@@ -41,6 +41,7 @@ import {
   type GymPlan,
   type GymSession,
 } from "@/lib/gym";
+import type { RoutineScaling } from "@/lib/health/body-metrics";
 import { gymSubNav } from "@/lib/nav";
 
 export type { GymExercise, GymPlan, GymSession };
@@ -64,28 +65,28 @@ export function GymOverviewStats({
           value={String(sessionCount)}
           detail="Your gym history"
           icon={Dumbbell}
-          className="bg-gradient-to-br from-[#0a5c4c] to-[#0e7c66] text-white"
+          className="bg-gradient-to-br from-accent-deep to-accent text-white"
         />
         <StatCard
           label="Training time"
           value={String(totalMinutes)}
           detail="Minutes recorded"
           icon={Clock3}
-          className="bg-[#e8fbf8] text-[#183d3a]"
+          className="bg-accent-soft text-accent-deep"
         />
         <StatCard
           label="Energy burned"
           value={String(totalCalories)}
           detail="From gym sessions"
           icon={Flame}
-          className="bg-[#fff3e8] text-[#533621]"
+          className="bg-ember/10 text-ember"
         />
         <StatCard
           label="Machine demos"
           value={String(machineCount)}
           detail="Guided gym equipment"
           icon={Cog}
-          className="bg-[#e8f5f0] text-[#3d2f7a]"
+          className="bg-accent-soft text-[#3d2f7a]"
         />
       </div>
     </Stagger>
@@ -105,7 +106,7 @@ function DemoModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[95] grid place-items-center bg-[#0f1a14]/55 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[95] grid place-items-center bg-solid/55 p-4 backdrop-blur-sm"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -114,12 +115,12 @@ function DemoModal({
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 12, opacity: 0 }}
-        className="w-full max-w-3xl overflow-hidden rounded-[1.6rem] border border-white/20 bg-[#f6faf7] shadow-2xl"
+        className="w-full max-w-3xl overflow-hidden rounded-[1.6rem] border border-panel/20 bg-card shadow-2xl"
       >
-        <div className="flex items-center justify-between border-b border-black/5 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-ink/5 px-5 py-4">
           <div>
             <p className="text-sm font-black">{exercise.name}</p>
-            <p className="mt-0.5 text-xs capitalize text-[#6a7a71]">
+            <p className="mt-0.5 text-xs capitalize text-muted">
               {exercise.muscle_group.replaceAll("_", " ")} · {exercise.equipment.replaceAll("_", " ")} ·{" "}
               {exercise.difficulty}
             </p>
@@ -127,7 +128,7 @@ function DemoModal({
           <button
             type="button"
             onClick={onClose}
-            className="grid size-9 place-items-center rounded-xl bg-[#dce8e1]"
+            className="grid size-9 place-items-center rounded-xl bg-surface-soft"
             aria-label="Close demo"
           >
             <X size={16} />
@@ -143,7 +144,7 @@ function DemoModal({
           />
         </div>
         {exercise.cues && (
-          <p className="px-5 py-4 text-sm leading-6 text-[#55665d]">{exercise.cues}</p>
+          <p className="px-5 py-4 text-sm leading-6 text-muted">{exercise.cues}</p>
         )}
       </motion.div>
     </motion.div>
@@ -164,22 +165,22 @@ function ExerciseGrid({
           key={exercise.id}
           type="button"
           onClick={() => onSelect(exercise)}
-          className="group overflow-hidden rounded-[1.3rem] border border-[#14221b]/8 bg-[#f6faf7] text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+          className="group overflow-hidden rounded-[1.3rem] border border-ink/8 bg-card text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
         >
-          <div className="relative aspect-video overflow-hidden bg-[#dce8e1]">
+          <div className="relative aspect-video overflow-hidden bg-surface-soft">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={exercise.demo_thumbnail_url ?? "/vivrant-mark.png"}
               alt=""
               className="size-full object-cover transition duration-500 group-hover:scale-105"
             />
-            <span className="absolute inset-0 grid place-items-center bg-[#0f1a14]/25 opacity-0 transition group-hover:opacity-100">
-              <span className="grid size-12 place-items-center rounded-full bg-white text-[#0e7c66] shadow-lg">
+            <span className="absolute inset-0 grid place-items-center bg-solid/25 opacity-0 transition group-hover:opacity-100">
+              <span className="grid size-12 place-items-center rounded-full bg-panel text-accent shadow-lg">
                 <Play size={18} fill="currentColor" />
               </span>
             </span>
             {isMachineGear(exercise.equipment) && (
-              <span className="absolute left-3 top-3 rounded-full bg-[#14221b]/85 px-2.5 py-1 text-[10px] font-black text-white backdrop-blur">
+              <span className="absolute left-3 top-3 rounded-full bg-inverse/85 px-2.5 py-1 text-[10px] font-black text-inverse-fg backdrop-blur">
                 Machine
               </span>
             )}
@@ -187,11 +188,11 @@ function ExerciseGrid({
           <div className="p-4">
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm font-black">{exercise.name}</p>
-              <span className="rounded-full bg-[#d7efe6] px-2 py-0.5 text-[10px] font-black capitalize text-[#0e7c66]">
+              <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-black capitalize text-accent">
                 {exercise.difficulty}
               </span>
             </div>
-            <p className="mt-1 text-xs capitalize text-[#6a7a71]">
+            <p className="mt-1 text-xs capitalize text-muted">
               {exercise.muscle_group.replaceAll("_", " ")} · {exercise.equipment.replaceAll("_", " ")}
             </p>
           </div>
@@ -240,7 +241,7 @@ export function GymDemosView({ exercises }: { exercises: GymExercise[] }) {
     <>
       <PageHeader eyebrow="GYM · DEMOS" title="Form first," highlight="then load." />
       <ModuleSubNav items={gymSubNav} />
-      <Panel title="Free-weight & bodyweight demos" right={<Play size={16} className="text-[#0e7c66]" />}>
+      <Panel title="Free-weight & bodyweight demos" right={<Play size={16} className="text-accent" />}>
         <div className="mb-4 flex flex-wrap gap-2">
           {muscleFilters.map((item) => (
             <button
@@ -249,8 +250,8 @@ export function GymDemosView({ exercises }: { exercises: GymExercise[] }) {
               onClick={() => setMuscle(item)}
               className={`rounded-full px-3 py-1.5 text-[11px] font-black capitalize transition ${
                 muscle === item
-                  ? "bg-[#14221b] text-white"
-                  : "bg-[#e8efe9] text-[#52635a] hover:bg-white"
+                  ? "bg-inverse text-inverse-fg"
+                  : "bg-surface text-muted hover:bg-panel"
               }`}
             >
               {muscleFilterLabel(item)}
@@ -315,7 +316,7 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
           <PrimaryButton
             disabled={recommending}
             onClick={recommendMachines}
-            className="rounded-full bg-[#0e7c66] px-5"
+            className="rounded-full bg-accent px-5"
           >
             <Cog size={14} className="mr-1.5 inline" />
             {recommending ? "Matching…" : "AI machine picks"}
@@ -329,12 +330,12 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
           title={machineRecs.title}
           className="mb-4"
           right={
-            <span className="rounded-full bg-[#d7efe6] px-3 py-1 text-[11px] font-black text-[#0e7c66]">
+            <span className="rounded-full bg-accent-soft px-3 py-1 text-[11px] font-black text-accent">
               {machineRecs.focus}
             </span>
           }
         >
-          <p className="mb-4 text-sm leading-6 text-[#55665d]">{machineRecs.summary}</p>
+          <p className="mb-4 text-sm leading-6 text-muted">{machineRecs.summary}</p>
           <div className="grid gap-3 md:grid-cols-2">
             {[...machineRecs.recommendations]
               .sort((a, b) => a.priority - b.priority)
@@ -343,26 +344,26 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
                 return (
                   <article
                     key={`${item.priority}-${item.machine}`}
-                    className="rounded-[1.3rem] border border-[#14221b]/8 bg-[#f6faf7] p-4 shadow-sm"
+                    className="rounded-[1.3rem] border border-ink/8 bg-card p-4 shadow-sm"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="text-[11px] font-black tracking-wide text-[#0e7c66]">
+                        <p className="text-[11px] font-black tracking-wide text-accent">
                           PICK #{item.priority}
                         </p>
                         <p className="mt-1 text-sm font-black">{item.machine}</p>
                       </div>
-                      <span className="rounded-full bg-[#e8efe9] px-2.5 py-1 text-[10px] font-black text-[#52635a]">
+                      <span className="rounded-full bg-surface px-2.5 py-1 text-[10px] font-black text-muted">
                         {item.sets}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs leading-5 text-[#55665d]">{item.why}</p>
-                    <p className="mt-2 text-xs leading-5 text-[#6a7a71]">{item.how_to_use}</p>
+                    <p className="mt-2 text-xs leading-5 text-muted">{item.why}</p>
+                    <p className="mt-2 text-xs leading-5 text-muted">{item.how_to_use}</p>
                     {demo && (
                       <button
                         type="button"
                         onClick={() => setActiveDemo(demo)}
-                        className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#14221b] px-3 py-1.5 text-[11px] font-black text-white transition hover:bg-[#0e7c66]"
+                        className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-inverse px-3 py-1.5 text-[11px] font-black text-inverse-fg transition hover:bg-accent"
                       >
                         <Play size={12} fill="currentColor" /> Watch demo
                       </button>
@@ -374,7 +375,7 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
         </Panel>
       )}
 
-      <Panel title="Machine demo library" right={<Cog size={16} className="text-[#0e7c66]" />}>
+      <Panel title="Machine demo library" right={<Cog size={16} className="text-accent" />}>
         <div className="mb-3 flex flex-wrap gap-2">
           {(
             [
@@ -389,7 +390,7 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
               type="button"
               onClick={() => selectGear(id)}
               className={`rounded-full px-3 py-1.5 text-[11px] font-black transition ${
-                gear === id ? "bg-[#0e7c66] text-white" : "bg-[#d7efe6] text-[#0e7c66] hover:bg-white"
+                gear === id ? "bg-accent text-white" : "bg-accent-soft text-accent hover:bg-panel"
               }`}
             >
               {label}
@@ -404,8 +405,8 @@ export function GymMachinesView({ exercises }: { exercises: GymExercise[] }) {
               onClick={() => setMuscle(item)}
               className={`rounded-full px-3 py-1.5 text-[11px] font-black capitalize transition ${
                 muscle === item
-                  ? "bg-[#14221b] text-white"
-                  : "bg-[#e8efe9] text-[#52635a] hover:bg-white"
+                  ? "bg-inverse text-inverse-fg"
+                  : "bg-surface text-muted hover:bg-panel"
               }`}
             >
               {muscleFilterLabel(item)}
@@ -479,7 +480,7 @@ export function GymSessionsView({ sessions }: { sessions: GymSession[] }) {
           </form>
         </Panel>
 
-        <Panel title="Recent sessions" right={<Target size={16} className="text-[#0e7c66]" />}>
+        <Panel title="Recent sessions" right={<Target size={16} className="text-accent" />}>
           <div className="space-y-2">
             {sessions.map((session) => (
               <ListRow
@@ -493,7 +494,7 @@ export function GymSessionsView({ sessions }: { sessions: GymSession[] }) {
                       type="button"
                       disabled={busy}
                       onClick={() => run(() => deleteGymSession(session.id))}
-                      className="grid size-8 place-items-center rounded-lg text-[#8a9a91] transition hover:bg-[#f8ece4] hover:text-[#c45c2a]"
+                      className="grid size-8 place-items-center rounded-lg text-muted transition hover:bg-ember/15 hover:text-ember"
                       aria-label={`Delete ${session.title}`}
                     >
                       <Trash2 size={14} />
@@ -513,9 +514,11 @@ export function GymSessionsView({ sessions }: { sessions: GymSession[] }) {
 export function GymPlansView({
   plans,
   exercises,
+  scaling = null,
 }: {
   plans: GymPlan[];
   exercises: GymExercise[];
+  scaling?: RoutineScaling | null;
 }) {
   const [busy, start] = useTransition();
   const [planning, startPlan] = useTransition();
@@ -551,31 +554,114 @@ export function GymPlansView({
         }
       />
       <ModuleSubNav items={gymSubNav} />
+
+      {scaling && (
+        <Panel title="BMI · target forecast" className="mb-4">
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-black text-ink">{scaling.summary}</p>
+                {scaling.pace_note && (
+                  <p className="mt-2 text-sm leading-6 text-muted">{scaling.pace_note}</p>
+                )}
+              </div>
+              {scaling.band_label && (
+                <span className="rounded-full border border-accent/20 bg-accent-soft/70 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-accent">
+                  {scaling.band_label}
+                  {scaling.bmi != null ? ` · ${scaling.bmi}` : ""}
+                </span>
+              )}
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                ["Focus", scaling.focus],
+                ["Days / week", scaling.days_per_week],
+                ["Session", `${scaling.session_minutes} min`],
+                ["Intensity", scaling.intensity],
+              ].map(([label, value]) => (
+                <div
+                  key={label}
+                  className="rounded-2xl border border-ink/5 bg-card px-3 py-3"
+                >
+                  <p className="text-[10px] font-black uppercase tracking-wider text-[#948e99]">
+                    {label}
+                  </p>
+                  <p className="mt-1 text-sm font-bold text-ink">{value}</p>
+                </div>
+              ))}
+            </div>
+
+            {(scaling.kg_to_goal != null || scaling.target_date) && (
+              <p className="text-xs font-semibold text-muted">
+                {scaling.kg_to_goal != null && (
+                  <>
+                    {Math.abs(scaling.kg_to_goal).toFixed(1)} kg to{" "}
+                    {scaling.kg_to_goal > 0 ? "gain" : "lose"}
+                    {scaling.goal_weight_kg != null
+                      ? ` (goal ${scaling.goal_weight_kg.toFixed(1)} kg)`
+                      : ""}
+                  </>
+                )}
+                {scaling.kg_to_goal != null && scaling.target_date ? " · " : ""}
+                {scaling.target_date && (
+                  <>
+                    target {scaling.target_date}
+                    {scaling.weeks_remaining != null
+                      ? ` · ${scaling.weeks_remaining} week(s) left`
+                      : ""}
+                    {scaling.suggested_kg_per_week != null
+                      ? ` · ~${Math.abs(scaling.suggested_kg_per_week).toFixed(2)} kg/week`
+                      : ""}
+                  </>
+                )}
+              </p>
+            )}
+
+            <ul className="space-y-1.5">
+              {scaling.tips.map((tip) => (
+                <li key={tip} className="flex gap-2 text-sm text-muted">
+                  <Target size={14} className="mt-0.5 shrink-0 text-accent" />
+                  <span>{tip}</span>
+                </li>
+              ))}
+            </ul>
+
+            {!scaling.bmi && (
+              <p className="text-xs font-semibold text-[#8a6a4a]">
+                Add height, weight, and a goal target date in Settings / Goals so plans scale to your BMI
+                forecast.
+              </p>
+            )}
+          </div>
+        </Panel>
+      )}
+
       <Panel title="Saved AI gym plans">
         <div className="space-y-4">
           {plans.map((plan) => (
-            <article key={plan.id} className="rounded-[1.3rem] border border-[#14221b]/8 bg-[#e8efe9]/45 p-4">
+            <article key={plan.id} className="rounded-[1.3rem] border border-ink/8 bg-surface/45 p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="text-sm font-black">{plan.title}</p>
-                  <p className="mt-1 text-xs capitalize text-[#6a7a71]">
+                  <p className="mt-1 text-xs capitalize text-muted">
                     {plan.focus.replace("_", " ")} · {plan.level} · {plan.days_per_week} days/week
                   </p>
-                  {plan.summary && <p className="mt-2 text-sm leading-6 text-[#55665d]">{plan.summary}</p>}
+                  {plan.summary && <p className="mt-2 text-sm leading-6 text-muted">{plan.summary}</p>}
                 </div>
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => run(() => deleteGymPlan(plan.id))}
-                  className="grid size-8 place-items-center rounded-lg text-[#8a9a91] transition hover:bg-[#f8ece4] hover:text-[#c45c2a]"
+                  className="grid size-8 place-items-center rounded-lg text-muted transition hover:bg-ember/15 hover:text-ember"
                 >
                   <Trash2 size={14} />
                 </button>
               </div>
               <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 {(plan.days ?? []).map((day) => (
-                  <div key={`${plan.id}-${day.day}`} className="rounded-2xl border border-black/5 bg-white/80 p-3">
-                    <p className="text-xs font-black text-[#0e7c66]">{day.day}</p>
+                  <div key={`${plan.id}-${day.day}`} className="rounded-2xl border border-ink/5 bg-panel/80 p-3">
+                    <p className="text-xs font-black text-accent">{day.day}</p>
                     <p className="mt-1 text-sm font-bold">{day.focus}</p>
                     <ul className="mt-2 space-y-1.5">
                       {(day.exercises ?? []).map((ex) => {
@@ -583,17 +669,17 @@ export function GymPlansView({
                           (item) => item.name.toLowerCase() === ex.name.toLowerCase(),
                         );
                         return (
-                          <li key={`${day.day}-${ex.name}`} className="text-xs text-[#55665d]">
+                          <li key={`${day.day}-${ex.name}`} className="text-xs text-muted">
                             {linked ? (
                               <button
                                 type="button"
                                 onClick={() => setActiveDemo(linked)}
-                                className="font-bold text-[#0e7c66] underline-offset-2 hover:underline"
+                                className="font-bold text-accent underline-offset-2 hover:underline"
                               >
                                 {ex.name}
                               </button>
                             ) : (
-                              <span className="font-bold text-[#1e2f26]">{ex.name}</span>
+                              <span className="font-bold text-ink">{ex.name}</span>
                             )}{" "}
                             · {ex.sets} · rest {ex.rest}
                           </li>
@@ -606,7 +692,9 @@ export function GymPlansView({
             </article>
           ))}
           {!plans.length && (
-            <EmptyState>Generate an AI gym plan with machines matched to your profile.</EmptyState>
+            <EmptyState>
+              Generate an AI gym plan scaled to your BMI band and target-date forecast.
+            </EmptyState>
           )}
         </div>
       </Panel>

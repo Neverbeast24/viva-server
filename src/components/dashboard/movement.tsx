@@ -97,7 +97,7 @@ export function MovementView({
       {mode === "log" && (
         <>
       {reason && (
-        <p className="mb-4 rounded-2xl border border-[#0e7c66]/15 bg-[#d7efe6]/70 px-4 py-3 text-sm font-semibold text-[#0e7c66]">
+        <p className="mb-4 rounded-2xl border border-accent/15 bg-accent-soft/70 px-4 py-3 text-sm font-semibold text-accent">
           {reason}
         </p>
       )}
@@ -168,21 +168,21 @@ export function MovementView({
             value={steps.toLocaleString()}
             detail={`${stepPct}% of ${stepGoal.toLocaleString()} goal`}
             icon={Footprints}
-            className="bg-gradient-to-br from-[#0a5c4c] to-[#0e7c66] text-white"
+            className="bg-gradient-to-br from-accent-deep to-accent text-white"
           />
           <StatCard
             label="Active min"
             value={String(totalMinutes)}
             detail={`${workouts.length} sessions`}
             icon={Timer}
-            className="bg-[#e8fbf8] text-[#183d3a]"
+            className="bg-accent-soft text-accent-deep"
           />
           <StatCard
             label="Calories"
             value={String(totalCalories)}
             detail="Burned from logged workouts"
             icon={Flame}
-            className="bg-[#fff3e8] text-[#533621]"
+            className="bg-ember/10 text-ember"
           />
           <StatCard
             label="Effort"
@@ -214,7 +214,7 @@ export function MovementView({
                           else toast.error(result.message);
                         })
                       }
-                      className="grid size-8 place-items-center rounded-lg text-[#8a9a91] transition hover:bg-[#f8ece4] hover:text-[#c45c2a]"
+                      className="grid size-8 place-items-center rounded-lg text-muted transition hover:bg-ember/15 hover:text-ember"
                       aria-label={`Delete ${workout.title}`}
                     >
                       <Trash2 size={14} />

@@ -1,13 +1,31 @@
 "use client";
 
+import Link from "next/link";
 import { useTransition } from "react";
-import { AlertTriangle, Minus, Plus, Refrigerator, Tags, Trash2 } from "lucide-react";
+import {
+  AlertTriangle,
+  LayoutDashboard,
+  Minus,
+  PackagePlus,
+  Plus,
+  Refrigerator,
+  ShoppingBasket,
+  Tags,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   addPantryItem,
   deletePantryItem,
   updatePantryStock,
 } from "@/app/dashboard/pantry/actions";
+import {
+  categoryLabel,
+  LOW_STOCK_THRESHOLD,
+  PANTRY_CATEGORIES,
+  type PantryItem,
+} from "@/app/dashboard/pantry/data";
+import { ModuleSubNav } from "@/components/dashboard/module-subnav";
 import {
   EmptyState,
   FormField,
@@ -20,19 +38,13 @@ import {
   fieldClass,
 } from "@/components/dashboard/ui";
 import { useModuleAction } from "@/components/dashboard/use-module-action";
+import { pantrySubNav } from "@/lib/nav";
 
-type PantryItem = {
-  id: number;
-  name: string;
-  category: string;
-  stock_level: number;
-};
+export type PantryMode = "overview" | "items" | "categories" | "low-stock" | "add";
 
-export function PantryView({ items }: { items: PantryItem[] }) {
+function usePantryActions() {
   const { pending, submit } = useModuleAction(addPantryItem);
   const [updating, startUpdate] = useTransition();
-  const lowStock = items.filter((item) => item.stock_level <= 25);
-  const categories = new Set(items.map((item) => item.category)).size;
 
   function runAction(action: () => Promise<{ ok: boolean; message: string }>) {
     startUpdate(async () => {
@@ -42,41 +54,116 @@ export function PantryView({ items }: { items: PantryItem[] }) {
     });
   }
 
+  return { pending, submit, updating, runAction };
+}
+
+function PantryAddForm({
+  pending,
+  submit,
+  defaultCategory = "grains",
+}: {
+  pending: boolean;
+  submit: (formData: FormData) => void;
+  defaultCategory?: string;
+}) {
+  return (
+    <form action={submit} className="grid gap-3 sm:grid-cols-4">
+      <FormField label="Pantry item" hint="Required" className="sm:col-span-2">
+        <input name="name" required placeholder="e.g. Brown rice" className={fieldClass} />
+      </FormField>
+      <FormField label="Category">
+        <select name="category" defaultValue={defaultCategory} className={fieldClass}>
+          {PANTRY_CATEGORIES.map((cat) => (
+            <option key={cat.value} value={cat.value}>
+              {cat.label}
+            </option>
+          ))}
+        </select>
+      </FormField>
+      <FormField label="Stock level" hint="percent">
+        <input
+          name="stock_level"
+          type="number"
+          min={0}
+          max={100}
+          defaultValue={50}
+          className={fieldClass}
+        />
+      </FormField>
+      <PrimaryButton disabled={pending} className="sm:col-span-4">
+        {pending ? "Saving…" : "Add to pantry"}
+      </PrimaryButton>
+    </form>
+  );
+}
+
+function StockRow({
+  item,
+  updating,
+  runAction,
+}: {
+  item: PantryItem;
+  updating: boolean;
+  runAction: (action: () => Promise<{ ok: boolean; message: string }>) => void;
+}) {
+  return (
+    <div className="rounded-2xl border border-ink/6 bg-surface/35 p-3">
+      <div className="mb-3 flex items-center gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-black">{item.name}</p>
+          <p className="mt-0.5 text-[10px] capitalize text-muted">
+            {categoryLabel(item.category)}
+          </p>
+        </div>
+        <button
+          type="button"
+          disabled={updating || item.stock_level <= 0}
+          onClick={() =>
+            runAction(() => updatePantryStock(item.id, Math.max(0, item.stock_level - 10)))
+          }
+          className="grid size-8 place-items-center rounded-lg bg-panel text-muted shadow-sm disabled:opacity-40"
+          aria-label={`Decrease ${item.name} stock`}
+        >
+          <Minus size={14} />
+        </button>
+        <span className="w-10 text-center text-xs font-black text-muted">
+          {item.stock_level}%
+        </span>
+        <button
+          type="button"
+          disabled={updating || item.stock_level >= 100}
+          onClick={() =>
+            runAction(() => updatePantryStock(item.id, Math.min(100, item.stock_level + 10)))
+          }
+          className="grid size-8 place-items-center rounded-lg bg-panel text-accent shadow-sm disabled:opacity-40"
+          aria-label={`Increase ${item.name} stock`}
+        >
+          <Plus size={14} />
+        </button>
+        <button
+          type="button"
+          disabled={updating}
+          onClick={() => runAction(() => deletePantryItem(item.id))}
+          className="grid size-8 place-items-center rounded-lg text-muted transition hover:bg-ember/15 hover:text-ember"
+          aria-label={`Delete ${item.name}`}
+        >
+          <Trash2 size={14} />
+        </button>
+      </div>
+      <Progress value={item.stock_level} />
+    </div>
+  );
+}
+
+function PantryOverview({ items }: { items: PantryItem[] }) {
+  const lowStock = items.filter((item) => item.stock_level <= LOW_STOCK_THRESHOLD);
+  const categories = new Set(items.map((item) => item.category)).size;
+  const wellStocked = items.filter((item) => item.stock_level > LOW_STOCK_THRESHOLD).length;
+
   return (
     <>
       <PageHeader eyebrow="PANTRY" title="Know what you" highlight="have." />
-
-      <Panel title="Add pantry item" className="mb-4">
-        <form action={submit} className="grid gap-3 sm:grid-cols-4">
-          <FormField label="Pantry item" hint="Required" className="sm:col-span-2">
-            <input name="name" required placeholder="e.g. Brown rice" className={fieldClass} />
-          </FormField>
-          <FormField label="Category">
-            <select name="category" defaultValue="grains" className={fieldClass}>
-              <option value="vegetables">Vegetables</option>
-              <option value="fruits">Fruits</option>
-              <option value="protein">Protein</option>
-              <option value="dairy">Dairy</option>
-              <option value="grains">Grains</option>
-              <option value="snacks">Snacks</option>
-              <option value="other">Other</option>
-            </select>
-          </FormField>
-          <FormField label="Stock level" hint="percent">
-            <input
-              name="stock_level"
-              type="number"
-              min={0}
-              max={100}
-              defaultValue={50}
-              className={fieldClass}
-            />
-          </FormField>
-          <PrimaryButton disabled={pending} className="sm:col-span-4">
-            {pending ? "Saving…" : "Add to pantry"}
-          </PrimaryButton>
-        </form>
-      </Panel>
+      <ModuleSubNav items={pantrySubNav} />
 
       <Stagger>
         <div className="grid gap-4 sm:grid-cols-3">
@@ -85,7 +172,7 @@ export function PantryView({ items }: { items: PantryItem[] }) {
             value={String(items.length)}
             detail="In your pantry"
             icon={Refrigerator}
-            className="bg-gradient-to-br from-[#0a5c4c] to-[#0e7c66] text-white"
+            className="bg-gradient-to-br from-accent-deep to-accent text-white"
           />
           <StatCard
             label="Running low"
@@ -99,63 +186,291 @@ export function PantryView({ items }: { items: PantryItem[] }) {
                 : "Everything is stocked"
             }
             icon={AlertTriangle}
-            className="bg-[#fff3e8] text-[#533621]"
+            className="bg-ember/10 text-ember"
           />
           <StatCard
             label="Categories"
             value={String(categories)}
-            detail="Types of food on hand"
+            detail={`${wellStocked} item${wellStocked === 1 ? "" : "s"} well stocked`}
             icon={Tags}
-            className="bg-[#e8fbf8] text-[#183d3a]"
+            className="bg-accent-soft text-accent-deep"
           />
         </div>
-        <Panel title="Stock levels" className="mt-4">
-          <div className="space-y-4">
-            {items.map((item) => (
-              <div key={item.id} className="rounded-2xl border border-[#14221b]/6 bg-[#e8efe9]/35 p-3">
-                <div className="mb-3 flex items-center gap-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-black">{item.name}</p>
-                    <p className="mt-0.5 text-[10px] capitalize text-[#74847b]">{item.category}</p>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            {
+              href: "/dashboard/pantry/items",
+              title: "All items",
+              detail: `${items.length} tracked — adjust stock anytime`,
+              icon: Refrigerator,
+            },
+            {
+              href: "/dashboard/pantry/categories",
+              title: "Categories",
+              detail: "Browse by food type",
+              icon: Tags,
+            },
+            {
+              href: "/dashboard/pantry/low-stock",
+              title: "Low stock",
+              detail: `${lowStock.length} need${lowStock.length === 1 ? "s" : ""} attention`,
+              icon: AlertTriangle,
+            },
+            {
+              href: "/dashboard/pantry/add",
+              title: "Add item",
+              detail: "Log something new on the shelf",
+              icon: PackagePlus,
+            },
+          ].map((card) => (
+            <Link
+              key={card.href}
+              href={card.href}
+              className="rounded-[1.4rem] border border-ink/8 bg-card p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-accent/25 hover:shadow-md"
+            >
+              <span className="grid size-10 place-items-center rounded-xl bg-accent-soft text-accent">
+                <card.icon size={18} />
+              </span>
+              <p className="mt-4 text-sm font-black">{card.title}</p>
+              <p className="mt-1 text-xs leading-5 text-muted">{card.detail}</p>
+            </Link>
+          ))}
+        </div>
+
+        <Panel
+          title="Needs restock soon"
+          className="mt-4"
+          right={
+            <Link
+              href="/dashboard/pantry/low-stock"
+              className="text-[11px] font-black text-accent hover:underline"
+            >
+              View all
+            </Link>
+          }
+        >
+          {lowStock.length ? (
+            <div className="space-y-2">
+              {lowStock.slice(0, 5).map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between gap-3 rounded-2xl border border-ink/6 bg-panel/60 px-4 py-3"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold">{item.name}</p>
+                    <p className="mt-0.5 text-xs capitalize text-muted">
+                      {categoryLabel(item.category)}
+                    </p>
                   </div>
-                  <button
-                    type="button"
-                    disabled={updating || item.stock_level <= 0}
-                    onClick={() => runAction(() => updatePantryStock(item.id, Math.max(0, item.stock_level - 10)))}
-                    className="grid size-8 place-items-center rounded-lg bg-white text-[#6f6877] shadow-sm disabled:opacity-40"
-                    aria-label={`Decrease ${item.name} stock`}
-                  >
-                    <Minus size={14} />
-                  </button>
-                  <span className="w-10 text-center text-xs font-black text-[#6a7a71]">{item.stock_level}%</span>
-                  <button
-                    type="button"
-                    disabled={updating || item.stock_level >= 100}
-                    onClick={() => runAction(() => updatePantryStock(item.id, Math.min(100, item.stock_level + 10)))}
-                    className="grid size-8 place-items-center rounded-lg bg-white text-[#0e7c66] shadow-sm disabled:opacity-40"
-                    aria-label={`Increase ${item.name} stock`}
-                  >
-                    <Plus size={14} />
-                  </button>
-                  <button
-                    type="button"
-                    disabled={updating}
-                    onClick={() => runAction(() => deletePantryItem(item.id))}
-                    className="grid size-8 place-items-center rounded-lg text-[#8a9a91] transition hover:bg-[#f8ece4] hover:text-[#c45c2a]"
-                    aria-label={`Delete ${item.name}`}
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                  <span className="shrink-0 text-xs font-black text-ember">
+                    {item.stock_level}%
+                  </span>
                 </div>
-                <Progress value={item.stock_level} />
-              </div>
-            ))}
-            {!items.length && (
-              <EmptyState>No pantry items yet. Add your first item above.</EmptyState>
-            )}
+              ))}
+            </div>
+          ) : (
+            <EmptyState>Nothing running low. Nice work keeping the pantry stocked.</EmptyState>
+          )}
+        </Panel>
+
+        <Panel title="Quick start" className="mt-4" right={<LayoutDashboard size={16} className="text-accent" />}>
+          <p className="text-sm leading-6 text-muted">
+            Track shelf stock by category, flag what’s low, then jump to groceries when it’s time to
+            restock.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link href="/dashboard/pantry/add">
+              <PrimaryButton className="rounded-full px-5">Add an item</PrimaryButton>
+            </Link>
+            <Link
+              href="/dashboard/groceries"
+              className="inline-flex items-center gap-1.5 rounded-full border border-ink/12 bg-panel/70 px-5 py-3 text-xs font-black text-muted transition hover:border-accent/30 hover:text-accent"
+            >
+              <ShoppingBasket size={13} />
+              Open groceries
+            </Link>
           </div>
         </Panel>
       </Stagger>
     </>
   );
+}
+
+function PantryItems({ items }: { items: PantryItem[] }) {
+  const { updating, runAction } = usePantryActions();
+
+  return (
+    <>
+      <PageHeader
+        eyebrow="PANTRY"
+        title="Full"
+        highlight="inventory."
+        action={
+          <Link href="/dashboard/pantry/add">
+            <PrimaryButton className="rounded-full px-5">Add item</PrimaryButton>
+          </Link>
+        }
+      />
+      <ModuleSubNav items={pantrySubNav} />
+
+      <Panel title="Stock levels">
+        <div className="space-y-4">
+          {items.map((item) => (
+            <StockRow key={item.id} item={item} updating={updating} runAction={runAction} />
+          ))}
+          {!items.length && (
+            <EmptyState>
+              No pantry items yet.{" "}
+              <Link href="/dashboard/pantry/add" className="font-bold text-accent hover:underline">
+                Add your first item
+              </Link>
+              .
+            </EmptyState>
+          )}
+        </div>
+      </Panel>
+    </>
+  );
+}
+
+function PantryCategories({ items }: { items: PantryItem[] }) {
+  const { updating, runAction } = usePantryActions();
+  const grouped: { value: string; label: string; items: PantryItem[] }[] = PANTRY_CATEGORIES.map(
+    (cat) => ({
+      ...cat,
+      items: items.filter((item) => item.category === cat.value),
+    }),
+  ).filter((group) => group.items.length > 0);
+
+  const extras = items.filter(
+    (item) => !PANTRY_CATEGORIES.some((cat) => cat.value === item.category),
+  );
+  if (extras.length) {
+    grouped.push({ value: "custom", label: "Other labels", items: extras });
+  }
+
+  return (
+    <>
+      <PageHeader eyebrow="PANTRY" title="Browse by" highlight="category." />
+      <ModuleSubNav items={pantrySubNav} />
+
+      <Stagger>
+        {!grouped.length && (
+          <EmptyState>
+            Nothing categorized yet.{" "}
+            <Link href="/dashboard/pantry/add" className="font-bold text-accent hover:underline">
+              Add an item
+            </Link>{" "}
+            to start grouping your shelves.
+          </EmptyState>
+        )}
+        <div className="space-y-4">
+          {grouped.map((group) => {
+            const avg = Math.round(
+              group.items.reduce((sum, item) => sum + item.stock_level, 0) / group.items.length,
+            );
+            return (
+              <Panel
+                key={group.value}
+                title={group.label}
+                right={
+                  <span className="text-[11px] font-black text-muted">
+                    {group.items.length} item{group.items.length === 1 ? "" : "s"} · avg {avg}%
+                  </span>
+                }
+              >
+                <div className="space-y-3">
+                  {group.items.map((item) => (
+                    <StockRow
+                      key={item.id}
+                      item={item}
+                      updating={updating}
+                      runAction={runAction}
+                    />
+                  ))}
+                </div>
+              </Panel>
+            );
+          })}
+        </div>
+      </Stagger>
+    </>
+  );
+}
+
+function PantryLowStock({ items }: { items: PantryItem[] }) {
+  const { updating, runAction } = usePantryActions();
+  const lowStock = items
+    .filter((item) => item.stock_level <= LOW_STOCK_THRESHOLD)
+    .sort((a, b) => a.stock_level - b.stock_level);
+
+  return (
+    <>
+      <PageHeader
+        eyebrow="PANTRY"
+        title="Running"
+        highlight="low."
+        action={
+          <Link
+            href="/dashboard/groceries"
+            className="inline-flex items-center gap-1.5 rounded-full border border-ink/12 bg-panel/70 px-4 py-2.5 text-xs font-black text-muted transition hover:border-accent/30 hover:text-accent"
+          >
+            <ShoppingBasket size={13} />
+            Groceries
+          </Link>
+        }
+      />
+      <ModuleSubNav items={pantrySubNav} />
+
+      <Panel
+        title={`Needs restock (≤${LOW_STOCK_THRESHOLD}%)`}
+        right={
+          <span className="text-[11px] font-black text-ember">
+            {lowStock.length} item{lowStock.length === 1 ? "" : "s"}
+          </span>
+        }
+      >
+        <div className="space-y-4">
+          {lowStock.map((item) => (
+            <StockRow key={item.id} item={item} updating={updating} runAction={runAction} />
+          ))}
+          {!lowStock.length && (
+            <EmptyState>All clear — nothing is at or below {LOW_STOCK_THRESHOLD}% stock.</EmptyState>
+          )}
+        </div>
+      </Panel>
+    </>
+  );
+}
+
+function PantryAdd({ defaultCategory }: { defaultCategory?: string }) {
+  const { pending, submit } = usePantryActions();
+
+  return (
+    <>
+      <PageHeader eyebrow="PANTRY" title="Add to the" highlight="shelf." />
+      <ModuleSubNav items={pantrySubNav} />
+
+      <Panel title="New pantry item">
+        <PantryAddForm pending={pending} submit={submit} defaultCategory={defaultCategory} />
+      </Panel>
+    </>
+  );
+}
+
+export function PantryView({
+  mode = "overview",
+  items,
+  defaultCategory,
+}: {
+  mode?: PantryMode;
+  items: PantryItem[];
+  defaultCategory?: string;
+}) {
+  if (mode === "items") return <PantryItems items={items} />;
+  if (mode === "categories") return <PantryCategories items={items} />;
+  if (mode === "low-stock") return <PantryLowStock items={items} />;
+  if (mode === "add") return <PantryAdd defaultCategory={defaultCategory} />;
+  return <PantryOverview items={items} />;
 }

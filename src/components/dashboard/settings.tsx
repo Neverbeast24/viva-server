@@ -16,7 +16,9 @@ import {
   PrimaryButton,
   fieldClass,
 } from "@/components/dashboard/ui";
+import { useTheme } from "@/components/theme-provider";
 import { useModuleAction } from "@/components/dashboard/use-module-action";
+import { isThemePreference } from "@/lib/theme";
 import { settingsSubNav } from "@/lib/nav";
 
 type Settings = {
@@ -113,11 +115,11 @@ function BmiScale({
   }
 
   return (
-    <div className="mt-4 space-y-3 rounded-2xl border border-[#14221b]/6 bg-[#f6faf7] p-4">
+    <div className="mt-4 space-y-3 rounded-2xl border border-ink/6 bg-card p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <p className="text-[10px] font-black uppercase tracking-wider text-[#948e99]">BMI scale</p>
-          <p className="mt-0.5 text-[10px] font-bold text-[#6a7a71]">
+          <p className="mt-0.5 text-[10px] font-bold text-muted">
             Based on height · weight
             {sexLabel && sex !== "prefer_not_to_say" ? ` · profile sex: ${sexLabel}` : ""}
           </p>
@@ -136,11 +138,11 @@ function BmiScale({
           style={{ left: `${markerPct}%` }}
           aria-hidden
         >
-          <span className="block whitespace-nowrap rounded-md bg-[#14221b] px-1.5 py-0.5 text-[9px] font-black text-white">
+          <span className="block whitespace-nowrap rounded-md bg-inverse px-1.5 py-0.5 text-[9px] font-black text-inverse-fg">
             You
           </span>
           <span
-            className="mx-auto mt-0.5 block size-0 border-x-[5px] border-t-[6px] border-x-transparent border-t-[#14221b]"
+            className="mx-auto mt-0.5 block size-0 border-x-[5px] border-t-[6px] border-x-transparent border-t-ink"
           />
         </div>
 
@@ -166,16 +168,16 @@ function BmiScale({
         />
       </div>
 
-      <div className="grid grid-cols-4 gap-1 text-center text-[9px] font-bold text-[#6a7a71]">
+      <div className="grid grid-cols-4 gap-1 text-center text-[9px] font-bold text-muted">
         {BMI_BANDS.map((band) => (
-          <span key={band.key} className={band.key === category.key ? "text-[#14221b]" : undefined}>
+          <span key={band.key} className={band.key === category.key ? "text-ink" : undefined}>
             {band.label}
           </span>
         ))}
       </div>
 
-      <p className="text-xs leading-5 text-[#55665d]">{guidance}</p>
-      <p className="text-[11px] leading-4 text-[#7a8a81]">
+      <p className="text-xs leading-5 text-muted">{guidance}</p>
+      <p className="text-[11px] leading-4 text-muted">
         WHO BMI bands are the same across sexes; body composition still varies, so treat this as a
         screening cue only.
       </p>
@@ -198,6 +200,7 @@ export function SettingsView({
 }) {
   const preferencesAction = useModuleAction(saveSettings);
   const profileAction = useModuleAction(saveHealthProfile);
+  const { setTheme } = useTheme();
   const bmi =
     profile.height_cm && profile.weight_kg
       ? profile.weight_kg / (profile.height_cm / 100) ** 2
@@ -379,8 +382,8 @@ export function SettingsView({
               ].map(([Icon, label, value]) => {
                 const SnapshotIcon = Icon as typeof Scale;
                 return (
-                  <div key={String(label)} className="rounded-2xl bg-[#e8efe9]/60 p-4">
-                    <SnapshotIcon size={16} className="text-[#0e7c66]" />
+                  <div key={String(label)} className="rounded-2xl bg-surface/60 p-4">
+                    <SnapshotIcon size={16} className="text-accent" />
                     <p className="mt-4 text-[10px] font-black uppercase tracking-wider text-[#948e99]">
                       {String(label)}
                     </p>
@@ -397,13 +400,13 @@ export function SettingsView({
                 sex={profile.sex}
               />
             ) : (
-              <div className="mt-4 rounded-2xl border border-dashed border-[#14221b]/12 bg-[#e8efe9]/40 p-4 text-xs leading-5 text-[#6a7a71]">
+              <div className="mt-4 rounded-2xl border border-dashed border-ink/12 bg-surface/40 p-4 text-xs leading-5 text-muted">
                 Add height and weight to see where you sit on the BMI scale and the normal weight
                 range for your height.
               </div>
             )}
-            <div className="mt-4 flex items-start gap-3 rounded-2xl bg-[#d7efe6]/70 p-4 text-xs leading-5 text-[#645a78]">
-              <BadgeInfo size={16} className="mt-0.5 shrink-0 text-[#0e7c66]" />
+            <div className="mt-4 flex items-start gap-3 rounded-2xl bg-accent-soft/70 p-4 text-xs leading-5 text-[#645a78]">
+              <BadgeInfo size={16} className="mt-0.5 shrink-0 text-accent" />
               BMI is a general screening measure, not a diagnosis. Height and weight drive the
               scale; sex and other profile details help personalize wellness guidance elsewhere.
             </div>
@@ -416,12 +419,12 @@ export function SettingsView({
                 ["Hydration", `${(profile.daily_water_goal_ml / 1000).toFixed(1)} L / day`],
                 ["Budget", `₱${profile.monthly_health_budget.toLocaleString()} / month`],
               ].map(([label, value]) => (
-                <div key={label} className="flex items-center gap-3 rounded-2xl bg-[#e8efe9]/50 p-3">
-                  <span className="grid size-9 place-items-center rounded-xl bg-white text-[#0e7c66]">
+                <div key={label} className="flex items-center gap-3 rounded-2xl bg-surface/50 p-3">
+                  <span className="grid size-9 place-items-center rounded-xl bg-panel text-accent">
                     <Target size={15} />
                   </span>
                   <div>
-                    <p className="text-xs font-bold text-[#6f8077]">{label}</p>
+                    <p className="text-xs font-bold text-muted">{label}</p>
                     <p className="text-sm font-black">{value}</p>
                   </div>
                 </div>
@@ -441,7 +444,15 @@ export function SettingsView({
         <form action={preferencesAction.submit} className="space-y-5">
           <div className="grid gap-3 sm:grid-cols-2">
             <FormField label="Appearance">
-              <select name="theme" defaultValue={settings.theme} className={fieldClass}>
+              <select
+                name="theme"
+                defaultValue={settings.theme}
+                className={fieldClass}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (isThemePreference(value)) setTheme(value);
+                }}
+              >
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
                 <option value="system">System</option>
@@ -451,10 +462,10 @@ export function SettingsView({
               <input name="timezone" defaultValue={settings.timezone} className={fieldClass} />
             </FormField>
           </div>
-          <label className="flex items-center justify-between gap-3 rounded-2xl border border-[#14221b]/7 bg-white/40 px-4 py-3 text-sm font-bold">
+          <label className="flex items-center justify-between gap-3 rounded-2xl border border-ink/7 bg-panel/40 px-4 py-3 text-sm font-bold">
             <span>
               <span className="block">Push notifications</span>
-              <span className="mt-0.5 block text-xs font-normal text-[#74847b]">
+              <span className="mt-0.5 block text-xs font-normal text-muted">
                 Browser and mobile alerts for tickets, broadcasts, and insights
               </span>
             </span>
@@ -462,13 +473,13 @@ export function SettingsView({
               type="checkbox"
               name="notifications_enabled"
               defaultChecked={settings.notifications_enabled}
-              className="size-5 accent-[#0e7c66]"
+              className="size-5 accent-accent"
             />
           </label>
-          <label className="flex items-center justify-between gap-3 rounded-2xl border border-[#14221b]/7 bg-white/40 px-4 py-3 text-sm font-bold">
+          <label className="flex items-center justify-between gap-3 rounded-2xl border border-ink/7 bg-panel/40 px-4 py-3 text-sm font-bold">
             <span>
               <span className="block">Weekly report</span>
-              <span className="mt-0.5 block text-xs font-normal text-[#74847b]">
+              <span className="mt-0.5 block text-xs font-normal text-muted">
                 Email a summary of your wellbeing trends
               </span>
             </span>
@@ -476,7 +487,7 @@ export function SettingsView({
               type="checkbox"
               name="weekly_report_enabled"
               defaultChecked={settings.weekly_report_enabled}
-              className="size-5 accent-[#0e7c66]"
+              className="size-5 accent-accent"
             />
           </label>
           <PrimaryButton disabled={preferencesAction.pending}>

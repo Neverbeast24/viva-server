@@ -24,7 +24,7 @@ import {
   LOW_STOCK_THRESHOLD,
   PANTRY_CATEGORIES,
   type PantryItem,
-} from "@/app/dashboard/pantry/data";
+} from "@/app/dashboard/pantry/shared";
 import { ModuleSubNav } from "@/components/dashboard/module-subnav";
 import {
   EmptyState,

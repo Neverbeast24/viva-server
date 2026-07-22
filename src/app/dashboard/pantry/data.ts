@@ -1,31 +1,7 @@
+import "server-only";
+
 import { requireUser } from "@/lib/auth/roles";
-
-export type PantryItem = {
-  id: number;
-  name: string;
-  category: string;
-  stock_level: number;
-  created_at?: string;
-};
-
-export const PANTRY_CATEGORIES = [
-  { value: "vegetables", label: "Vegetables" },
-  { value: "fruits", label: "Fruits" },
-  { value: "protein", label: "Protein" },
-  { value: "dairy", label: "Dairy" },
-  { value: "grains", label: "Grains" },
-  { value: "snacks", label: "Snacks" },
-  { value: "drinks", label: "Drinks" },
-  { value: "condiments", label: "Condiments" },
-  { value: "frozen", label: "Frozen" },
-  { value: "other", label: "Other" },
-] as const;
-
-export const LOW_STOCK_THRESHOLD = 25;
-
-export function categoryLabel(value: string) {
-  return PANTRY_CATEGORIES.find((c) => c.value === value)?.label ?? value;
-}
+import type { PantryItem } from "@/app/dashboard/pantry/shared";
 
 export async function loadPantryItems() {
   const { supabase, user } = await requireUser();
@@ -37,3 +13,10 @@ export async function loadPantryItems() {
 
   return (data ?? []) as PantryItem[];
 }
+
+export type { PantryItem } from "@/app/dashboard/pantry/shared";
+export {
+  PANTRY_CATEGORIES,
+  LOW_STOCK_THRESHOLD,
+  categoryLabel,
+} from "@/app/dashboard/pantry/shared";

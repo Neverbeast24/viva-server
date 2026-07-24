@@ -40,6 +40,7 @@ Fill in:
 3. Firebase web config from Firebase Console → Project Settings → Your apps
 4. Firebase Web Push certificate (VAPID) for Cloud Messaging
 5. Firebase Admin service account JSON for **server-side** push (`FIREBASE_SERVICE_ACCOUNT_JSON`)
+6. `RESEND_API_KEY` from [resend.com/api-keys](https://resend.com/api-keys) — needed to email inquiry price quotes from Admin → Inquiries (optional `EMAIL_FROM`)
 
 Full notification + mobile walkthrough: see [`NOTIFICATIONS.md`](./NOTIFICATIONS.md).
 
@@ -163,6 +164,8 @@ npm run dev
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://gcqbuccazplfpmuhperg.supabase.co` | Production, Preview, Development |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | your publishable key | Production, Preview, Development |
 | `NEXT_PUBLIC_APP_URL` | your Vercel URL, e.g. `https://viva-server.vercel.app` | Production |
+| `RESEND_API_KEY` | from [resend.com/api-keys](https://resend.com/api-keys) | Production, Preview, Development |
+| `EMAIL_FROM` (optional) | e.g. `VIVRΛNT <quotes@yourdomain.com>` | Production, Preview, Development |
 
 5. Click **Deploy**.
 6. Copy your live URL from Vercel (example: `https://viva-server.vercel.app`).

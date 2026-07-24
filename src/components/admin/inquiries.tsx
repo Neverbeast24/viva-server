@@ -34,7 +34,13 @@ function defaultPrice(plan: string, existing: number | null) {
   return "";
 }
 
-function InquiryRow({ inquiry }: { inquiry: AdminInquiry }) {
+function InquiryRow({
+  inquiry,
+  emailConfigured,
+}: {
+  inquiry: AdminInquiry;
+  emailConfigured: boolean;
+}) {
   const [pending, start] = useTransition();
 
   function onSubmit(formData: FormData) {
@@ -117,17 +123,27 @@ function InquiryRow({ inquiry }: { inquiry: AdminInquiry }) {
           />
         </label>
         <div className="flex flex-col justify-end gap-2">
-          <label className="flex items-center gap-2 text-xs font-bold text-ink">
+          <label
+            className={`flex items-center gap-2 text-xs font-bold ${
+              emailConfigured ? "text-ink" : "text-muted"
+            }`}
+            title={
+              emailConfigured
+                ? undefined
+                : "Add RESEND_API_KEY to enable quote emails"
+            }
+          >
             <input
               type="checkbox"
               name="send_price_email"
-              defaultChecked
-              className="size-4 rounded border-ink/20 accent-[var(--accent)]"
+              defaultChecked={emailConfigured}
+              disabled={!emailConfigured}
+              className="size-4 rounded border-ink/20 accent-[var(--accent)] disabled:opacity-50"
             />
             Email price
           </label>
           <PrimaryButton type="submit" disabled={pending} className="w-full rounded-full px-5">
-            {pending ? "Sending…" : "Update"}
+            {pending ? "Saving…" : "Update"}
           </PrimaryButton>
         </div>
       </form>
@@ -135,7 +151,13 @@ function InquiryRow({ inquiry }: { inquiry: AdminInquiry }) {
   );
 }
 
-export function AdminInquiriesView({ inquiries }: { inquiries: AdminInquiry[] }) {
+export function AdminInquiriesView({
+  inquiries,
+  emailConfigured = false,
+}: {
+  inquiries: AdminInquiry[];
+  emailConfigured?: boolean;
+}) {
   const openCount = inquiries.filter(
     (row) => row.status === "open" || row.status === "in_progress",
   ).length;
@@ -149,12 +171,20 @@ export function AdminInquiriesView({ inquiries }: { inquiries: AdminInquiry[] })
         automatically email the quote to the requester.{" "}
         <span className="font-bold text-accent">{openCount} active</span> right now.
       </p>
+      {!emailConfigured && (
+        <p className="mt-4 max-w-2xl rounded-2xl border border-ember/20 bg-ember/10 px-4 py-3 text-sm leading-6 text-ink">
+          Quote email is off until <span className="font-bold">RESEND_API_KEY</span> is set in{" "}
+          <span className="font-bold">.env.local</span> (local) or Vercel env (production). You can
+          still save prices and status without sending mail.
+        </p>
+      )}
 
       <div className="mt-8 overflow-hidden rounded-[1.6rem] border border-ink/8 bg-card/85 shadow-sm">
         {inquiries.map((inquiry) => (
           <InquiryRow
             key={`${inquiry.id}-${inquiry.status}-${inquiry.admin_note ?? ""}-${inquiry.quoted_price ?? ""}-${inquiry.price_emailed_at ?? ""}`}
             inquiry={inquiry}
+            emailConfigured={emailConfigured}
           />
         ))}
         {!inquiries.length && (

@@ -19,13 +19,17 @@ function formatPhp(amount: number) {
   }).format(amount);
 }
 
+export function isEmailConfigured() {
+  return Boolean(process.env.RESEND_API_KEY?.trim());
+}
+
 export async function sendInquiryPriceEmail(input: PriceQuoteEmailInput) {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   if (!apiKey) {
     return {
       ok: false as const,
       message:
-        "Email is not configured. Add RESEND_API_KEY (and optional EMAIL_FROM) in Vercel env, then redeploy.",
+        "Email is not configured. Add RESEND_API_KEY to .env.local (local) or Vercel env (production), then restart/redeploy.",
     };
   }
 

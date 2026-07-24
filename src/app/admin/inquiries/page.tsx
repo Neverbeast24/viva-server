@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AdminInquiriesView, type AdminInquiry } from "@/components/admin/inquiries";
 import { requireSuperAdmin } from "@/lib/auth/roles";
+import { isEmailConfigured } from "@/lib/email/send";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Inquiries" };
@@ -17,5 +18,10 @@ export default async function AdminInquiriesPage() {
     .order("created_at", { ascending: false })
     .limit(200);
 
-  return <AdminInquiriesView inquiries={(data ?? []) as AdminInquiry[]} />;
+  return (
+    <AdminInquiriesView
+      inquiries={(data ?? []) as AdminInquiry[]}
+      emailConfigured={isEmailConfigured()}
+    />
+  );
 }

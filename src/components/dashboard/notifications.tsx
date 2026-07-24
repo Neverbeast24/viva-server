@@ -75,13 +75,19 @@ export function Notifications({ items }: { items: NotificationItem[] }) {
       <motion.button
         type="button"
         whileTap={{ scale: 0.92 }}
-        aria-label="Notifications"
+        aria-label={
+          unread > 0
+            ? `Notifications, ${unread} unread`
+            : "Notifications"
+        }
         onClick={() => setOpen((value) => !value)}
         className="focus-ring relative grid size-10 place-items-center rounded-full bg-card text-muted shadow-sm transition hover:-translate-y-0.5"
       >
         <Bell size={17} />
         {unread > 0 && (
-          <i className="absolute right-2.5 top-2.5 size-1.5 rounded-full bg-[#ff647c]" />
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ff647c] px-1 text-[9px] font-bold leading-none text-white">
+            {unread > 99 ? "99+" : unread}
+          </span>
         )}
       </motion.button>
 

@@ -35,6 +35,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Brand } from "@/components/brand";
+import { SITE_CONTACT, contactMailto, contactTelHref } from "@/lib/contact";
 
 const insights = [
   {
@@ -846,7 +847,16 @@ export function LandingPage() {
           <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-muted">
             No credit card for Starter. Plus is ₱299/month — request access and we activate it
             for you. Campus is arranged directly with{" "}
-            <span className="font-bold text-ink">Daniella D. Sayson</span>.
+            <span className="font-bold text-ink">{SITE_CONTACT.name}</span>.
+          </p>
+          <p className="mx-auto mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm font-semibold text-ink">
+            <a href={contactMailto("campus")} className="text-accent hover:underline">
+              {SITE_CONTACT.email}
+            </a>
+            <span className="text-muted">·</span>
+            <a href={contactTelHref()} className="text-accent hover:underline">
+              {SITE_CONTACT.phoneDisplay}
+            </a>
           </p>
         </div>
         <div className="grid gap-5 lg:grid-cols-3">
@@ -860,8 +870,8 @@ export function LandingPage() {
               whileHover={{ y: -8 }}
               className={`relative flex flex-col overflow-hidden rounded-[2rem] p-7 sm:p-8 ${
                 plan.highlight
-                  ? "border-2 border-accent bg-inverse text-inverse-fg shadow-[0_24px_60px_rgba(14,124,102,.28)]"
-                  : "border border-ink/8 bg-card/90 shadow-[0_16px_40px_rgba(var(--shadow-color),.06)]"
+                  ? "border-2 border-accent bg-accent-soft text-ink shadow-[0_24px_60px_rgba(14,124,102,.28)]"
+                  : "border border-ink/8 bg-card text-ink shadow-[0_16px_40px_rgba(var(--shadow-color),.06)]"
               }`}
             >
               {plan.highlight && (
@@ -869,32 +879,44 @@ export function LandingPage() {
                   MOST POPULAR
                 </span>
               )}
-              <p className={`text-xs font-black tracking-[0.18em] ${plan.highlight ? "text-cyan" : "text-accent"}`}>
+              <p className="text-xs font-black tracking-[0.18em] text-accent">
                 {plan.name.toUpperCase()}
               </p>
               <div className="mt-4 flex items-end gap-1">
-                <span className="font-display text-5xl tracking-tight">{plan.price}</span>
-                <span className={`mb-2 text-sm font-semibold ${plan.highlight ? "text-inverse-fg/70" : "text-muted"}`}>
+                <span className="font-display text-5xl tracking-tight text-ink">{plan.price}</span>
+                <span className="mb-2 text-sm font-semibold text-ink/65">
                   {plan.period}
                 </span>
               </div>
-              <p className={`mt-3 text-sm leading-6 ${plan.highlight ? "text-inverse-fg/80" : "text-muted"}`}>
+              <p className="mt-3 text-sm leading-6 text-ink/75">
                 {plan.blurb}
               </p>
               <ul className="mt-8 flex-1 space-y-3">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2.5 text-sm">
-                    <Check size={16} className={`mt-0.5 shrink-0 ${plan.highlight ? "text-cyan" : "text-accent"}`} />
-                    <span className={plan.highlight ? "text-inverse-fg/90" : "text-ink/80"}>{feature}</span>
+                  <li key={feature} className="flex items-start gap-2.5 text-sm text-ink/85">
+                    <Check size={16} className="mt-0.5 shrink-0 text-accent" />
+                    <span>{feature}</span>
                   </li>
                 ))}
               </ul>
+              {plan.name === "Campus" && (
+                <p className="mt-5 text-xs leading-5 text-ink/70">
+                  Contact {SITE_CONTACT.name}:{" "}
+                  <a href={contactMailto("campus")} className="font-bold text-accent hover:underline">
+                    {SITE_CONTACT.email}
+                  </a>{" "}
+                  ·{" "}
+                  <a href={contactTelHref()} className="font-bold text-accent hover:underline">
+                    {SITE_CONTACT.phoneDisplay}
+                  </a>
+                </p>
+              )}
               <Link
                 href={plan.href}
                 className={`focus-ring mt-8 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-black transition hover:-translate-y-0.5 ${
                   plan.highlight
-                    ? "bg-panel text-ink hover:bg-accent-soft"
-                    : "bg-inverse text-inverse-fg hover:bg-accent"
+                    ? "bg-accent text-white hover:bg-accent-deep"
+                    : "bg-ink text-panel hover:bg-accent hover:text-white"
                 }`}
               >
                 {plan.cta}

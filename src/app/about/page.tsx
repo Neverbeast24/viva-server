@@ -39,8 +39,8 @@ export default function AboutPage() {
       <nav className="sticky top-0 z-50 border-b border-ink/6 bg-surface/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 md:px-8">
           <Brand />
-          <div className="flex items-center gap-3 text-sm font-semibold text-muted sm:gap-6">
-            <Link href="/#pricing" className="transition-colors hover:text-accent">
+          <div className="flex items-center gap-3 text-sm font-semibold text-ink/80 sm:gap-6">
+            <Link href="/pricing" className="transition-colors hover:text-accent">
               Pricing
             </Link>
             <Link href="/contact" className="transition-colors hover:text-accent">
@@ -48,7 +48,7 @@ export default function AboutPage() {
             </Link>
             <Link
               href="/login"
-              className="focus-ring inline-flex items-center gap-2 rounded-full bg-inverse px-4 py-2.5 text-sm font-bold text-inverse-fg transition hover:bg-accent"
+              className="focus-ring inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-bold text-white transition hover:bg-accent-deep"
             >
               Get started
               <ArrowUpRight size={14} />

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Mail, MessageCircle, Phone } from "lucide-react";
 import { Brand } from "@/components/brand";
+import { InquiryForm } from "@/components/inquiry-form";
 import {
   SITE_CONTACT,
   contactMailto,
@@ -63,16 +64,16 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
       <nav className="sticky top-0 z-50 border-b border-ink/6 bg-surface/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 md:px-8">
           <Brand />
-          <div className="flex items-center gap-3 text-sm font-semibold text-muted sm:gap-6">
+          <div className="flex items-center gap-3 text-sm font-semibold text-ink/80 sm:gap-6">
             <Link href="/about" className="transition-colors hover:text-accent">
               About
             </Link>
-            <Link href="/#pricing" className="transition-colors hover:text-accent">
+            <Link href="/pricing" className="transition-colors hover:text-accent">
               Pricing
             </Link>
             <Link
               href="/login"
-              className="focus-ring inline-flex items-center gap-2 rounded-full bg-inverse px-4 py-2.5 text-sm font-bold text-inverse-fg transition hover:bg-accent"
+              className="focus-ring inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-bold text-white transition hover:bg-accent-deep"
             >
               Get started
               <ArrowUpRight size={14} />
@@ -81,95 +82,95 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
         </div>
       </nav>
 
-      <section className="mx-auto grid max-w-7xl gap-10 px-5 pb-24 pt-16 md:px-8 lg:grid-cols-[1.1fr_.9fr] lg:pt-24">
-        <div>
-          <p className="text-[11px] font-black tracking-[0.2em] text-accent">{copy.eyebrow}</p>
-          <h1 className="font-display mt-4 text-5xl leading-[1.05] text-ink sm:text-6xl">
-            {copy.title}
-          </h1>
-          <p className="mt-6 max-w-xl text-lg leading-8 text-muted">{copy.blurb}</p>
+      <section className="mx-auto max-w-7xl px-5 pb-10 pt-16 md:px-8 md:pt-20">
+        <p className="text-[11px] font-black tracking-[0.2em] text-accent">{copy.eyebrow}</p>
+        <h1 className="font-display mt-4 max-w-3xl text-5xl leading-[1.05] text-ink sm:text-6xl">
+          {copy.title}
+        </h1>
+        <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">{copy.blurb}</p>
+        <p className="mt-4 text-sm font-semibold text-ink">
+          {SITE_CONTACT.name} ·{" "}
+          <a href={contactMailto(plan)} className="text-accent hover:underline">
+            {SITE_CONTACT.email}
+          </a>{" "}
+          ·{" "}
+          <a href={contactTelHref()} className="text-accent hover:underline">
+            {SITE_CONTACT.phoneDisplay}
+          </a>
+        </p>
+      </section>
 
-          <div className="mt-10 space-y-3">
-            <a
-              href={contactMailto(plan)}
-              className="focus-ring flex items-center gap-4 rounded-[1.4rem] border border-ink/8 bg-card/90 p-5 shadow-[0_12px_30px_rgba(var(--shadow-color),.06)] transition hover:-translate-y-0.5 hover:border-accent/30"
-            >
-              <span className="grid size-11 place-items-center rounded-xl bg-accent text-white">
-                <Mail size={18} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-black text-ink">Email {SITE_CONTACT.name}</p>
-                <p className="truncate text-sm text-muted">{SITE_CONTACT.email}</p>
-              </div>
-              <ArrowUpRight size={16} className="shrink-0 text-accent" />
-            </a>
+      <section className="mx-auto grid max-w-7xl gap-6 px-5 pb-24 md:px-8 lg:grid-cols-[1.15fr_.85fr]">
+        <InquiryForm defaultPlan={plan} />
 
-            <a
-              href={contactTelHref()}
-              className="focus-ring flex items-center gap-4 rounded-[1.4rem] border border-ink/8 bg-card/90 p-5 shadow-[0_12px_30px_rgba(var(--shadow-color),.06)] transition hover:-translate-y-0.5 hover:border-accent/30"
-            >
-              <span className="grid size-11 place-items-center rounded-xl bg-inverse text-inverse-fg">
-                <Phone size={18} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-black text-ink">Call or save the number</p>
-                <p className="text-sm text-muted">{SITE_CONTACT.phoneDisplay}</p>
-              </div>
-              <ArrowUpRight size={16} className="shrink-0 text-accent" />
-            </a>
+        <div className="space-y-3">
+          <a
+            href={contactMailto(plan)}
+            className="focus-ring flex items-center gap-4 rounded-[1.4rem] border border-ink/8 bg-card/90 p-5 shadow-[0_12px_30px_rgba(var(--shadow-color),.06)] transition hover:-translate-y-0.5 hover:border-accent/30"
+          >
+            <span className="grid size-11 place-items-center rounded-xl bg-accent text-white">
+              <Mail size={18} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-black text-ink">Email directly</p>
+              <p className="truncate text-sm text-muted">{SITE_CONTACT.email}</p>
+            </div>
+            <ArrowUpRight size={16} className="shrink-0 text-accent" />
+          </a>
 
-            <a
-              href={contactSmsHref()}
-              className="focus-ring flex items-center gap-4 rounded-[1.4rem] border border-ink/8 bg-card/90 p-5 shadow-[0_12px_30px_rgba(var(--shadow-color),.06)] transition hover:-translate-y-0.5 hover:border-accent/30"
-            >
-              <span className="grid size-11 place-items-center rounded-xl bg-accent-soft text-accent">
-                <MessageCircle size={18} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-black text-ink">Text message</p>
-                <p className="text-sm text-muted">Opens SMS to {SITE_CONTACT.phoneDisplay}</p>
-              </div>
-              <ArrowUpRight size={16} className="shrink-0 text-accent" />
-            </a>
-          </div>
-        </div>
+          <a
+            href={contactTelHref()}
+            className="focus-ring flex items-center gap-4 rounded-[1.4rem] border border-ink/8 bg-card/90 p-5 shadow-[0_12px_30px_rgba(var(--shadow-color),.06)] transition hover:-translate-y-0.5 hover:border-accent/30"
+          >
+            <span className="grid size-11 place-items-center rounded-xl bg-ink text-panel">
+              <Phone size={18} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-black text-ink">Call or save the number</p>
+              <p className="text-sm text-muted">{SITE_CONTACT.phoneDisplay}</p>
+            </div>
+            <ArrowUpRight size={16} className="shrink-0 text-accent" />
+          </a>
 
-        <aside className="rounded-[2rem] border border-ink/8 bg-solid p-8 text-solid-fg sm:p-10">
-          <p className="text-xs font-black tracking-[0.18em] text-cyan">QUICK PATHS</p>
-          <ul className="mt-6 space-y-4 text-sm leading-6 text-solid-fg/85">
-            <li>
-              <span className="font-black text-solid-fg">Starter (free)</span> — create an account
-              anytime and start logging your rhythm.
-            </li>
-            <li>
-              <span className="font-black text-solid-fg">Plus (₱299/mo)</span> — email with subject
-              “Plus access” after you sign up so we can activate coaching features for you.
-            </li>
-            <li>
-              <span className="font-black text-solid-fg">Campus</span> — share your org, team size,
-              and research needs; we’ll set roles and onboarding.
-            </li>
-          </ul>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <a
+            href={contactSmsHref()}
+            className="focus-ring flex items-center gap-4 rounded-[1.4rem] border border-ink/8 bg-card/90 p-5 shadow-[0_12px_30px_rgba(var(--shadow-color),.06)] transition hover:-translate-y-0.5 hover:border-accent/30"
+          >
+            <span className="grid size-11 place-items-center rounded-xl bg-accent-soft text-accent">
+              <MessageCircle size={18} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-black text-ink">Text message</p>
+              <p className="text-sm text-muted">SMS to {SITE_CONTACT.phoneDisplay}</p>
+            </div>
+            <ArrowUpRight size={16} className="shrink-0 text-accent" />
+          </a>
+
+          <div className="rounded-[1.6rem] border border-ink/8 bg-accent-soft/80 p-6">
+            <p className="text-xs font-black tracking-[0.16em] text-accent">QUICK PATHS</p>
+            <ul className="mt-4 space-y-3 text-sm leading-6 text-ink/80">
+              <li>
+                <span className="font-black text-ink">Starter</span> — free account anytime via
+                Get started.
+              </li>
+              <li>
+                <span className="font-black text-ink">Plus</span> — ₱299/mo, activated after you
+                message Daniella.
+              </li>
+              <li>
+                <span className="font-black text-ink">Campus</span> — custom setup for research and
+                teams.
+              </li>
+            </ul>
             <Link
               href="/login"
-              className="focus-ring inline-flex items-center gap-2 rounded-full bg-panel px-5 py-3 text-sm font-black text-ink transition hover:bg-accent-soft"
+              className="focus-ring mt-5 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-black text-white transition hover:bg-accent-deep"
             >
               Create free account
               <ArrowUpRight size={15} />
             </Link>
-            <Link
-              href="/#pricing"
-              className="focus-ring inline-flex items-center gap-2 rounded-full border border-panel/20 px-5 py-3 text-sm font-black text-solid-fg/90 transition hover:bg-panel/10"
-            >
-              View pricing
-            </Link>
           </div>
-          <p className="mt-8 text-xs leading-5 text-solid-fg/65">
-            Prefer a pre-filled email? Use the buttons on the left — they open your mail app with
-            the right subject and a short template for {SITE_CONTACT.name}.
-          </p>
-        </aside>
+        </div>
       </section>
     </main>
   );
